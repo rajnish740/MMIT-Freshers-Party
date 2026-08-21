@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Registration | MMIT Freshers Party 2026</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4ff,
+                    #f8fafc
+                );
+
+            min-height: 100vh;
+
+            padding: 30px 15px;
+
+        }
+
+
+        .container {
+
+            max-width: 650px;
+
+            margin: auto;
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 35px;
+
+            box-shadow:
+                0 10px 40px
+                rgba(0,0,0,0.12);
+
+        }
+
+
+        .college-image {
+
+            display: block;
+
+            width: 150px;
+
+            height: 90px;
+
+            object-fit: cover;
+
+            border-radius: 12px;
+
+            margin: 0 auto 15px auto;
+
+        }
+
+
+        h1 {
+
+            text-align: center;
+
+            color: #172554;
+
+            font-size: 30px;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #666;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .form-group {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            font-weight: bold;
+
+            color: #333;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        input,
+        select {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            outline: none;
+
+        }
+
+
+        input:focus,
+        select:focus {
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,0.10);
+
+        }
+
+
+        .row {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 15px;
+
+        }
+
+
+        .fee-box {
+
+            background: #eff6ff;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin: 25px 0;
+
+            text-align: center;
+
+        }
+
+
+        .fee-box p {
+
+            color: #555;
+
+        }
+
+
+        .fee {
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #2563eb;
+
+        }
+
+
+        button {
+
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+
+            border-radius: 30px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+        }
+
+
+        button:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-2px);
+
+        }
+
+
+        .back {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #2563eb;
+
+            text-decoration: none;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                padding: 25px 20px;
+
+            }
+
+
+            .row {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <img
+        src="{{ url_for('static', filename='images/college.jpg') }}"
+        class="college-image"
+        alt="MMIT Kushinagar"
+    >
+
+
+    <h1>
+        🎉 Freshers Party 2026
+    </h1>
+
+
+    <p class="subtitle">
+        MMIT KUSHINAGAR — Student Registration
+    </p>
+
+
+    <form
+        action="/register"
+        method="POST"
+    >
+
+
+        <div class="form-group">
+
+            <label>
+                Full Name *
+            </label>
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Enter your full name"
+                required
+            >
+
+        </div>
+
+
+        <div class="row">
+
+
+            <div class="form-group">
+
+                <label>
+                    Roll Number *
+                </label>
+
+                <input
+                    type="text"
+                    name="roll_number"
+                    placeholder="Enter roll number"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Semester *
+                </label>
+
+                <select
+                    name="semester"
+                    required
+                >
+
+                    <option value="">
+                        Select Semester
+                    </option>
+
+                    <option value="1st">
+                        1st Semester
+                    </option>
+
+                    <option value="2nd">
+                        2nd Semester
+                    </option>
+
+                    <option value="3rd">
+                        3rd Semester
+                    </option>
+
+                    <option value="4th">
+                        4th Semester
+                    </option>
+
+                    <option value="5th">
+                        5th Semester
+                    </option>
+
+                    <option value="6th">
+                        6th Semester
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Branch *
+            </label>
+
+            <select
+                name="branch"
+                required
+            >
+
+                <option value="">
+                    Select Branch
+                </option>
+
+                <option value="Computer Science">
+                    Computer Science
+                </option>
+
+                <option value="Information Technology">
+                    Information Technology
+                </option>
+
+                <option value="Electrical Engineering">
+                    Electrical Engineering
+                </option>
+
+                <option value="Mechanical Engineering">
+                    Mechanical Engineering
+                </option>
+
+                <option value="Civil Engineering">
+                    Civil Engineering
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Mobile Number *
+            </label>
+
+            <input
+                type="tel"
+                name="mobile"
+                placeholder="Enter 10 digit mobile number"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Gender *
+            </label>
+
+            <select
+                name="gender"
+                required
+            >
+
+                <option value="">
+                    Select Gender
+                </option>
+
+                <option value="Male">
+                    Male
+                </option>
+
+                <option value="Female">
+                    Female
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="fee-box">
+
+            <p>
+                Freshers Party Registration Fee
+            </p>
+
+            <div class="fee">
+                ₹299
+            </div>
+
+        </div>
+
+
+        <button type="submit">
+
+            Continue to Registration
+
+        </button>
+
+
+    </form>
+
+
+    <a
+        href="/"
+        class="back"
+    >
+        ← Back to Home
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>

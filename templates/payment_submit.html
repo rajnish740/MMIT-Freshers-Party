@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Submit Payment</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 550px;
+            margin: 50px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .student-name {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input[type="file"] {
+            background: #fafafa;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #198754;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #146c43;
+        }
+
+        .info {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>🧾 Payment Confirmation</h1>
+
+            <div class="student-name">
+
+                Student:
+                <strong>{{ student_name }}</strong>
+
+            </div>
+
+
+            <form
+                action="/payment-submit"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <!-- Student ID -->
+
+                <input
+                    type="hidden"
+                    name="student_id"
+                    value="{{ student_id }}"
+                >
+
+
+                <!-- UTR -->
+
+                <label for="utr">
+
+                    UTR / Transaction ID
+
+                </label>
+
+                <input
+                    type="text"
+                    id="utr"
+                    name="utr"
+                    placeholder="Enter UTR / Transaction ID"
+                    required
+                >
+
+
+                <!-- Screenshot -->
+
+                <label for="payment_screenshot">
+
+                    Payment Screenshot
+
+                </label>
+
+                <input
+                    type="file"
+                    id="payment_screenshot"
+                    name="payment_screenshot"
+                    accept="image/*"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+
+                    Submit Payment Details
+
+                </button>
+
+            </form>
+
+
+            <div class="info">
+
+                ⚠️ कृपया सही UTR और payment screenshot ही upload करें।
+                Admin आपके payment को verify करेगा।
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

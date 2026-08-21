@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Payment Receipt | MMIT KUSHINAGAR
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4ff,
+                    #f8fafc
+                );
+
+            padding: 30px 15px;
+
+            color: #1e293b;
+
+        }
+
+
+        /* =========================
+           RECEIPT
+        ========================= */
+
+        .receipt {
+
+            max-width: 800px;
+
+            margin: auto;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 40px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(0,0,0,0.12);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+        /* TOP LINE */
+
+        .receipt::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 7px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #172554,
+                    #2563eb,
+                    #60a5fa
+                );
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+
+            text-align: center;
+
+            border-bottom:
+                2px solid #172554;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .college-image {
+
+            width: 110px;
+
+            height: 70px;
+
+            object-fit: cover;
+
+            border-radius: 10px;
+
+            margin-bottom: 10px;
+
+            border:
+                2px solid #e2e8f0;
+
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            color: #172554;
+
+            font-size: 32px;
+
+            font-weight: 800;
+
+        }
+
+
+        .header p {
+
+            margin: 6px 0;
+
+            color: #64748b;
+
+        }
+
+
+        .event {
+
+            font-weight: bold;
+
+            color: #2563eb !important;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================= */
+
+        .success {
+
+            text-align: center;
+
+            background: #dcfce7;
+
+            color: #166534;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            font-weight: bold;
+
+            margin-bottom: 25px;
+
+            border:
+                1px solid #bbf7d0;
+
+        }
+
+
+        /* =========================
+           RECEIPT TITLE
+        ========================= */
+
+        .receipt-title {
+
+            text-align: center;
+
+            color: #172554;
+
+            margin-bottom: 25px;
+
+            font-size: 26px;
+
+        }
+
+
+        .receipt-number {
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            margin-top: -15px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        /* =========================
+           DETAILS TABLE
+        ========================= */
+
+        .details {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+        }
+
+
+        .details td {
+
+            padding: 14px;
+
+            border-bottom:
+                1px solid #e2e8f0;
+
+        }
+
+
+        .details tr:last-child td {
+
+            border-bottom: none;
+
+        }
+
+
+        .details td:first-child {
+
+            font-weight: bold;
+
+            color: #475569;
+
+            width: 40%;
+
+            background: #f8fafc;
+
+        }
+
+
+        .details td:last-child {
+
+            color: #1e293b;
+
+            font-weight: 500;
+
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+
+            display: inline-block;
+
+            background: #dcfce7;
+
+            color: #166534;
+
+            padding: 7px 14px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+
+            font-size: 13px;
+
+        }
+
+
+        /* =========================
+           AMOUNT
+        ========================= */
+
+        .amount {
+
+            font-size: 28px;
+
+            font-weight: 800 !important;
+
+            color: #2563eb !important;
+
+        }
+
+
+        /* =========================
+           VERIFIED BOX
+        ========================= */
+
+        .verified-box {
+
+            margin-top: 25px;
+
+            padding: 18px;
+
+            text-align: center;
+
+            background: #eff6ff;
+
+            border:
+                1px solid #bfdbfe;
+
+            border-radius: 12px;
+
+        }
+
+
+        .verified-box h3 {
+
+            margin: 0 0 5px;
+
+            color: #1d4ed8;
+
+        }
+
+
+        .verified-box p {
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+
+            text-align: center;
+
+            margin-top: 30px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid #e2e8f0;
+
+            color: #64748b;
+
+        }
+
+
+        .footer p {
+
+            margin: 6px 0;
+
+        }
+
+
+        .footer strong {
+
+            color: #172554;
+
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .buttons {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+        }
+
+
+        button {
+
+            border: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 13px 24px;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin: 5px;
+
+            transition: 0.2s;
+
+        }
+
+
+        button:hover {
+
+            background: #1d4ed8;
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        .download {
+
+            background: #198754;
+
+        }
+
+
+        .download:hover {
+
+            background: #157347;
+
+        }
+
+
+        .back {
+
+            background: #64748b;
+
+        }
+
+
+        .back:hover {
+
+            background: #475569;
+
+        }
+
+
+        /* =========================
+           PRINT
+        ========================= */
+
+        @media print {
+
+            body {
+
+                background: white;
+
+                padding: 0;
+
+            }
+
+
+            .receipt {
+
+                box-shadow: none;
+
+                max-width: 100%;
+
+                border-radius: 0;
+
+                padding: 25px;
+
+            }
+
+
+            .buttons {
+
+                display: none;
+
+            }
+
+
+            .receipt::before {
+
+                display: none;
+
+            }
+
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 10px;
+
+            }
+
+
+            .receipt {
+
+                padding: 22px 15px;
+
+                border-radius: 12px;
+
+            }
+
+
+            .header h1 {
+
+                font-size: 25px;
+
+            }
+
+
+            .receipt-title {
+
+                font-size: 22px;
+
+            }
+
+
+            .details td {
+
+                padding: 11px 9px;
+
+                font-size: 13px;
+
+            }
+
+
+            .details td:first-child {
+
+                width: 42%;
+
+            }
+
+
+            .amount {
+
+                font-size: 23px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="receipt">
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <div class="header">
+
+
+        <img
+            src="{{ url_for('static', filename='images/college.jpg') }}"
+            class="college-image"
+            alt="MMIT KUSHINAGAR"
+        >
+
+
+        <h1>
+            MMIT KUSHINAGAR
+        </h1>
+
+
+        <p class="event">
+            🎉 Freshers Party 2026
+        </p>
+
+
+        <p>
+            Payment Confirmation
+        </p>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         SUCCESS
+    ========================= -->
+
+    <div class="success">
+
+        ✅ Payment Successfully Verified
+
+    </div>
+
+
+
+    <!-- =========================
+         TITLE
+    ========================= -->
+
+    <h2 class="receipt-title">
+
+        🎫 Payment Receipt
+
+    </h2>
+
+
+    <div class="receipt-number">
+
+        Receipt No:
+        <strong>
+            MMIT-2026-{{ student[0] }}
+        </strong>
+
+    </div>
+
+
+
+    <!-- =========================
+         STUDENT DETAILS
+    ========================= -->
+
+    <table class="details">
+
+
+        <tr>
+
+            <td>
+                Registration ID
+            </td>
+
+            <td>
+                {{ student[0] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Student Name
+            </td>
+
+            <td>
+                <strong>
+                    {{ student[1] }}
+                </strong>
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Roll Number
+            </td>
+
+            <td>
+                {{ student[2] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Semester
+            </td>
+
+            <td>
+                {{ student[3] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Branch
+            </td>
+
+            <td>
+                {{ student[4] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Mobile
+            </td>
+
+            <td>
+                {{ student[5] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                UTR / Transaction ID
+            </td>
+
+            <td>
+                {{ student[6] }}
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Payment Amount
+            </td>
+
+            <td class="amount">
+                ₹299
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Payment Status
+            </td>
+
+            <td>
+
+                <span class="status">
+                    ✓ VERIFIED
+                </span>
+
+            </td>
+
+        </tr>
+
+
+    </table>
+
+
+
+    <!-- =========================
+         VERIFIED MESSAGE
+    ========================= -->
+
+    <div class="verified-box">
+
+        <h3>
+            ✅ Payment Verified Successfully
+        </h3>
+
+        <p>
+            आपका Freshers Party 2026 registration
+            successfully confirm हो गया है।
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <div class="footer">
+
+        <p>
+            🎉 Thank you for registering for
+            <strong>Freshers Party 2026!</strong>
+        </p>
+
+        <p>
+            <strong>
+                MMIT KUSHINAGAR
+            </strong>
+        </p>
+
+        <p>
+            Please keep this receipt for your records.
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         BUTTONS
+    ========================= -->
+
+    <div class="buttons">
+
+
+        <!-- PRINT RECEIPT -->
+
+        <button
+            onclick="window.print()"
+        >
+
+            🖨️ Print Receipt
+
+        </button>
+
+
+        <!-- DOWNLOAD RECEIPT -->
+
+        <button
+            class="download"
+            onclick="downloadReceipt()"
+        >
+
+            📥 Download Receipt
+
+        </button>
+
+
+        <!-- BACK -->
+
+        <button
+            class="back"
+            onclick="window.history.back()"
+        >
+
+            ← Back
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     DOWNLOAD SCRIPT
+========================= -->
+
+<script>
+
+function downloadReceipt() {
+
+    window.print();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

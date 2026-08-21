@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MMIT KUSHINAGAR | Freshers Party 2026</title>
+
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f5f7fb;
+
+            color: #222;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            background: white;
+
+            padding: 25px 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 3px 20px rgba(0, 0, 0, 0.10);
+
+            position: relative;
+
+            z-index: 10;
+
+        }
+
+
+        .college-image {
+
+            width: 220px;
+
+            height: 130px;
+
+            object-fit: cover;
+
+            border-radius: 15px;
+
+            border: 4px solid white;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.18);
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .college-name {
+
+            font-size: 34px;
+
+            font-weight: 800;
+
+            color: #172554;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .college-location {
+
+            font-size: 16px;
+
+            color: #666;
+
+            margin-top: 5px;
+
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        nav {
+
+            background: #172554;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 35px;
+
+            padding: 14px 20px;
+
+        }
+
+
+        nav a {
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: 600;
+
+            font-size: 15px;
+
+            transition: 0.3s;
+
+        }
+
+
+        nav a:hover {
+
+            color: #93c5fd;
+
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            min-height: 650px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            padding: 50px 20px;
+
+            position: relative;
+
+            overflow: hidden;
+
+
+            background:
+
+                linear-gradient(
+                    rgba(0, 0, 0, 0.62),
+                    rgba(0, 0, 0, 0.62)
+                ),
+
+                url("{{ url_for('static', filename='images/college.jpg') }}");
+
+            background-size: cover;
+
+            background-position: center;
+
+        }
+
+
+        .hero-content {
+
+            max-width: 850px;
+
+            color: white;
+
+        }
+
+
+        .welcome {
+
+            display: inline-block;
+
+            background: rgba(255,255,255,0.15);
+
+            border: 1px solid rgba(255,255,255,0.3);
+
+            padding: 8px 20px;
+
+            border-radius: 30px;
+
+            font-size: 15px;
+
+            margin-bottom: 20px;
+
+            backdrop-filter: blur(5px);
+
+        }
+
+
+        .hero h1 {
+
+            font-size: 65px;
+
+            line-height: 1.15;
+
+            margin-bottom: 20px;
+
+            font-weight: 900;
+
+        }
+
+
+        .hero h1 span {
+
+            color: #93c5fd;
+
+        }
+
+
+        .hero-text {
+
+            font-size: 22px;
+
+            margin-bottom: 15px;
+
+            color: #f1f5f9;
+
+        }
+
+
+        .hero-subtext {
+
+            font-size: 17px;
+
+            color: #dbeafe;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .hero-buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+
+        }
+
+
+        .register-button {
+
+            display: inline-block;
+
+            background: #2563eb;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 17px 42px;
+
+            border-radius: 40px;
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 25px rgba(37,99,235,0.35);
+
+            transition: all 0.3s ease;
+
+        }
+
+
+        .register-button:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 15px 30px rgba(37,99,235,0.45);
+
+        }
+
+
+        /* =========================
+           PAYMENT STATUS BUTTON
+        ========================= */
+
+        .status-button {
+
+            display: inline-block;
+
+            background: #198754;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 17px 32px;
+
+            border-radius: 40px;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 25px rgba(25,135,84,0.30);
+
+            transition: all 0.3s ease;
+
+        }
+
+
+        .status-button:hover {
+
+            background: #157347;
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 15px 30px rgba(25,135,84,0.40);
+
+        }
+
+
+        /* =========================
+           EVENT INFO
+        ========================= */
+
+        .section {
+
+            padding: 80px 20px;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+        }
+
+
+        .section-title {
+
+            text-align: center;
+
+            font-size: 38px;
+
+            color: #172554;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .section-description {
+
+            text-align: center;
+
+            color: #666;
+
+            max-width: 700px;
+
+            margin:
+                0 auto 45px auto;
+
+        }
+
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    1fr
+                );
+
+            gap: 25px;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 30px 20px;
+
+            border-radius: 18px;
+
+            text-align: center;
+
+            box-shadow:
+                0 7px 25px
+                rgba(0,0,0,0.08);
+
+            transition: 0.3s;
+
+        }
+
+
+        .card:hover {
+
+            transform: translateY(-8px);
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,0,0,0.12);
+
+        }
+
+
+        .card-icon {
+
+            font-size: 45px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .card h3 {
+
+            color: #172554;
+
+            margin-bottom: 10px;
+
+            font-size: 21px;
+
+        }
+
+
+        .card p {
+
+            color: #666;
+
+            font-size: 15px;
+
+        }
+
+
+        /* =========================
+           ABOUT EVENT
+        ========================= */
+
+        .about {
+
+            background: white;
+
+            padding: 80px 20px;
+
+        }
+
+
+        .about-content {
+
+            max-width: 1000px;
+
+            margin: auto;
+
+            text-align: center;
+
+        }
+
+
+        .about-content h2 {
+
+            font-size: 38px;
+
+            color: #172554;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .about-content p {
+
+            color: #555;
+
+            font-size: 17px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        /* =========================
+           FEE BOX
+        ========================= */
+
+        .fee-section {
+
+            padding: 80px 20px;
+
+            text-align: center;
+
+            background: #eef4ff;
+
+        }
+
+
+        .fee-box {
+
+            max-width: 500px;
+
+            margin: auto;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 25px;
+
+            box-shadow:
+                0 10px 35px
+                rgba(0,0,0,0.10);
+
+        }
+
+
+        .fee-title {
+
+            font-size: 22px;
+
+            color: #555;
+
+        }
+
+
+        .fee {
+
+            font-size: 55px;
+
+            font-weight: 900;
+
+            color: #2563eb;
+
+            margin: 10px 0 20px 0;
+
+        }
+
+
+        .fee-note {
+
+            color: #777;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        /* =========================
+           NOTICE
+        ========================= */
+
+        .notice {
+
+            max-width: 850px;
+
+            margin: 40px auto 0 auto;
+
+            background: #fff7ed;
+
+            border-left: 5px solid #f97316;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            text-align: left;
+
+        }
+
+
+        .notice strong {
+
+            color: #c2410c;
+
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            background: #172554;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 40px 20px;
+
+        }
+
+
+        .footer-college {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .footer-text {
+
+            color: #cbd5e1;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .copyright {
+
+            margin-top: 20px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.15);
+
+            color: #94a3b8;
+
+            font-size: 14px;
+
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .cards {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        1fr
+                    );
+
+            }
+
+
+            .hero h1 {
+
+                font-size: 48px;
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            header {
+
+                padding: 20px 15px;
+
+            }
+
+
+            .college-image {
+
+                width: 180px;
+
+                height: 110px;
+
+            }
+
+
+            .college-name {
+
+                font-size: 25px;
+
+            }
+
+
+            nav {
+
+                gap: 15px;
+
+                flex-wrap: wrap;
+
+            }
+
+
+            nav a {
+
+                font-size: 13px;
+
+            }
+
+
+            .hero {
+
+                min-height: 550px;
+
+            }
+
+
+            .hero h1 {
+
+                font-size: 38px;
+
+            }
+
+
+            .hero-text {
+
+                font-size: 18px;
+
+            }
+
+
+            .hero-buttons {
+
+                flex-direction: column;
+
+                gap: 12px;
+
+            }
+
+
+            .register-button,
+            .status-button {
+
+                width: 100%;
+
+                max-width: 330px;
+
+                margin: 0;
+
+            }
+
+
+            .cards {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .section-title {
+
+                font-size: 30px;
+
+            }
+
+
+            .about-content h2 {
+
+                font-size: 30px;
+
+            }
+
+
+            .fee {
+
+                font-size: 45px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         COLLEGE HEADER
+    ========================== -->
+
+    <header>
+
+        <img
+            src="{{ url_for('static', filename='images/college.jpg') }}"
+            class="college-image"
+            alt="MMIT Kushinagar College"
+        >
+
+
+        <div class="college-name">
+
+            MMIT KUSHINAGAR
+
+        </div>
+
+
+        <div class="college-location">
+
+            Kushinagar, Uttar Pradesh
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#event">
+            Event
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
+        <a href="#registration">
+            Registration
+        </a>
+
+        <a href="/payment-status">
+            🔍 Payment Status
+        </a>
+
+        <a href="/admin">
+            🔐 Admin Login
+        </a>
+
+    </nav>
+
+
+
+    <!-- =========================
+         HERO SECTION
+    ========================== -->
+
+    <section
+        class="hero"
+        id="home"
+    >
+
+        <div class="hero-content">
+
+
+            <div class="welcome">
+
+                ✨ Welcome Freshers ✨
+
+            </div>
+
+
+            <h1>
+
+                🎉 Freshers Party
+                <span>2026</span>
+
+            </h1>
+
+
+            <p class="hero-text">
+
+                A New Beginning,
+                A New Journey,
+                A New Memory!
+
+            </p>
+
+
+            <p class="hero-subtext">
+
+                Join us and make your
+                first college memories unforgettable.
+
+            </p>
+
+
+            <!-- =========================
+                 HERO BUTTONS
+            ========================== -->
+
+            <div class="hero-buttons">
+
+                <a
+                    href="/register"
+                    class="register-button"
+                >
+
+                    🎟️ Register Now
+
+                </a>
+
+
+                <a
+                    href="/payment-status"
+                    class="status-button"
+                >
+
+                    🔍 Check Payment Status
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         EVENT INFORMATION
+    ========================== -->
+
+    <section
+        class="section"
+        id="event"
+    >
+
+        <h2 class="section-title">
+
+            🎊 Event Information
+
+        </h2>
+
+
+        <p class="section-description">
+
+            MMIT KUSHINAGAR is organizing
+            an exciting Freshers Party 2026
+            for our new students.
+
+        </p>
+
+
+        <div class="cards">
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🎓
+                </div>
+
+                <h3>
+                    College
+                </h3>
+
+                <p>
+                    MMIT KUSHINAGAR
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    🎉
+                </div>
+
+                <h3>
+                    Event
+                </h3>
+
+                <p>
+                    Freshers Party 2026
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    💰
+                </div>
+
+                <h3>
+                    Registration Fee
+                </h3>
+
+                <p>
+                    ₹299 per student
+                </p>
+
+            </div>
+
+
+
+            <div class="card">
+
+                <div class="card-icon">
+                    ❤️
+                </div>
+
+                <h3>
+                    Memories
+                </h3>
+
+                <p>
+                    Create unforgettable
+                    college memories.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ABOUT EVENT
+    ========================== -->
+
+    <section
+        class="about"
+        id="about"
+    >
+
+        <div class="about-content">
+
+
+            <h2>
+
+                🌟 About Freshers Party
+
+            </h2>
+
+
+            <p>
+
+                Welcome to MMIT KUSHINAGAR!
+
+                Freshers Party 2026 is a
+                special event organized to
+                welcome our new students.
+
+            </p>
+
+
+            <p>
+
+                It is a great opportunity
+                for students to meet new
+                friends, enjoy exciting
+                activities and create
+                unforgettable memories.
+
+            </p>
+
+
+            <p>
+
+                Get ready for an amazing
+                celebration!
+
+            </p>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         REGISTRATION FEE
+    ========================== -->
+
+    <section
+        class="fee-section"
+        id="registration"
+    >
+
+        <div class="fee-box">
+
+
+            <div class="fee-title">
+
+                Freshers Party
+                Registration Fee
+
+            </div>
+
+
+            <div class="fee">
+
+                ₹299
+
+            </div>
+
+
+            <div class="fee-note">
+
+                Registration करके
+                अपनी seat confirm करें।
+
+            </div>
+
+
+            <a
+                href="/register"
+                class="register-button"
+            >
+
+                🎟️ Register & Continue
+
+            </a>
+
+
+            <div class="notice">
+
+                <strong>
+                    Important:
+                </strong>
+
+                Registration के बाद
+                payment process पूरा करना
+                जरूरी होगा।
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+
+        <div class="footer-college">
+
+            MMIT KUSHINAGAR
+
+        </div>
+
+
+        <div class="footer-text">
+
+            🎉 Freshers Party 2026 🎉
+
+        </div>
+
+
+        <div class="footer-text">
+
+            Welcome Freshers!
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MMIT KUSHINAGAR.
+            All Rights Reserved.
+
+        </div>
+
+
+    </footer>
+
+
+</body>
+
+</html>

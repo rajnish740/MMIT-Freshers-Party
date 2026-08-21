@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.venv/
+
+# Database
+students.db
+
+# Uploaded payment screenshots
+static/uploads/
+
+# Environment / secrets
+.env
