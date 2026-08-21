@@ -6,8 +6,16 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Session ke liye secret key
+# ==============================
+# SESSION SECRET KEY
+# ==============================
+
 app.secret_key = "mmit-freshers-2026-secret-key"
+
+
+# ==============================
+# UPLOAD FOLDER
+# ==============================
 
 UPLOAD_FOLDER = "static/uploads"
 
@@ -53,6 +61,7 @@ def create_database():
         )
     """)
 
+    # Existing database ke columns check karo
     cursor.execute("PRAGMA table_info(students)")
 
     columns = [
@@ -60,6 +69,7 @@ def create_database():
         for column in cursor.fetchall()
     ]
 
+    # UTR column agar nahi hai to create karo
     if "utr" not in columns:
 
         cursor.execute("""
@@ -67,6 +77,7 @@ def create_database():
             ADD COLUMN utr TEXT
         """)
 
+    # Payment screenshot column agar nahi hai to create karo
     if "payment_screenshot" not in columns:
 
         cursor.execute("""
@@ -76,6 +87,15 @@ def create_database():
 
     conn.commit()
     conn.close()
+
+
+# ==================================================
+# IMPORTANT:
+# Render / Gunicorn par bhi database automatically
+# create hoga.
+# ==================================================
+
+create_database()
 
 
 # ==============================
@@ -98,15 +118,24 @@ def register():
     if request.method == "POST":
 
         name = request.form["name"]
+
         roll_number = request.form["roll_number"]
+
         semester = request.form["semester"]
+
         branch = request.form["branch"]
+
         mobile = request.form["mobile"]
+
         email = request.form["email"]
+
         gender = request.form["gender"]
 
+
         conn = sqlite3.connect("students.db")
+
         cursor = conn.cursor()
+
 
         cursor.execute("""
             INSERT INTO students
@@ -124,6 +153,7 @@ def register():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 
         """, (
+
             name,
             roll_number,
             semester,
@@ -132,19 +162,29 @@ def register():
             email,
             gender,
             "PENDING"
+
         ))
+
 
         conn.commit()
 
+
         registration_id = cursor.lastrowid
+
 
         conn.close()
 
+
         return render_template(
+
             "payment.html",
+
             registration_no=registration_id,
+
             student_name=name
+
         )
+
 
     return render_template("register.html")
 
@@ -157,10 +197,14 @@ def register():
 def payment_submit_page(student_id):
 
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
 
+
     cursor.execute("""
-        SELECT id, name
+        SELECT
+            id,
+            name
 
         FROM students
 
@@ -168,15 +212,20 @@ def payment_submit_page(student_id):
 
     """, (student_id,))
 
+
     student = cursor.fetchone()
 
+
     conn.close()
+
 
     if student is None:
 
         return "Student registration not found."
 
+
     return render_template(
+
         "payment_submit.html",
 
         registration_id=student[0],
@@ -184,6 +233,7 @@ def payment_submit_page(student_id):
         student_id=student[0],
 
         student_name=student[1]
+
     )
 
 
@@ -198,53 +248,77 @@ def save_payment():
 
     utr = request.form["utr"].strip()
 
+
     screenshot = request.files.get(
         "payment_screenshot"
     )
+
 
     if not utr:
 
         return "UTR / Transaction ID is required."
 
+
     if screenshot is None or screenshot.filename == "":
 
         return "Payment screenshot is required."
+
 
     filename = secure_filename(
         screenshot.filename
     )
 
+
     filename = f"{student_id}_{filename}"
 
+
     filepath = os.path.join(
+
         app.config["UPLOAD_FOLDER"],
+
         filename
+
     )
+
 
     screenshot.save(filepath)
 
+
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         UPDATE students
 
         SET
+
             payment_status = ?,
+
             utr = ?,
+
             payment_screenshot = ?
 
         WHERE id = ?
 
     """, (
+
         "SUBMITTED",
+
         utr,
+
         filename,
+
         student_id
+
     ))
 
+
     conn.commit()
+
     conn.close()
+
 
     return """
 
@@ -290,22 +364,34 @@ def payment_status():
             "registration_id"
         ].strip()
 
+
         mobile = request.form[
             "mobile"
         ].strip()
 
+
         conn = sqlite3.connect("students.db")
+
         cursor = conn.cursor()
+
 
         cursor.execute("""
             SELECT
+
                 id,
+
                 name,
+
                 roll_number,
+
                 semester,
+
                 branch,
+
                 mobile,
+
                 utr,
+
                 payment_status
 
             FROM students
@@ -315,28 +401,44 @@ def payment_status():
             AND mobile = ?
 
         """, (
+
             registration_id,
+
             mobile
+
         ))
+
 
         student = cursor.fetchone()
 
+
         conn.close()
+
 
         if student is None:
 
             return render_template(
+
                 "student_status.html",
+
                 error="❌ Registration ID या Mobile Number गलत है।"
+
             )
 
+
         return render_template(
+
             "student_status.html",
+
             student=student
+
         )
 
+
     return render_template(
+
         "student_status.html"
+
     )
 
 
@@ -363,13 +465,16 @@ def admin_login():
 
     password = request.form["password"]
 
+
     if username == "admin" and password == "admin123":
 
         session["admin_logged_in"] = True
 
+
         return redirect(
             "/admin/dashboard"
         )
+
 
     return """
 
@@ -403,19 +508,31 @@ def admin_dashboard():
 
         return redirect("/admin")
 
+
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+
             id,
+
             name,
+
             roll_number,
+
             semester,
+
             branch,
+
             mobile,
+
             utr,
+
             payment_status,
+
             payment_screenshot
 
         FROM students
@@ -424,13 +541,19 @@ def admin_dashboard():
 
     """)
 
+
     students = cursor.fetchall()
+
 
     conn.close()
 
+
     return render_template(
+
         "admin_dashboard.html",
+
         students=students
+
     )
 
 
@@ -448,8 +571,11 @@ def verify_payment(student_id):
 
         return redirect("/admin")
 
+
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         UPDATE students
@@ -459,12 +585,18 @@ def verify_payment(student_id):
         WHERE id = ?
 
     """, (
+
         "VERIFIED",
+
         student_id
+
     ))
 
+
     conn.commit()
+
     conn.close()
+
 
     return redirect(
         "/admin/dashboard"
@@ -485,8 +617,11 @@ def reject_payment(student_id):
 
         return redirect("/admin")
 
+
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         UPDATE students
@@ -496,12 +631,18 @@ def reject_payment(student_id):
         WHERE id = ?
 
     """, (
+
         "REJECTED",
+
         student_id
+
     ))
 
+
     conn.commit()
+
     conn.close()
+
 
     return redirect(
         "/admin/dashboard"
@@ -521,18 +662,29 @@ def payment_receipt(student_id):
 
         return redirect("/admin")
 
+
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+
             id,
+
             name,
+
             roll_number,
+
             semester,
+
             branch,
+
             mobile,
+
             utr,
+
             payment_status
 
         FROM students
@@ -541,13 +693,17 @@ def payment_receipt(student_id):
 
     """, (student_id,))
 
+
     student = cursor.fetchone()
 
+
     conn.close()
+
 
     if student is None:
 
         return "Student not found."
+
 
     if student[7] != "VERIFIED":
 
@@ -578,9 +734,13 @@ def payment_receipt(student_id):
 
         """
 
+
     return render_template(
+
         "receipt.html",
+
         student=student
+
     )
 
 
@@ -594,17 +754,27 @@ def payment_receipt(student_id):
 def student_receipt(student_id):
 
     conn = sqlite3.connect("students.db")
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+
             id,
+
             name,
+
             roll_number,
+
             semester,
+
             branch,
+
             mobile,
+
             utr,
+
             payment_status
 
         FROM students
@@ -613,13 +783,17 @@ def student_receipt(student_id):
 
     """, (student_id,))
 
+
     student = cursor.fetchone()
 
+
     conn.close()
+
 
     if student is None:
 
         return "Student not found."
+
 
     # Receipt केवल VERIFIED payment के लिए
 
@@ -652,9 +826,13 @@ def student_receipt(student_id):
 
         """
 
+
     return render_template(
+
         "receipt.html",
+
         student=student
+
     )
 
 
@@ -670,6 +848,7 @@ def admin_logout():
         None
     )
 
+
     return redirect("/admin")
 
 
@@ -679,6 +858,8 @@ def admin_logout():
 
 if __name__ == "__main__":
 
-    create_database()
-
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=True
+    )
