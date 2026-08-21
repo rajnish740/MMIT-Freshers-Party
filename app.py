@@ -1,18 +1,15 @@
 from flask import Flask, render_template, request, redirect, session
 import os
-import sqlite3
-from werkzeug.utils import secure_filename
-
-# PostgreSQL
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 
 
 # ==================================================
-# SESSION SECRET KEY
+# SECRET KEY
 # ==================================================
 
 app.secret_key = os.environ.get(
@@ -36,129 +33,77 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # DATABASE CONNECTION
 # ==================================================
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+def get_db_connection():
 
+    database_url = os.environ.get("DATABASE_URL")
 
-def get_connection():
-    """
-    Render par PostgreSQL use hoga.
-    Local computer par DATABASE_URL na hone par
-    SQLite use hoga.
-    """
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set."
+        )
 
-    if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL)
-
-    return sqlite3.connect("students.db")
-
-
-# ==================================================
-# DATABASE TYPE
-# ==================================================
-
-def is_postgres():
-    return bool(DATABASE_URL)
+    return psycopg2.connect(
+        database_url,
+        sslmode="require"
+    )
 
 
 # ==================================================
-# DATABASE CREATE / UPDATE
+# CREATE DATABASE TABLE
 # ==================================================
 
 def create_database():
 
-    conn = get_connection()
+    conn = get_db_connection()
 
     cursor = conn.cursor()
 
-    if is_postgres():
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS students (
 
-        # ==========================================
-        # POSTGRESQL
-        # ==========================================
+            id SERIAL PRIMARY KEY,
 
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS students (
+            name TEXT NOT NULL,
 
-                id SERIAL PRIMARY KEY,
+            roll_number TEXT NOT NULL,
 
-                name TEXT NOT NULL,
+            semester TEXT NOT NULL,
 
-                roll_number TEXT NOT NULL,
+            branch TEXT NOT NULL,
 
-                semester TEXT NOT NULL,
+            mobile TEXT NOT NULL,
 
-                branch TEXT NOT NULL,
+            email TEXT,
 
-                mobile TEXT NOT NULL,
+            gender TEXT NOT NULL,
 
-                email TEXT,
+            payment_status TEXT DEFAULT 'PENDING',
 
-                gender TEXT NOT NULL,
+            utr TEXT,
 
-                payment_status TEXT DEFAULT 'PENDING',
+            payment_screenshot TEXT
 
-                utr TEXT,
-
-                payment_screenshot TEXT
-
-            )
-        """)
-
-        cursor.execute("""
-            ALTER TABLE students
-            ADD COLUMN IF NOT EXISTS utr TEXT
-        """)
-
-        cursor.execute("""
-            ALTER TABLE students
-            ADD COLUMN IF NOT EXISTS payment_screenshot TEXT
-        """)
-
-    else:
-
-        # ==========================================
-        # SQLITE - LOCAL COMPUTER
-        # ==========================================
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS students (
-
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-                name TEXT NOT NULL,
-
-                roll_number TEXT NOT NULL,
-
-                semester TEXT NOT NULL,
-
-                branch TEXT NOT NULL,
-
-                mobile TEXT NOT NULL,
-
-                email TEXT,
-
-                gender TEXT NOT NULL,
-
-                payment_status TEXT DEFAULT 'PENDING',
-
-                utr TEXT,
-
-                payment_screenshot TEXT
-
-            )
-        """)
+        )
+    """)
 
     conn.commit()
 
     cursor.close()
+
     conn.close()
 
 
 # ==================================================
-# DATABASE INITIALIZE
+# CREATE TABLE WHEN APP STARTS
 # ==================================================
 
-create_database()
+try:
+
+    create_database()
+
+except Exception as e:
+
+    print("Database initialization error:", e)
 
 
 # ==================================================
@@ -168,7 +113,9 @@ create_database()
 @app.route("/")
 def home():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html"
+    )
 
 
 # ==================================================
@@ -181,36 +128,28 @@ def register():
     if request.method == "POST":
 
         name = request.form["name"]
+
         roll_number = request.form["roll_number"]
+
         semester = request.form["semester"]
+
         branch = request.form["branch"]
+
         mobile = request.form["mobile"]
+
         email = request.form["email"]
+
         gender = request.form["gender"]
 
-        conn = get_connection()
+
+        conn = get_db_connection()
+
         cursor = conn.cursor()
 
-        if is_postgres():
 
-            cursor.execute("""
-                INSERT INTO students
-                (
-                    name,
-                    roll_number,
-                    semester,
-                    branch,
-                    mobile,
-                    email,
-                    gender,
-                    payment_status
-                )
-
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-
-                RETURNING id
-
-            """, (
+        cursor.execute("""
+            INSERT INTO students
+            (
                 name,
                 roll_number,
                 semester,
@@ -218,45 +157,43 @@ def register():
                 mobile,
                 email,
                 gender,
-                "PENDING"
-            ))
+                payment_status
+            )
 
-            registration_id = cursor.fetchone()[0]
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s,
+                %s
+            )
 
-        else:
+            RETURNING id
 
-            cursor.execute("""
-                INSERT INTO students
-                (
-                    name,
-                    roll_number,
-                    semester,
-                    branch,
-                    mobile,
-                    email,
-                    gender,
-                    payment_status
-                )
+        """, (
+            name,
+            roll_number,
+            semester,
+            branch,
+            mobile,
+            email,
+            gender,
+            "PENDING"
+        ))
 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 
-            """, (
-                name,
-                roll_number,
-                semester,
-                branch,
-                mobile,
-                email,
-                gender,
-                "PENDING"
-            ))
-
-            registration_id = cursor.lastrowid
+        registration_id = cursor.fetchone()[0]
 
         conn.commit()
 
         cursor.close()
+
         conn.close()
+
 
         return render_template(
             "payment.html",
@@ -264,43 +201,46 @@ def register():
             student_name=name
         )
 
-    return render_template("register.html")
+
+    return render_template(
+        "register.html"
+    )
 
 
 # ==================================================
-# PAYMENT CONFIRMATION PAGE
+# PAYMENT SUBMIT PAGE
 # ==================================================
 
 @app.route("/payment-submit/<int:student_id>")
 def payment_submit_page(student_id):
 
-    conn = get_connection()
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            SELECT id, name
-            FROM students
-            WHERE id = %s
-        """, (student_id,))
+    cursor.execute("""
+        SELECT id, name
 
-    else:
+        FROM students
 
-        cursor.execute("""
-            SELECT id, name
-            FROM students
-            WHERE id = ?
-        """, (student_id,))
+        WHERE id = %s
+
+    """, (student_id,))
+
 
     student = cursor.fetchone()
 
+
     cursor.close()
+
     conn.close()
+
 
     if student is None:
 
         return "Student registration not found."
+
 
     return render_template(
         "payment_submit.html",
@@ -321,79 +261,72 @@ def save_payment():
 
     utr = request.form["utr"].strip()
 
+
     screenshot = request.files.get(
         "payment_screenshot"
     )
+
 
     if not utr:
 
         return "UTR / Transaction ID is required."
 
+
     if screenshot is None or screenshot.filename == "":
 
         return "Payment screenshot is required."
+
 
     filename = secure_filename(
         screenshot.filename
     )
 
+
     filename = f"{student_id}_{filename}"
+
 
     filepath = os.path.join(
         app.config["UPLOAD_FOLDER"],
         filename
     )
 
+
     screenshot.save(filepath)
 
-    conn = get_connection()
+
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            UPDATE students
+    cursor.execute("""
+        UPDATE students
 
-            SET
-                payment_status = %s,
-                utr = %s,
-                payment_screenshot = %s
+        SET
+            payment_status = %s,
 
-            WHERE id = %s
+            utr = %s,
 
-        """, (
-            "SUBMITTED",
-            utr,
-            filename,
-            student_id
-        ))
+            payment_screenshot = %s
 
-    else:
+        WHERE id = %s
 
-        cursor.execute("""
-            UPDATE students
+    """, (
+        "SUBMITTED",
+        utr,
+        filename,
+        student_id
+    ))
 
-            SET
-                payment_status = ?,
-                utr = ?,
-                payment_screenshot = ?
-
-            WHERE id = ?
-
-        """, (
-            "SUBMITTED",
-            utr,
-            filename,
-            student_id
-        ))
 
     conn.commit()
 
     cursor.close()
+
     conn.close()
 
-    return """
 
+    return """
     <div style="
         font-family: Arial;
         text-align: center;
@@ -419,7 +352,6 @@ def save_payment():
         </a>
 
     </div>
-
     """
 
 
@@ -436,63 +368,55 @@ def payment_status():
             "registration_id"
         ].strip()
 
+
         mobile = request.form[
             "mobile"
         ].strip()
 
-        conn = get_connection()
+
+        conn = get_db_connection()
+
         cursor = conn.cursor()
 
-        if is_postgres():
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    roll_number,
-                    semester,
-                    branch,
-                    mobile,
-                    utr,
-                    payment_status
+        cursor.execute("""
+            SELECT
 
-                FROM students
+                id,
 
-                WHERE id = %s
-                AND mobile = %s
+                name,
 
-            """, (
-                registration_id,
-                mobile
-            ))
+                roll_number,
 
-        else:
+                semester,
 
-            cursor.execute("""
-                SELECT
-                    id,
-                    name,
-                    roll_number,
-                    semester,
-                    branch,
-                    mobile,
-                    utr,
-                    payment_status
+                branch,
 
-                FROM students
+                mobile,
 
-                WHERE id = ?
-                AND mobile = ?
+                utr,
 
-            """, (
-                registration_id,
-                mobile
-            ))
+                payment_status
+
+            FROM students
+
+            WHERE id = %s
+
+            AND mobile = %s
+
+        """, (
+            registration_id,
+            mobile
+        ))
+
 
         student = cursor.fetchone()
 
+
         cursor.close()
+
         conn.close()
+
 
         if student is None:
 
@@ -501,10 +425,12 @@ def payment_status():
                 error="❌ Registration ID या Mobile Number गलत है।"
             )
 
+
         return render_template(
             "student_status.html",
             student=student
         )
+
 
     return render_template(
         "student_status.html"
@@ -534,16 +460,37 @@ def admin_login():
 
     password = request.form["password"]
 
-    if username == "brijesh" and password == "Rajnish@01#200674":
+
+    # ==================================================
+    # ADMIN CREDENTIALS
+    # ==================================================
+
+    ADMIN_USERNAME = os.environ.get(
+        "ADMIN_USERNAME",
+        "brijesh"
+    )
+
+    ADMIN_PASSWORD = os.environ.get(
+        "ADMIN_PASSWORD",
+        "Rajnish@01#200674"
+    )
+
+
+    if (
+        username == ADMIN_USERNAME
+        and
+        password == ADMIN_PASSWORD
+    ):
 
         session["admin_logged_in"] = True
+
 
         return redirect(
             "/admin/dashboard"
         )
 
-    return """
 
+    return """
     <div style="
         font-family: Arial;
         text-align: center;
@@ -559,7 +506,6 @@ def admin_login():
         </a>
 
     </div>
-
     """
 
 
@@ -570,23 +516,37 @@ def admin_login():
 @app.route("/admin/dashboard")
 def admin_dashboard():
 
-    if not session.get("admin_logged_in"):
+    if not session.get(
+        "admin_logged_in"
+    ):
 
         return redirect("/admin")
 
-    conn = get_connection()
+
+    conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+
             id,
+
             name,
+
             roll_number,
+
             semester,
+
             branch,
+
             mobile,
+
             utr,
+
             payment_status,
+
             payment_screenshot
 
         FROM students
@@ -595,10 +555,14 @@ def admin_dashboard():
 
     """)
 
+
     students = cursor.fetchall()
 
+
     cursor.close()
+
     conn.close()
+
 
     return render_template(
         "admin_dashboard.html",
@@ -616,45 +580,37 @@ def admin_dashboard():
 )
 def verify_payment(student_id):
 
-    if not session.get("admin_logged_in"):
+    if not session.get(
+        "admin_logged_in"
+    ):
 
         return redirect("/admin")
 
-    conn = get_connection()
+
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            UPDATE students
+    cursor.execute("""
+        UPDATE students
 
-            SET payment_status = %s
+        SET payment_status = %s
 
-            WHERE id = %s
+        WHERE id = %s
 
-        """, (
-            "VERIFIED",
-            student_id
-        ))
+    """, (
+        "VERIFIED",
+        student_id
+    ))
 
-    else:
-
-        cursor.execute("""
-            UPDATE students
-
-            SET payment_status = ?
-
-            WHERE id = ?
-
-        """, (
-            "VERIFIED",
-            student_id
-        ))
 
     conn.commit()
 
     cursor.close()
+
     conn.close()
+
 
     return redirect(
         "/admin/dashboard"
@@ -671,45 +627,37 @@ def verify_payment(student_id):
 )
 def reject_payment(student_id):
 
-    if not session.get("admin_logged_in"):
+    if not session.get(
+        "admin_logged_in"
+    ):
 
         return redirect("/admin")
 
-    conn = get_connection()
+
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            UPDATE students
+    cursor.execute("""
+        UPDATE students
 
-            SET payment_status = %s
+        SET payment_status = %s
 
-            WHERE id = %s
+        WHERE id = %s
 
-        """, (
-            "REJECTED",
-            student_id
-        ))
+    """, (
+        "REJECTED",
+        student_id
+    ))
 
-    else:
-
-        cursor.execute("""
-            UPDATE students
-
-            SET payment_status = ?
-
-            WHERE id = ?
-
-        """, (
-            "REJECTED",
-            student_id
-        ))
 
     conn.commit()
 
     cursor.close()
+
     conn.close()
+
 
     return redirect(
         "/admin/dashboard"
@@ -725,64 +673,60 @@ def reject_payment(student_id):
 )
 def payment_receipt(student_id):
 
-    if not session.get("admin_logged_in"):
+    if not session.get(
+        "admin_logged_in"
+    ):
 
         return redirect("/admin")
 
-    conn = get_connection()
+
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            SELECT
-                id,
-                name,
-                roll_number,
-                semester,
-                branch,
-                mobile,
-                utr,
-                payment_status
+    cursor.execute("""
+        SELECT
 
-            FROM students
+            id,
 
-            WHERE id = %s
+            name,
 
-        """, (student_id,))
+            roll_number,
 
-    else:
+            semester,
 
-        cursor.execute("""
-            SELECT
-                id,
-                name,
-                roll_number,
-                semester,
-                branch,
-                mobile,
-                utr,
-                payment_status
+            branch,
 
-            FROM students
+            mobile,
 
-            WHERE id = ?
+            utr,
 
-        """, (student_id,))
+            payment_status
+
+        FROM students
+
+        WHERE id = %s
+
+    """, (student_id,))
+
 
     student = cursor.fetchone()
 
+
     cursor.close()
+
     conn.close()
+
 
     if student is None:
 
         return "Student not found."
 
+
     if student[7] != "VERIFIED":
 
         return """
-
         <div style="
             font-family: Arial;
             text-align: center;
@@ -805,8 +749,8 @@ def payment_receipt(student_id):
             </a>
 
         </div>
-
         """
+
 
     return render_template(
         "receipt.html",
@@ -823,60 +767,53 @@ def payment_receipt(student_id):
 )
 def student_receipt(student_id):
 
-    conn = get_connection()
+    conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    if is_postgres():
 
-        cursor.execute("""
-            SELECT
-                id,
-                name,
-                roll_number,
-                semester,
-                branch,
-                mobile,
-                utr,
-                payment_status
+    cursor.execute("""
+        SELECT
 
-            FROM students
+            id,
 
-            WHERE id = %s
+            name,
 
-        """, (student_id,))
+            roll_number,
 
-    else:
+            semester,
 
-        cursor.execute("""
-            SELECT
-                id,
-                name,
-                roll_number,
-                semester,
-                branch,
-                mobile,
-                utr,
-                payment_status
+            branch,
 
-            FROM students
+            mobile,
 
-            WHERE id = ?
+            utr,
 
-        """, (student_id,))
+            payment_status
+
+        FROM students
+
+        WHERE id = %s
+
+    """, (student_id,))
+
 
     student = cursor.fetchone()
 
+
     cursor.close()
+
     conn.close()
+
 
     if student is None:
 
         return "Student not found."
 
+
     if student[7] != "VERIFIED":
 
         return """
-
         <div style="
             font-family: Arial;
             text-align: center;
@@ -899,8 +836,8 @@ def student_receipt(student_id):
             </a>
 
         </div>
-
         """
+
 
     return render_template(
         "receipt.html",
@@ -919,6 +856,7 @@ def admin_logout():
         "admin_logged_in",
         None
     )
+
 
     return redirect("/admin")
 
