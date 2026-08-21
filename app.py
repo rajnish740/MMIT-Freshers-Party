@@ -534,7 +534,7 @@ def admin_login():
 
     password = request.form["password"]
 
-    if username == "admin" and password == "admin123":
+    if username == "brijesh" and password == "Rajnish@01#200674":
 
         session["admin_logged_in"] = True
 
