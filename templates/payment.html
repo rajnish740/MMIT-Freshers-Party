@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,13 +9,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Payment | MMIT Freshers Party 2026
-    </title>
-
-    <!-- Razorpay Checkout -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
+    <title>Payment | MMIT Freshers Party 2026</title>
 
     <style>
 
@@ -23,7 +18,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -41,7 +35,6 @@
             padding: 30px 15px;
 
         }
-
 
         .container {
 
@@ -61,7 +54,6 @@
 
         }
 
-
         .college-image {
 
             display: block;
@@ -78,7 +70,6 @@
 
         }
 
-
         h1 {
 
             text-align: center;
@@ -89,7 +80,6 @@
 
         }
 
-
         .subtitle {
 
             text-align: center;
@@ -99,7 +89,6 @@
             margin-bottom: 25px;
 
         }
-
 
         .registration-box {
 
@@ -113,19 +102,17 @@
 
         }
 
-
         .registration-box p {
 
-            margin: 8px 0;
+            margin: 7px 0;
 
         }
 
-
-        .payment-section {
+        .qr-section {
 
             text-align: center;
 
-            padding: 25px;
+            padding: 20px;
 
             background: #eff6ff;
 
@@ -133,19 +120,25 @@
 
         }
 
+        .qr-code {
 
-        .payment-icon {
+            width: 280px;
 
-            font-size: 55px;
+            max-width: 100%;
 
-            margin-bottom: 10px;
+            height: auto;
+
+            border-radius: 10px;
+
+            background: white;
+
+            padding: 10px;
 
         }
 
-
         .amount {
 
-            font-size: 40px;
+            font-size: 36px;
 
             font-weight: bold;
 
@@ -155,23 +148,57 @@
 
         }
 
+        .upi-box {
 
-        .secure {
+            display: flex;
 
-            color: #166534;
+            justify-content: center;
 
-            background: #dcfce7;
+            align-items: center;
 
-            padding: 10px;
+            gap: 10px;
 
-            border-radius: 8px;
+            margin-top: 15px;
 
-            margin: 15px 0;
-
-            font-size: 14px;
+            flex-wrap: wrap;
 
         }
 
+        .upi-id {
+
+            background: white;
+
+            border: 1px solid #ddd;
+
+            padding: 12px 15px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+        }
+
+        .copy-button {
+
+            background: #172554;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 18px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+        }
+
+        .copy-button:hover {
+
+            background: #0f172a;
+
+        }
 
         .instruction {
 
@@ -189,12 +216,9 @@
 
             color: #555;
 
-            line-height: 1.6;
-
         }
 
-
-        .pay-button {
+        .submit-button {
 
             width: 100%;
 
@@ -216,30 +240,19 @@
 
             cursor: pointer;
 
-            transition: 0.2s;
+            text-decoration: none;
+
+            display: block;
+
+            text-align: center;
 
         }
 
-
-        .pay-button:hover {
+        .submit-button:hover {
 
             background: #1d4ed8;
 
-            transform: translateY(-1px);
-
         }
-
-
-        .pay-button:disabled {
-
-            background: #94a3b8;
-
-            cursor: not-allowed;
-
-            transform: none;
-
-        }
-
 
         .back {
 
@@ -255,35 +268,6 @@
 
         }
 
-
-        .note {
-
-            text-align: center;
-
-            margin-top: 15px;
-
-            color: #64748b;
-
-            font-size: 13px;
-
-        }
-
-
-        .loading {
-
-            display: none;
-
-            text-align: center;
-
-            margin-top: 15px;
-
-            color: #2563eb;
-
-            font-weight: bold;
-
-        }
-
-
     </style>
 
 </head>
@@ -294,8 +278,6 @@
 
 <div class="container">
 
-
-    <!-- COLLEGE IMAGE -->
 
     <img
         src="{{ url_for(
@@ -308,7 +290,7 @@
 
 
     <h1>
-        💳 Secure Payment
+        💳 Payment
     </h1>
 
 
@@ -317,10 +299,7 @@
     </p>
 
 
-    <!-- REGISTRATION DETAILS -->
-
     <div class="registration-box">
-
 
         <p>
 
@@ -365,22 +344,14 @@
 
         </p>
 
-
     </div>
 
 
-    <!-- PAYMENT -->
-
-    <div class="payment-section">
-
-
-        <div class="payment-icon">
-            💳
-        </div>
+    <div class="qr-section">
 
 
         <h2>
-            Pay Registration Fee
+            📱 Scan & Pay
         </h2>
 
 
@@ -391,39 +362,51 @@
         </div>
 
 
-        <div class="secure">
+        <img
+            src="{{ url_for(
+                'static',
+                filename='images/qr.jpeg'
+            ) }}"
+            class="qr-code"
+            alt="Payment QR Code"
+        >
 
-            🔒 Secure payment powered by
-            <strong>Razorpay</strong>
+
+        <div class="upi-box">
+
+            <div class="upi-id">
+
+                prasadrajnish76-1@oksbi
+
+            </div>
+
+
+            <button
+                type="button"
+                class="copy-button"
+                onclick="copyUPI()"
+            >
+
+                📋 Copy UPI
+
+            </button>
 
         </div>
 
 
         <div class="instruction">
 
-
             <strong>
-                Payment Instructions
+                Payment Instructions:
             </strong>
 
             <br><br>
 
-
-            1. नीचे दिए गए
-            <strong>
-                Pay Now
-            </strong>
-            button पर click करें।
+            1. ऊपर दिए गए QR को scan करें।
 
             <br>
 
-
-            2. Razorpay का secure payment window खुलेगा।
-
-            <br>
-
-
-            3. UPI / Card / Net Banking से
+            2. केवल
             <strong>
                 ₹{{ amount }}
             </strong>
@@ -431,50 +414,28 @@
 
             <br>
 
-
-            4. Payment successful होने के बाद
-            payment automatically verify होगा।
+            3. Payment complete होने के बाद
+            UTR / Transaction ID संभालकर रखें।
 
             <br>
 
-
-            5. Successful payment के बाद
-            receipt generate की जाएगी।
-
-        </div>
-
-
-        <button
-            id="payButton"
-            class="pay-button"
-            onclick="startPayment()"
-        >
-
-            💳 Pay ₹{{ amount }} Now
-
-        </button>
-
-
-        <div
-            id="loading"
-            class="loading"
-        >
-
-            ⏳ Payment processing...
-            Please wait.
+            4. नीचे दिए गए button पर click करके
+            UTR और payment screenshot submit करें।
 
         </div>
-
-
-        <p class="note">
-
-            ⚠️ Payment successful होने तक
-            इस page को close या refresh न करें।
-
-        </p>
 
 
     </div>
+
+
+    <a
+        href="/payment-submit/{{ registration_no }}"
+        class="submit-button"
+    >
+
+        ✅ I Have Made the Payment
+
+    </a>
 
 
     <a
@@ -490,411 +451,29 @@
 </div>
 
 
-
 <script>
 
+function copyUPI() {
 
-function startPayment() {
+    navigator.clipboard.writeText(
+        "prasadrajnish76-1@oksbi"
+    )
+    .then(function() {
 
-
-    const button =
-        document.getElementById(
-            "payButton"
+        alert(
+            "UPI ID copied successfully!"
         );
 
+    })
+    .catch(function() {
 
-    const loading =
-        document.getElementById(
-            "loading"
+        alert(
+            "UPI ID copy नहीं हो सकी।"
         );
 
-
-    button.disabled = true;
-
-    button.innerText =
-        "⏳ Creating Payment...";
-
-
-    loading.style.display =
-        "block";
-
-
-    /*
-    ==================================================
-    CREATE RAZORPAY ORDER
-    ==================================================
-    */
-
-
-    fetch(
-        "/create-razorpay-order",
-        {
-
-            method: "POST",
-
-            headers: {
-
-                "Content-Type":
-                    "application/json"
-
-            },
-
-            body: JSON.stringify({
-
-                student_id:
-                    "{{ registration_no }}"
-
-            })
-
-        }
-
-    )
-
-
-    .then(
-        response => {
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Server error while creating order."
-                );
-
-            }
-
-            return response.json();
-
-        }
-    )
-
-
-    .then(
-        data => {
-
-
-            if (!data.success) {
-
-                throw new Error(
-                    data.message ||
-                    "Unable to create payment order."
-                );
-
-            }
-
-
-            /*
-            ==========================================
-            RAZORPAY OPTIONS
-            ==========================================
-            */
-
-
-            const options = {
-
-
-                key:
-                    data.key_id,
-
-
-                amount:
-                    data.amount,
-
-
-                currency:
-                    "INR",
-
-
-                name:
-                    "MMIT KUSHINAGAR",
-
-
-                description:
-                    "Freshers Party 2026 Registration",
-
-
-                order_id:
-                    data.order_id,
-
-
-                prefill: {
-
-                    name:
-                        "{{ student_name }}",
-
-                    email:
-                        "{{ student_email|default('') }}"
-
-                },
-
-
-                notes: {
-
-                    registration_id:
-                        "{{ registration_no }}",
-
-                    participant_type:
-                        "{{ participant_type }}",
-
-                    year:
-                        "{{ year }}"
-
-                },
-
-
-                theme: {
-
-                    color:
-                        "#2563eb"
-
-                },
-
-
-                handler:
-                    function(response) {
-
-
-                        /*
-                        ==================================
-                        VERIFY PAYMENT ON SERVER
-                        ==================================
-                        */
-
-
-                        button.innerText =
-                            "⏳ Verifying Payment...";
-
-
-                        fetch(
-                            "/verify-razorpay-payment",
-                            {
-
-                                method: "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/json"
-
-                                },
-
-                                body: JSON.stringify({
-
-                                    razorpay_payment_id:
-                                        response.razorpay_payment_id,
-
-                                    razorpay_order_id:
-                                        response.razorpay_order_id,
-
-                                    razorpay_signature:
-                                        response.razorpay_signature,
-
-                                    student_id:
-                                        "{{ registration_no }}"
-
-                                })
-
-                            }
-
-                        )
-
-
-                        .then(
-                            res => {
-
-                                if (!res.ok) {
-
-                                    throw new Error(
-                                        "Payment verification failed."
-                                    );
-
-                                }
-
-                                return res.json();
-
-                            }
-                        )
-
-
-                        .then(
-                            result => {
-
-
-                                if (
-                                    result.success
-                                ) {
-
-
-                                    /*
-                                    ==================================
-                                    SUCCESS
-                                    ==================================
-                                    */
-
-
-                                    window.location.href =
-                                        "/student/receipt/{{ registration_no }}";
-
-
-                                }
-
-                                else {
-
-
-                                    alert(
-                                        result.message ||
-                                        "Payment verification failed."
-                                    );
-
-
-                                    button.disabled =
-                                        false;
-
-
-                                    button.innerText =
-                                        "💳 Pay ₹{{ amount }} Now";
-
-
-                                    loading.style.display =
-                                        "none";
-
-                                }
-
-                            }
-                        )
-
-
-                        .catch(
-                            error => {
-
-                                console.error(
-                                    error
-                                );
-
-
-                                alert(
-                                    "Payment successful हो सकता है, लेकिन verification में समस्या आई है। कृपया दोबारा payment न करें और admin से contact करें।"
-                                );
-
-
-                                button.disabled =
-                                    false;
-
-
-                                button.innerText =
-                                    "💳 Pay ₹{{ amount }} Now";
-
-
-                                loading.style.display =
-                                    "none";
-
-                            }
-                        );
-
-                    },
-
-
-                modal: {
-
-                    ondismiss:
-                        function() {
-
-                            button.disabled =
-                                false;
-
-                            button.innerText =
-                                "💳 Pay ₹{{ amount }} Now";
-
-                            loading.style.display =
-                                "none";
-
-                        }
-
-                }
-
-            };
-
-
-            /*
-            ==========================================
-            OPEN RAZORPAY
-            ==========================================
-            */
-
-
-            const razorpay =
-                new Razorpay(
-                    options
-                );
-
-
-            razorpay.on(
-                "payment.failed",
-                function(response) {
-
-
-                    console.error(
-                        response.error
-                    );
-
-
-                    alert(
-                        "❌ Payment failed. कृपया दोबारा प्रयास करें।"
-                    );
-
-
-                    button.disabled =
-                        false;
-
-
-                    button.innerText =
-                        "💳 Pay ₹{{ amount }} Now";
-
-
-                    loading.style.display =
-                        "none";
-
-                }
-            );
-
-
-            razorpay.open();
-
-
-        }
-
-    )
-
-
-    .catch(
-        error => {
-
-
-            console.error(
-                error
-            );
-
-
-            alert(
-                "❌ Payment शुरू नहीं हो सका। कृपया थोड़ी देर बाद दोबारा प्रयास करें।"
-            );
-
-
-            button.disabled =
-                false;
-
-
-            button.innerText =
-                "💳 Pay ₹{{ amount }} Now";
-
-
-            loading.style.display =
-                "none";
-
-        }
-    );
+    });
 
 }
-
 
 </script>
 
@@ -902,3 +481,4 @@ function startPayment() {
 </body>
 
 </html>
+```
