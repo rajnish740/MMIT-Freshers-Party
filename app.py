@@ -63,6 +63,11 @@ def create_database():
     # ==================================================
     # CREATE TABLE
     # ==================================================
+    # NOTE:
+    # roll_number column database me rakha gaya hai.
+    # Webpage se roll number hata diya gaya hai.
+    # Student ke liye automatically "N/A" save hoga.
+    # ==================================================
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS students (
@@ -156,6 +161,10 @@ def register():
 
     if request.method == "POST":
 
+        # ==================================================
+        # BASIC DETAILS
+        # ==================================================
+
         name = request.form[
             "name"
         ].strip()
@@ -166,10 +175,14 @@ def register():
         ].strip()
 
 
-        roll_number = request.form.get(
-            "roll_number",
-            ""
-        ).strip()
+        # ==================================================
+        # ROLL NUMBER
+        # ==================================================
+        # Roll Number webpage se hata diya gaya hai.
+        # Database column ke liye automatically N/A save hoga.
+        # ==================================================
+
+        roll_number = "N/A"
 
 
         year = request.form.get(
@@ -212,6 +225,10 @@ def register():
 
         if participant_type == "Student":
 
+            # ----------------------------------------------
+            # VALID YEAR
+            # ----------------------------------------------
+
             if year not in [
                 "1st Year",
                 "2nd Year",
@@ -219,10 +236,27 @@ def register():
             ]:
 
                 return """
-                <h2>❌ Please select a valid Year.</h2>
-                <a href="/register">← Back</a>
+                <div style="
+                    font-family: Arial;
+                    text-align: center;
+                    padding: 50px;
+                ">
+
+                    <h2>
+                        ❌ Please select a valid Year.
+                    </h2>
+
+                    <a href="/register">
+                        ← Back
+                    </a>
+
+                </div>
                 """
 
+
+            # ----------------------------------------------
+            # STUDENT PAYMENT
+            # ----------------------------------------------
 
             if year == "1st Year":
 
@@ -233,13 +267,55 @@ def register():
                 payment_amount = Decimal("300")
 
 
+            # ----------------------------------------------
+            # BRANCH VALIDATION
+            # ----------------------------------------------
+
+            if not branch:
+
+                return """
+                <div style="
+                    font-family: Arial;
+                    text-align: center;
+                    padding: 50px;
+                ">
+
+                    <h2>
+                        ❌ Branch is required.
+                    </h2>
+
+                    <a href="/register">
+                        ← Back
+                    </a>
+
+                </div>
+                """
+
+
+        # ==================================================
+        # TEACHER
+        # ==================================================
+
         elif participant_type == "Teacher":
 
             if not teacher_amount:
 
                 return """
-                <h2>❌ Teacher amount is required.</h2>
-                <a href="/register">← Back</a>
+                <div style="
+                    font-family: Arial;
+                    text-align: center;
+                    padding: 50px;
+                ">
+
+                    <h2>
+                        ❌ Teacher amount is required.
+                    </h2>
+
+                    <a href="/register">
+                        ← Back
+                    </a>
+
+                </div>
                 """
 
 
@@ -252,66 +328,80 @@ def register():
             except InvalidOperation:
 
                 return """
-                <h2>❌ Invalid teacher amount.</h2>
-                <a href="/register">← Back</a>
+                <div style="
+                    font-family: Arial;
+                    text-align: center;
+                    padding: 50px;
+                ">
+
+                    <h2>
+                        ❌ Invalid teacher amount.
+                    </h2>
+
+                    <a href="/register">
+                        ← Back
+                    </a>
+
+                </div>
                 """
 
 
             if payment_amount <= 0:
 
                 return """
-                <h2>❌ Amount must be greater than 0.</h2>
-                <a href="/register">← Back</a>
+                <div style="
+                    font-family: Arial;
+                    text-align: center;
+                    padding: 50px;
+                ">
+
+                    <h2>
+                        ❌ Amount must be greater than 0.
+                    </h2>
+
+                    <a href="/register">
+                        ← Back
+                    </a>
+
+                </div>
                 """
 
 
+            # Teacher ke liye year database me Teacher save hoga
             year = "Teacher"
 
+
+            # Teacher ke liye branch agar empty hai
+            # to Teacher save hoga
+
+            if not branch:
+
+                branch = "Teacher"
+
+
+        # ==================================================
+        # INVALID PARTICIPANT TYPE
+        # ==================================================
 
         else:
 
             return """
-            <h2>❌ Invalid participant type.</h2>
-            <a href="/register">← Back</a>
+            <div style="
+                font-family: Arial;
+                text-align: center;
+                padding: 50px;
+            ">
+
+                <h2>
+                    ❌ Invalid participant type.
+                </h2>
+
+                <a href="/register">
+                    ← Back
+                </a>
+
+            </div>
             """
-
-
-        # ==================================================
-        # STUDENT / TEACHER VALIDATION
-        # ==================================================
-
-        if participant_type == "Student":
-
-            if not roll_number:
-
-                return """
-                <h2>❌ Roll Number is required.</h2>
-                <a href="/register">← Back</a>
-                """
-
-
-            if not branch:
-
-                return """
-                <h2>❌ Branch is required.</h2>
-                <a href="/register">← Back</a>
-                """
-
-
-        else:
-
-            roll_number = (
-                roll_number
-                if roll_number
-                else "N/A"
-            )
-
-
-            branch = (
-                branch
-                if branch
-                else "Teacher"
-            )
 
 
         # ==================================================
@@ -357,6 +447,7 @@ def register():
 
             name,
 
+            # Database column ke liye N/A
             roll_number,
 
             year,
@@ -408,6 +499,10 @@ def register():
 
         )
 
+
+    # ==================================================
+    # GET REQUEST
+    # ==================================================
 
     return render_template(
         "register.html"
@@ -493,13 +588,34 @@ def save_payment():
     )
 
 
+    # ==================================================
+    # UTR VALIDATION
+    # ==================================================
+
     if not utr:
 
         return """
-        <h2>❌ UTR / Transaction ID is required.</h2>
-        <a href="javascript:history.back()">← Back</a>
+        <div style="
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+        ">
+
+            <h2>
+                ❌ UTR / Transaction ID is required.
+            </h2>
+
+            <a href="javascript:history.back()">
+                ← Back
+            </a>
+
+        </div>
         """
 
+
+    # ==================================================
+    # SCREENSHOT VALIDATION
+    # ==================================================
 
     if (
         screenshot is None
@@ -507,10 +623,27 @@ def save_payment():
     ):
 
         return """
-        <h2>❌ Payment screenshot is required.</h2>
-        <a href="javascript:history.back()">← Back</a>
+        <div style="
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+        ">
+
+            <h2>
+                ❌ Payment screenshot is required.
+            </h2>
+
+            <a href="javascript:history.back()">
+                ← Back
+            </a>
+
+        </div>
         """
 
+
+    # ==================================================
+    # FILE NAME
+    # ==================================================
 
     filename = secure_filename(
         screenshot.filename
@@ -533,6 +666,10 @@ def save_payment():
 
     screenshot.save(filepath)
 
+
+    # ==================================================
+    # UPDATE PAYMENT
+    # ==================================================
 
     conn = get_db_connection()
 
@@ -572,6 +709,10 @@ def save_payment():
     conn.close()
 
 
+    # ==================================================
+    # SUCCESS
+    # ==================================================
+
     return """
     <div style="
         font-family: Arial;
@@ -603,9 +744,6 @@ def save_payment():
 
 # ==================================================
 # STUDENT PAYMENT STATUS
-# ==================================================
-# अब Registration ID की जगह
-# UTR / Transaction ID + Mobile Number से search होगा
 # ==================================================
 
 @app.route(
@@ -839,49 +977,92 @@ def admin_login():
 )
 def admin_dashboard():
 
-    if not session.get("admin_logged_in"):
-        return redirect("/admin")
+    if not session.get(
+        "admin_logged_in"
+    ):
+
+        return redirect(
+            "/admin"
+        )
+
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
 
-    # सभी students
+
+    # ==================================================
+    # ALL STUDENTS
+    # ==================================================
+
     cursor.execute("""
         SELECT
+
             id,
+
             name,
+
             roll_number,
+
             semester,
+
             branch,
+
             mobile,
+
             utr,
+
             payment_status,
+
             payment_screenshot,
+
             participant_type,
+
             payment_amount
+
         FROM students
+
         ORDER BY id DESC
     """)
 
+
     students = cursor.fetchall()
 
-    # केवल VERIFIED payments की total amount
+
+    # ==================================================
+    # VERIFIED PAYMENT TOTAL
+    # ==================================================
+
     cursor.execute("""
-        SELECT COALESCE(SUM(payment_amount), 0)
+        SELECT
+            COALESCE(
+                SUM(payment_amount),
+                0
+            )
+
         FROM students
+
         WHERE payment_status = 'VERIFIED'
     """)
 
+
     total_collection = cursor.fetchone()[0]
 
+
     cursor.close()
+
     conn.close()
 
+
     return render_template(
+
         "admin_dashboard.html",
+
         students=students,
+
         total_collection=total_collection
-        )
+
+    )
 
 
 # ==================================================
@@ -1056,6 +1237,10 @@ def payment_receipt(student_id):
         return "Student not found."
 
 
+    # ==================================================
+    # ONLY VERIFIED PAYMENT
+    # ==================================================
+
     if student[7] != "VERIFIED":
 
         return """
@@ -1152,6 +1337,10 @@ def student_receipt(student_id):
         return "Student not found."
 
 
+    # ==================================================
+    # ONLY VERIFIED PAYMENT
+    # ==================================================
+
     if student[7] != "VERIFIED":
 
         return """
@@ -1208,10 +1397,6 @@ def admin_logout():
         "/admin"
     )
 
-
-# ==================================================
-# START SERVER
-# ==================================================
 
 # ==================================================
 # START SERVER
