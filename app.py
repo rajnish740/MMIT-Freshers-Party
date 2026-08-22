@@ -839,67 +839,49 @@ def admin_login():
 )
 def admin_dashboard():
 
-    if not session.get(
-        "admin_logged_in"
-    ):
-
-        return redirect(
-            "/admin"
-        )
-
+    if not session.get("admin_logged_in"):
+        return redirect("/admin")
 
     conn = get_db_connection()
-
     cursor = conn.cursor()
 
-
+    # सभी students
     cursor.execute("""
         SELECT
-
             id,
-
             name,
-
             roll_number,
-
             semester,
-
             branch,
-
             mobile,
-
             utr,
-
             payment_status,
-
             payment_screenshot,
-
             participant_type,
-
             payment_amount
-
         FROM students
-
         ORDER BY id DESC
-
     """)
-
 
     students = cursor.fetchall()
 
+    # केवल VERIFIED payments की total amount
+    cursor.execute("""
+        SELECT COALESCE(SUM(payment_amount), 0)
+        FROM students
+        WHERE payment_status = 'VERIFIED'
+    """)
+
+    total_collection = cursor.fetchone()[0]
 
     cursor.close()
-
     conn.close()
 
-
     return render_template(
-
         "admin_dashboard.html",
-
-        students=students
-
-    )
+        students=students,
+        total_collection=total_collection
+        )
 
 
 # ==================================================
