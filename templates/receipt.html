@@ -12,13 +12,11 @@
         Payment Receipt | MMIT KUSHINAGAR
     </title>
 
-
     <style>
 
         * {
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -42,11 +40,6 @@
 
         }
 
-
-        /* =========================
-           RECEIPT
-        ========================= */
-
         .receipt {
 
             max-width: 800px;
@@ -68,9 +61,6 @@
             overflow: hidden;
 
         }
-
-
-        /* TOP LINE */
 
         .receipt::before {
 
@@ -96,11 +86,6 @@
 
         }
 
-
-        /* =========================
-           HEADER
-        ========================= */
-
         .header {
 
             text-align: center;
@@ -113,7 +98,6 @@
             margin-bottom: 25px;
 
         }
-
 
         .college-image {
 
@@ -132,7 +116,6 @@
 
         }
 
-
         .header h1 {
 
             margin: 0;
@@ -145,7 +128,6 @@
 
         }
 
-
         .header p {
 
             margin: 6px 0;
@@ -154,7 +136,6 @@
 
         }
 
-
         .event {
 
             font-weight: bold;
@@ -162,11 +143,6 @@
             color: #2563eb !important;
 
         }
-
-
-        /* =========================
-           SUCCESS
-        ========================= */
 
         .success {
 
@@ -189,11 +165,6 @@
 
         }
 
-
-        /* =========================
-           RECEIPT TITLE
-        ========================= */
-
         .receipt-title {
 
             text-align: center;
@@ -205,7 +176,6 @@
             font-size: 26px;
 
         }
-
 
         .receipt-number {
 
@@ -220,11 +190,6 @@
             margin-bottom: 25px;
 
         }
-
-
-        /* =========================
-           DETAILS TABLE
-        ========================= */
 
         .details {
 
@@ -242,7 +207,6 @@
 
         }
 
-
         .details td {
 
             padding: 14px;
@@ -252,13 +216,11 @@
 
         }
 
-
         .details tr:last-child td {
 
             border-bottom: none;
 
         }
-
 
         .details td:first-child {
 
@@ -272,7 +234,6 @@
 
         }
 
-
         .details td:last-child {
 
             color: #1e293b;
@@ -280,11 +241,6 @@
             font-weight: 500;
 
         }
-
-
-        /* =========================
-           STATUS
-        ========================= */
 
         .status {
 
@@ -304,11 +260,6 @@
 
         }
 
-
-        /* =========================
-           AMOUNT
-        ========================= */
-
         .amount {
 
             font-size: 28px;
@@ -318,11 +269,6 @@
             color: #2563eb !important;
 
         }
-
-
-        /* =========================
-           VERIFIED BOX
-        ========================= */
 
         .verified-box {
 
@@ -341,7 +287,6 @@
 
         }
 
-
         .verified-box h3 {
 
             margin: 0 0 5px;
@@ -349,7 +294,6 @@
             color: #1d4ed8;
 
         }
-
 
         .verified-box p {
 
@@ -360,11 +304,6 @@
             font-size: 14px;
 
         }
-
-
-        /* =========================
-           FOOTER
-        ========================= */
 
         .footer {
 
@@ -381,24 +320,17 @@
 
         }
 
-
         .footer p {
 
             margin: 6px 0;
 
         }
 
-
         .footer strong {
 
             color: #172554;
 
         }
-
-
-        /* =========================
-           BUTTONS
-        ========================= */
 
         .buttons {
 
@@ -407,7 +339,6 @@
             margin-top: 25px;
 
         }
-
 
         button {
 
@@ -433,7 +364,6 @@
 
         }
 
-
         button:hover {
 
             background: #1d4ed8;
@@ -443,13 +373,11 @@
 
         }
 
-
         .download {
 
             background: #198754;
 
         }
-
 
         .download:hover {
 
@@ -457,24 +385,17 @@
 
         }
 
-
         .back {
 
             background: #64748b;
 
         }
 
-
         .back:hover {
 
             background: #475569;
 
         }
-
-
-        /* =========================
-           PRINT
-        ========================= */
 
         @media print {
 
@@ -485,7 +406,6 @@
                 padding: 0;
 
             }
-
 
             .receipt {
 
@@ -499,13 +419,11 @@
 
             }
 
-
             .buttons {
 
                 display: none;
 
             }
-
 
             .receipt::before {
 
@@ -515,11 +433,6 @@
 
         }
 
-
-        /* =========================
-           MOBILE
-        ========================= */
-
         @media (max-width: 600px) {
 
             body {
@@ -527,7 +440,6 @@
                 padding: 10px;
 
             }
-
 
             .receipt {
 
@@ -537,20 +449,17 @@
 
             }
 
-
             .header h1 {
 
                 font-size: 25px;
 
             }
 
-
             .receipt-title {
 
                 font-size: 22px;
 
             }
-
 
             .details td {
 
@@ -560,13 +469,11 @@
 
             }
 
-
             .details td:first-child {
 
                 width: 42%;
 
             }
-
 
             .amount {
 
@@ -587,15 +494,14 @@
 <div class="receipt">
 
 
-    <!-- =========================
-         HEADER
-    ========================= -->
-
     <div class="header">
 
 
         <img
-            src="{{ url_for('static', filename='images/college.jpg') }}"
+            src="{{ url_for(
+                'static',
+                filename='images/college.jpg'
+            ) }}"
             class="college-image"
             alt="MMIT KUSHINAGAR"
         >
@@ -619,22 +525,12 @@
     </div>
 
 
-
-    <!-- =========================
-         SUCCESS
-    ========================= -->
-
     <div class="success">
 
         ✅ Payment Successfully Verified
 
     </div>
 
-
-
-    <!-- =========================
-         TITLE
-    ========================= -->
 
     <h2 class="receipt-title">
 
@@ -646,17 +542,13 @@
     <div class="receipt-number">
 
         Receipt No:
+
         <strong>
             MMIT-2026-{{ student[0] }}
         </strong>
 
     </div>
 
-
-
-    <!-- =========================
-         STUDENT DETAILS
-    ========================= -->
 
     <table class="details">
 
@@ -681,9 +573,11 @@
             </td>
 
             <td>
+
                 <strong>
                     {{ student[1] }}
                 </strong>
+
             </td>
 
         </tr>
@@ -702,14 +596,35 @@
         </tr>
 
 
+        <!-- PARTICIPANT TYPE -->
+
         <tr>
 
             <td>
-                Semester
+                Registration Type
             </td>
 
             <td>
+
+                {{ student[8] or "Student" }}
+
+            </td>
+
+        </tr>
+
+
+        <!-- YEAR -->
+
+        <tr>
+
+            <td>
+                Year
+            </td>
+
+            <td>
+
                 {{ student[3] }}
+
             </td>
 
         </tr>
@@ -722,7 +637,9 @@
             </td>
 
             <td>
+
                 {{ student[4] }}
+
             </td>
 
         </tr>
@@ -735,7 +652,9 @@
             </td>
 
             <td>
+
                 {{ student[5] }}
+
             </td>
 
         </tr>
@@ -748,11 +667,15 @@
             </td>
 
             <td>
+
                 {{ student[6] }}
+
             </td>
 
         </tr>
 
+
+        <!-- PAYMENT AMOUNT -->
 
         <tr>
 
@@ -761,11 +684,15 @@
             </td>
 
             <td class="amount">
-                ₹299
+
+                ₹{{ student[9] or "—" }}
+
             </td>
 
         </tr>
 
+
+        <!-- PAYMENT STATUS -->
 
         <tr>
 
@@ -776,7 +703,9 @@
             <td>
 
                 <span class="status">
+
                     ✓ VERIFIED
+
                 </span>
 
             </td>
@@ -787,59 +716,62 @@
     </table>
 
 
-
-    <!-- =========================
-         VERIFIED MESSAGE
-    ========================= -->
-
     <div class="verified-box">
 
+
         <h3>
+
             ✅ Payment Verified Successfully
+
         </h3>
 
+
         <p>
+
             आपका Freshers Party 2026 registration
             successfully confirm हो गया है।
+
         </p>
+
 
     </div>
 
-
-
-    <!-- =========================
-         FOOTER
-    ========================= -->
 
     <div class="footer">
 
-        <p>
-            🎉 Thank you for registering for
-            <strong>Freshers Party 2026!</strong>
-        </p>
 
         <p>
+
+            🎉 Thank you for registering for
+
+            <strong>
+                Freshers Party 2026!
+            </strong>
+
+        </p>
+
+
+        <p>
+
             <strong>
                 MMIT KUSHINAGAR
             </strong>
+
         </p>
 
+
         <p>
+
             Please keep this receipt for your records.
+
         </p>
+
 
     </div>
 
 
-
-    <!-- =========================
-         BUTTONS
-    ========================= -->
-
     <div class="buttons">
 
-
-        <!-- PRINT RECEIPT -->
 
         <button
             onclick="window.print()"
@@ -850,8 +782,6 @@
         </button>
 
 
-        <!-- DOWNLOAD RECEIPT -->
-
         <button
             class="download"
             onclick="downloadReceipt()"
@@ -861,8 +791,6 @@
 
         </button>
 
-
-        <!-- BACK -->
 
         <button
             class="back"
@@ -879,10 +807,6 @@
 
 </div>
 
-
-<!-- =========================
-     DOWNLOAD SCRIPT
-========================= -->
 
 <script>
 

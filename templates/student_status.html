@@ -238,6 +238,16 @@
 
         }
 
+        .amount {
+
+            color: #2563eb;
+
+            font-size: 20px;
+
+            font-weight: 800;
+
+        }
+
         .status {
 
             display: inline-block;
@@ -370,7 +380,10 @@
     <div class="header">
 
         <img
-            src="{{ url_for('static', filename='images/college.jpg') }}"
+            src="{{ url_for(
+                'static',
+                filename='images/college.jpg'
+            ) }}"
             class="college-image"
             alt="MMIT KUSHINAGAR"
         >
@@ -404,14 +417,15 @@
             method="POST"
         >
 
+
             <label>
-                Registration ID
+                UTR / Transaction ID
             </label>
 
             <input
-                type="number"
-                name="registration_id"
-                placeholder="Enter Registration ID"
+                type="text"
+                name="utr"
+                placeholder="Enter UTR / Transaction ID"
                 required
             >
 
@@ -437,12 +451,14 @@
 
             </button>
 
+
         </form>
 
     {% endif %}
 
 
     {% if student %}
+
 
         <div class="student-box">
 
@@ -489,7 +505,20 @@
             <div class="row">
 
                 <span class="label">
-                    Semester
+                    Registration Type
+                </span>
+
+                <span class="value">
+                    {{ student[8] or "Student" }}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Year
                 </span>
 
                 <span class="value">
@@ -515,10 +544,50 @@
             <div class="row">
 
                 <span class="label">
+                    Mobile
+                </span>
+
+                <span class="value">
+                    {{ student[5] }}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    UTR / Transaction ID
+                </span>
+
+                <span class="value">
+                    {{ student[6] }}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Amount
+                </span>
+
+                <span class="value amount">
+                    ₹{{ student[9] or "—" }}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
                     Payment Status
                 </span>
 
                 <span class="value">
+
 
                     {% if student[7] == "VERIFIED" %}
 
@@ -526,17 +595,20 @@
                             ✅ VERIFIED
                         </span>
 
+
                     {% elif student[7] == "SUBMITTED" %}
 
                         <span class="status submitted">
                             💳 SUBMITTED
                         </span>
 
+
                     {% elif student[7] == "REJECTED" %}
 
                         <span class="status rejected">
                             ❌ REJECTED
                         </span>
+
 
                     {% else %}
 
@@ -545,6 +617,7 @@
                         </span>
 
                     {% endif %}
+
 
                 </span>
 
@@ -557,7 +630,7 @@
         {% if student[7] == "VERIFIED" %}
 
             <a
-                href="/admin/receipt/{{ student[0] }}"
+                href="/student/receipt/{{ student[0] }}"
                 class="receipt-button"
             >
 
@@ -573,9 +646,10 @@
             class="home"
         >
 
-            🔄 Check Another Registration
+            🔄 Check Another Payment
 
         </a>
+
 
     {% endif %}
 

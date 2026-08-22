@@ -10,7 +10,6 @@
 
     <title>Payment | MMIT Freshers Party 2026</title>
 
-
     <style>
 
         * {
@@ -18,7 +17,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -36,7 +34,6 @@
             padding: 30px 15px;
 
         }
-
 
         .container {
 
@@ -56,7 +53,6 @@
 
         }
 
-
         .college-image {
 
             display: block;
@@ -73,7 +69,6 @@
 
         }
 
-
         h1 {
 
             text-align: center;
@@ -84,7 +79,6 @@
 
         }
 
-
         .subtitle {
 
             text-align: center;
@@ -94,7 +88,6 @@
             margin-bottom: 25px;
 
         }
-
 
         .registration-box {
 
@@ -108,13 +101,11 @@
 
         }
 
-
         .registration-box p {
 
-            margin: 6px 0;
+            margin: 7px 0;
 
         }
-
 
         .qr-section {
 
@@ -127,7 +118,6 @@
             border-radius: 15px;
 
         }
-
 
         .qr-code {
 
@@ -145,7 +135,6 @@
 
         }
 
-
         .amount {
 
             font-size: 36px;
@@ -157,7 +146,6 @@
             margin: 15px 0;
 
         }
-
 
         .upi-box {
 
@@ -175,7 +163,6 @@
 
         }
 
-
         .upi-id {
 
             background: white;
@@ -189,7 +176,6 @@
             font-weight: bold;
 
         }
-
 
         .copy-button {
 
@@ -206,7 +192,6 @@
             cursor: pointer;
 
         }
-
 
         .instruction {
 
@@ -225,7 +210,6 @@
             color: #555;
 
         }
-
 
         .submit-button {
 
@@ -250,14 +234,6 @@
             cursor: pointer;
 
         }
-
-
-        .submit-button:hover {
-
-            background: #1d4ed8;
-
-        }
-
 
         .back {
 
@@ -285,7 +261,10 @@
 
 
     <img
-        src="{{ url_for('static', filename='images/college.jpg') }}"
+        src="{{ url_for(
+            'static',
+            filename='images/college.jpg'
+        ) }}"
         class="college-image"
         alt="MMIT Kushinagar"
     >
@@ -304,13 +283,45 @@
     <div class="registration-box">
 
         <p>
-            <strong>Registration No:</strong>
+            <strong>
+                Registration No:
+            </strong>
+
             {{ registration_no }}
+
         </p>
 
+
         <p>
-            <strong>Name:</strong>
+
+            <strong>
+                Name:
+            </strong>
+
             {{ student_name }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Type:
+            </strong>
+
+            {{ participant_type }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Year:
+            </strong>
+
+            {{ year }}
+
         </p>
 
     </div>
@@ -325,12 +336,17 @@
 
 
         <div class="amount">
-            ₹199
+
+            ₹{{ amount }}
+
         </div>
 
 
         <img
-            src="{{ url_for('static', filename='images/qr.jpeg') }}"
+            src="{{ url_for(
+                'static',
+                filename='images/qr.jpeg'
+            ) }}"
             class="qr-code"
             alt="Payment QR Code"
         >
@@ -339,7 +355,9 @@
         <div class="upi-box">
 
             <div class="upi-id">
+
                 prasadrajnish76-1@oksbi
+
             </div>
 
 
@@ -347,7 +365,9 @@
                 class="copy-button"
                 onclick="copyUPI()"
             >
+
                 📋 Copy UPI
+
             </button>
 
         </div>
@@ -365,7 +385,11 @@
 
             <br>
 
-            2. केवल <strong>₹199</strong> payment करें।
+            2. केवल
+            <strong>
+                ₹{{ amount }}
+            </strong>
+            payment करें।
 
             <br>
 
@@ -383,19 +407,27 @@
 
 
     <a
-    href="/payment-submit/{{ registration_no }}"
-    class="submit-button"
-    style="display:block;text-align:center;text-decoration:none;"
->
-    ✅ I Have Made the Payment
-</a>
+        href="/payment-submit/{{ registration_no }}"
+        class="submit-button"
+        style="
+            display:block;
+            text-align:center;
+            text-decoration:none;
+        "
+    >
+
+        ✅ I Have Made the Payment
+
+    </a>
 
 
     <a
         href="/"
         class="back"
     >
+
         ← Back to Home
+
     </a>
 
 
@@ -412,15 +444,6 @@ function copyUPI() {
 
     alert(
         "UPI ID copied successfully!"
-    );
-
-}
-
-
-function paymentDone() {
-
-    alert(
-        "Payment details submission page next step में बनाया जाएगा."
     );
 
 }

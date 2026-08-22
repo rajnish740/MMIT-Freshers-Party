@@ -8,7 +8,9 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard | MMIT KUSHINAGAR</title>
+    <title>
+        Admin Dashboard | MMIT KUSHINAGAR
+    </title>
 
 
     <style>
@@ -34,9 +36,7 @@
         }
 
 
-        /* =========================
-           HEADER
-        ========================= */
+        /* ================= HEADER ================= */
 
         header {
 
@@ -78,24 +78,20 @@
         }
 
 
-        /* =========================
-           MAIN CONTAINER
-        ========================= */
+        /* ================= CONTAINER ================= */
 
         .container {
 
             width: 95%;
 
-            max-width: 1400px;
+            max-width: 1600px;
 
             margin: 30px auto;
 
         }
 
 
-        /* =========================
-           TOP BAR
-        ========================= */
+        /* ================= TOP BAR ================= */
 
         .top-bar {
 
@@ -148,18 +144,16 @@
         }
 
 
-        /* =========================
-           STATISTICS CARDS
-        ========================= */
+        /* ================= STATISTICS ================= */
 
         .stats {
 
             display: grid;
 
             grid-template-columns:
-                repeat(4, 1fr);
+                repeat(5, 1fr);
 
-            gap: 20px;
+            gap: 18px;
 
             margin-bottom: 30px;
 
@@ -170,7 +164,7 @@
 
             background: white;
 
-            padding: 25px;
+            padding: 22px;
 
             border-radius: 16px;
 
@@ -182,16 +176,18 @@
 
             align-items: center;
 
-            gap: 18px;
+            gap: 15px;
 
         }
 
 
         .stat-icon {
 
-            width: 60px;
+            width: 58px;
 
-            height: 60px;
+            height: 58px;
+
+            min-width: 58px;
 
             border-radius: 14px;
 
@@ -201,7 +197,7 @@
 
             justify-content: center;
 
-            font-size: 30px;
+            font-size: 28px;
 
             background: #dbeafe;
 
@@ -212,7 +208,7 @@
 
             margin: 0;
 
-            font-size: 28px;
+            font-size: 25px;
 
             color: #172554;
 
@@ -221,18 +217,16 @@
 
         .stat-info p {
 
-            margin: 3px 0 0;
+            margin: 4px 0 0;
 
             color: #64748b;
 
-            font-size: 14px;
+            font-size: 13px;
 
         }
 
 
-        /* =========================
-           SEARCH + FILTER
-        ========================= */
+        /* ================= CONTROLS ================= */
 
         .controls {
 
@@ -250,7 +244,7 @@
 
             display: flex;
 
-            gap: 15px;
+            gap: 12px;
 
             flex-wrap: wrap;
 
@@ -261,7 +255,7 @@
 
             flex: 1;
 
-            min-width: 250px;
+            min-width: 280px;
 
         }
 
@@ -272,7 +266,8 @@
 
             padding: 13px 15px;
 
-            border: 1px solid #cbd5e1;
+            border:
+                1px solid #cbd5e1;
 
             border-radius: 8px;
 
@@ -294,7 +289,8 @@
 
             padding: 13px 15px;
 
-            border: 1px solid #cbd5e1;
+            border:
+                1px solid #cbd5e1;
 
             border-radius: 8px;
 
@@ -304,12 +300,38 @@
 
             cursor: pointer;
 
+            min-width: 160px;
+
         }
 
 
-        /* =========================
-           TABLE
-        ========================= */
+        .reset-button {
+
+            border: none;
+
+            background: #64748b;
+
+            color: white;
+
+            padding: 13px 18px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .reset-button:hover {
+
+            background: #475569;
+
+        }
+
+
+        /* ================= TABLE ================= */
 
         .table-box {
 
@@ -335,7 +357,7 @@
             border-collapse:
                 collapse;
 
-            min-width: 1200px;
+            min-width: 1500px;
 
         }
 
@@ -350,7 +372,9 @@
 
             text-align: left;
 
-            font-size: 14px;
+            font-size: 13px;
+
+            white-space: nowrap;
 
         }
 
@@ -364,6 +388,8 @@
 
             font-size: 14px;
 
+            vertical-align: middle;
+
         }
 
 
@@ -374,9 +400,7 @@
         }
 
 
-        /* =========================
-           STATUS
-        ========================= */
+        /* ================= STATUS ================= */
 
         .status {
 
@@ -389,6 +413,8 @@
             font-size: 12px;
 
             font-weight: bold;
+
+            white-space: nowrap;
 
         }
 
@@ -429,9 +455,20 @@
         }
 
 
-        /* =========================
-           SCREENSHOT
-        ========================= */
+        /* ================= AMOUNT ================= */
+
+        .amount {
+
+            color: #2563eb;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* ================= SCREENSHOT ================= */
 
         .screenshot {
 
@@ -455,7 +492,8 @@
 
         .screenshot:hover {
 
-            transform: scale(1.08);
+            transform:
+                scale(1.08);
 
         }
 
@@ -464,12 +502,12 @@
 
             color: #94a3b8;
 
+            font-size: 12px;
+
         }
 
 
-        /* =========================
-           ACTION BUTTONS
-        ========================= */
+        /* ================= ACTION BUTTONS ================= */
 
         .action-btn {
 
@@ -486,6 +524,8 @@
             font-weight: bold;
 
             margin: 2px;
+
+            font-size: 12px;
 
         }
 
@@ -518,10 +558,6 @@
         }
 
 
-        /* =========================
-           RECEIPT BUTTON
-        ========================= */
-
         .receipt {
 
             display: inline-block;
@@ -540,6 +576,8 @@
 
             margin: 2px;
 
+            font-size: 12px;
+
         }
 
 
@@ -550,26 +588,47 @@
         }
 
 
-        /* =========================
-           EMPTY
-        ========================= */
+        /* ================= EMPTY ================= */
 
         .empty {
 
             text-align: center;
 
-            padding: 40px;
+            padding: 45px;
 
             color: #64748b;
 
         }
 
 
-        /* =========================
-           RESPONSIVE
-        ========================= */
+        /* ================= RESULT INFO ================= */
 
-        @media (max-width: 1000px) {
+        .result-info {
+
+            margin-top: 10px;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1200px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(3, 1fr);
+
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
 
             .stats {
 
@@ -611,6 +670,28 @@
 
             }
 
+
+            .controls {
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .search-box {
+
+                min-width: 100%;
+
+            }
+
+
+            .filter-box select {
+
+                width: 100%;
+
+            }
+
         }
 
     </style>
@@ -621,202 +702,69 @@
 <body>
 
 
-    <!-- =========================
-         HEADER
-    ========================= -->
+<!-- ================= HEADER ================= -->
 
-    <header>
+<header>
 
-        <h1>
-            🔐 MMIT KUSHINAGAR
-        </h1>
+    <h1>
+        🔐 MMIT KUSHINAGAR
+    </h1>
 
-        <p>
-            Freshers Party 2026 — Admin Dashboard
-        </p>
+    <p>
+        Freshers Party 2026 — Admin Dashboard
+    </p>
 
-    </header>
+</header>
 
 
 
-    <div class="container">
+<div class="container">
 
 
-        <!-- =========================
-             TOP BAR
-        ========================= -->
+    <!-- ================= TOP BAR ================= -->
 
-        <div class="top-bar">
+    <div class="top-bar">
 
-            <h2>
-                👨‍🎓 Student Management
-            </h2>
+        <h2>
+            👨‍🎓 Registration Management
+        </h2>
 
 
-            <a
-                href="/admin/logout"
-                class="logout"
-            >
-                🚪 Logout
-            </a>
+        <a
+            href="/admin/logout"
+            class="logout"
+        >
 
-        </div>
+            🚪 Logout
 
+        </a>
 
-
-        <!-- =========================
-             STATISTICS
-        ========================= -->
-
-        <div class="stats">
+    </div>
 
 
-            <!-- TOTAL -->
 
-            <div class="stat-card">
+    <!-- ================= STATISTICS ================= -->
 
-                <div class="stat-icon">
-                    👨‍🎓
-                </div>
+    <div class="stats">
 
-                <div class="stat-info">
 
-                    <h3 id="totalCount">
-                        0
-                    </h3>
+        <!-- TOTAL -->
 
-                    <p>
-                        Total Students
-                    </p>
+        <div class="stat-card">
 
-                </div>
-
+            <div class="stat-icon">
+                👨‍🎓
             </div>
 
+            <div class="stat-info">
 
+                <h3 id="totalCount">
+                    0
+                </h3>
 
-            <!-- SUBMITTED -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    💳
-                </div>
-
-                <div class="stat-info">
-
-                    <h3 id="submittedCount">
-                        0
-                    </h3>
-
-                    <p>
-                        Payment Submitted
-                    </p>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- VERIFIED -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ✅
-                </div>
-
-                <div class="stat-info">
-
-                    <h3 id="verifiedCount">
-                        0
-                    </h3>
-
-                    <p>
-                        Payment Verified
-                    </p>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- REJECTED -->
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    ❌
-                </div>
-
-                <div class="stat-info">
-
-                    <h3 id="rejectedCount">
-                        0
-                    </h3>
-
-                    <p>
-                        Payment Rejected
-                    </p>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =========================
-             SEARCH + FILTER
-        ========================= -->
-
-        <div class="controls">
-
-
-            <div class="search-box">
-
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="🔍 Search by name, roll number, mobile or UTR..."
-                    onkeyup="filterStudents()"
-                >
-
-            </div>
-
-
-            <div class="filter-box">
-
-                <select
-                    id="statusFilter"
-                    onchange="filterStudents()"
-                >
-
-                    <option value="ALL">
-                        All Payments
-                    </option>
-
-                    <option value="PENDING">
-                        Pending
-                    </option>
-
-                    <option value="SUBMITTED">
-                        Submitted
-                    </option>
-
-                    <option value="VERIFIED">
-                        Verified
-                    </option>
-
-                    <option value="REJECTED">
-                        Rejected
-                    </option>
-
-                </select>
+                <p>
+                    Total Registrations
+                </p>
 
             </div>
 
@@ -824,251 +772,97 @@
 
 
 
-        <!-- =========================
-             STUDENT TABLE
-        ========================= -->
+        <!-- SUBMITTED -->
 
-        <div class="table-box">
+        <div class="stat-card">
 
-            <table id="studentTable">
+            <div class="stat-icon">
+                💳
+            </div>
 
-                <thead>
+            <div class="stat-info">
 
-                    <tr>
+                <h3 id="submittedCount">
+                    0
+                </h3>
 
-                        <th>ID</th>
+                <p>
+                    Payment Submitted
+                </p>
 
-                        <th>Name</th>
+            </div>
 
-                        <th>Roll Number</th>
+        </div>
 
-                        <th>Semester</th>
 
-                        <th>Branch</th>
 
-                        <th>Mobile</th>
+        <!-- VERIFIED -->
 
-                        <th>UTR</th>
+        <div class="stat-card">
 
-                        <th>Status</th>
+            <div class="stat-icon">
+                ✅
+            </div>
 
-                        <th>Screenshot</th>
+            <div class="stat-info">
 
-                        <th>Action</th>
+                <h3 id="verifiedCount">
+                    0
+                </h3>
 
-                    </tr>
+                <p>
+                    Payment Verified
+                </p>
 
-                </thead>
+            </div>
 
+        </div>
 
-                <tbody>
 
 
-                    {% for student in students %}
+        <!-- REJECTED -->
 
-                    <tr
-                        class="student-row"
-                        data-status="{{ student[7] }}"
-                    >
+        <div class="stat-card">
 
+            <div class="stat-icon">
+                ❌
+            </div>
 
-                        <td>
-                            {{ student[0] }}
-                        </td>
+            <div class="stat-info">
 
+                <h3 id="rejectedCount">
+                    0
+                </h3>
 
-                        <td>
+                <p>
+                    Payment Rejected
+                </p>
 
-                            <strong>
-                                {{ student[1] }}
-                            </strong>
+            </div>
 
-                        </td>
+        </div>
 
 
-                        <td>
-                            {{ student[2] }}
-                        </td>
 
+        <!-- TOTAL AMOUNT -->
 
-                        <td>
-                            {{ student[3] }}
-                        </td>
+        <div class="stat-card">
 
+            <div class="stat-icon">
+                💰
+            </div>
 
-                        <td>
-                            {{ student[4] }}
-                        </td>
+            <div class="stat-info">
 
+                <h3 id="totalAmount">
+                    ₹0
+                </h3>
 
-                        <td>
-                            {{ student[5] }}
-                        </td>
+                <p>
+                    Total Payment Amount
+                </p>
 
-
-                        <td>
-                            {{ student[6] or "Not Submitted" }}
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            {% if student[7] == "SUBMITTED" %}
-
-                                <span class="status submitted">
-                                    SUBMITTED
-                                </span>
-
-                            {% elif student[7] == "VERIFIED" %}
-
-                                <span class="status verified">
-                                    VERIFIED
-                                </span>
-
-                            {% elif student[7] == "REJECTED" %}
-
-                                <span class="status rejected">
-                                    REJECTED
-                                </span>
-
-                            {% else %}
-
-                                <span class="status pending">
-                                    PENDING
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- SCREENSHOT -->
-
-                        <td>
-
-                            {% if student[8] %}
-
-                                <a
-                                    href="{{ url_for('static', filename='uploads/' + student[8]) }}"
-                                    target="_blank"
-                                >
-
-                                    <img
-                                        src="{{ url_for('static', filename='uploads/' + student[8]) }}"
-                                        class="screenshot"
-                                        alt="Payment Screenshot"
-                                    >
-
-                                </a>
-
-                            {% else %}
-
-                                <span class="no-image">
-                                    No Screenshot
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- ACTION -->
-
-                        <td>
-
-
-                            <!-- VERIFY BUTTON -->
-
-                            {% if student[7] != "VERIFIED" %}
-
-                                <form
-                                    action="/admin/verify/{{ student[0] }}"
-                                    method="POST"
-                                    style="display:inline;"
-                                >
-
-                                    <button
-                                        type="submit"
-                                        class="action-btn verify"
-                                        onclick="return confirm('क्या आप इस payment को verify करना चाहते हैं?');"
-                                    >
-                                        ✓ Verify
-                                    </button>
-
-                                </form>
-
-                            {% endif %}
-
-
-
-                            <!-- REJECT BUTTON -->
-
-                            {% if student[7] != "REJECTED" %}
-
-                                <form
-                                    action="/admin/reject/{{ student[0] }}"
-                                    method="POST"
-                                    style="display:inline;"
-                                >
-
-                                    <button
-                                        type="submit"
-                                        class="action-btn reject"
-                                        onclick="return confirm('क्या आप इस payment को reject करना चाहते हैं?');"
-                                    >
-                                        ✕ Reject
-                                    </button>
-
-                                </form>
-
-                            {% endif %}
-
-
-
-                            <!-- RECEIPT BUTTON -->
-
-                            {% if student[7] == "VERIFIED" %}
-
-                                <a
-                                    href="/admin/receipt/{{ student[0] }}"
-                                    target="_blank"
-                                    class="receipt"
-                                >
-                                    🎫 Receipt
-                                </a>
-
-                            {% endif %}
-
-
-                        </td>
-
-
-                    </tr>
-
-
-                    {% else %}
-
-                    <tr>
-
-                        <td
-                            colspan="10"
-                            class="empty"
-                        >
-
-                            👨‍🎓 अभी कोई student registration नहीं है।
-
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -1077,181 +871,828 @@
 
 
 
-    <!-- =========================
-         JAVASCRIPT
-    ========================= -->
+    <!-- ================= SEARCH + FILTER ================= -->
 
-    <script>
+    <div class="controls">
 
 
-        /* =========================
-           CALCULATE STATISTICS
-        ========================= */
+        <div class="search-box">
 
-        function calculateStats() {
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search Name, Roll, Mobile, UTR, Type or Year..."
+                onkeyup="filterStudents()"
+            >
+
+        </div>
 
 
-            const rows =
-                document.querySelectorAll(
-                    ".student-row"
+
+        <div class="filter-box">
+
+            <select
+                id="statusFilter"
+                onchange="filterStudents()"
+            >
+
+                <option value="ALL">
+                    All Payments
+                </option>
+
+                <option value="PENDING">
+                    ⏳ Pending
+                </option>
+
+                <option value="SUBMITTED">
+                    💳 Submitted
+                </option>
+
+                <option value="VERIFIED">
+                    ✅ Verified
+                </option>
+
+                <option value="REJECTED">
+                    ❌ Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div class="filter-box">
+
+            <select
+                id="typeFilter"
+                onchange="filterStudents()"
+            >
+
+                <option value="ALL">
+                    All Types
+                </option>
+
+                <option value="Student">
+                    👨‍🎓 Student
+                </option>
+
+                <option value="Teacher">
+                    👨‍🏫 Teacher
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <button
+            class="reset-button"
+            onclick="resetFilters()"
+        >
+
+            🔄 Reset
+
+        </button>
+
+
+    </div>
+
+
+
+    <div class="result-info">
+
+        Showing registrations:
+        <strong id="visibleCount">0</strong>
+
+    </div>
+
+
+
+    <!-- ================= TABLE ================= -->
+
+    <div class="table-box">
+
+
+        <table id="studentTable">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Roll Number
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Year
+                    </th>
+
+                    <th>
+                        Branch
+                    </th>
+
+                    <th>
+                        Mobile
+                    </th>
+
+                    <th>
+                        UTR / Transaction ID
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Screenshot
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody>
+
+
+                {% for student in students %}
+
+
+                <tr
+                    class="student-row"
+                    data-status="{{ student[7] }}"
+                    data-type="{{ student[9] or 'Student' }}"
+                >
+
+
+                    <!-- ID -->
+
+                    <td>
+
+                        <strong>
+                            {{ student[0] }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- NAME -->
+
+                    <td>
+
+                        <strong>
+                            {{ student[1] }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- ROLL -->
+
+                    <td>
+                        {{ student[2] }}
+                    </td>
+
+
+
+                    <!-- TYPE -->
+
+                    <td>
+
+                        {% if student[9] == "Teacher" %}
+
+                            👨‍🏫 Teacher
+
+                        {% else %}
+
+                            👨‍🎓 Student
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- YEAR -->
+
+                    <td>
+                        {{ student[3] }}
+                    </td>
+
+
+
+                    <!-- BRANCH -->
+
+                    <td>
+                        {{ student[4] }}
+                    </td>
+
+
+
+                    <!-- MOBILE -->
+
+                    <td>
+                        {{ student[5] }}
+                    </td>
+
+
+
+                    <!-- UTR -->
+
+                    <td>
+
+                        {% if student[6] %}
+
+                            <strong>
+                                {{ student[6] }}
+                            </strong>
+
+                        {% else %}
+
+                            <span class="no-image">
+                                Not Submitted
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- AMOUNT -->
+
+                    <td class="amount">
+
+                        {% if student[10] %}
+
+                            ₹{{ student[10] }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+
+                        {% if student[7] == "SUBMITTED" %}
+
+                            <span
+                                class="status submitted"
+                            >
+
+                                💳 SUBMITTED
+
+                            </span>
+
+
+                        {% elif student[7] == "VERIFIED" %}
+
+                            <span
+                                class="status verified"
+                            >
+
+                                ✅ VERIFIED
+
+                            </span>
+
+
+                        {% elif student[7] == "REJECTED" %}
+
+                            <span
+                                class="status rejected"
+                            >
+
+                                ❌ REJECTED
+
+                            </span>
+
+
+                        {% else %}
+
+                            <span
+                                class="status pending"
+                            >
+
+                                ⏳ PENDING
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </td>
+
+
+
+                    <!-- SCREENSHOT -->
+
+                    <td>
+
+
+                        {% if student[8] %}
+
+
+                            <a
+                                href="{{ url_for(
+                                    'static',
+                                    filename='uploads/' + student[8]
+                                ) }}"
+                                target="_blank"
+                            >
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='uploads/' + student[8]
+                                    ) }}"
+                                    class="screenshot"
+                                    alt="Payment Screenshot"
+                                >
+
+                            </a>
+
+
+                        {% else %}
+
+
+                            <span class="no-image">
+
+                                No Screenshot
+
+                            </span>
+
+
+                        {% endif %}
+
+
+                    </td>
+
+
+
+                    <!-- ACTION -->
+
+                    <td>
+
+
+                        {% if student[7] != "VERIFIED" %}
+
+
+                            <form
+                                action="/admin/verify/{{ student[0] }}"
+                                method="POST"
+                                style="display:inline;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="action-btn verify"
+                                    onclick="return confirm(
+                                        'क्या आप इस payment को verify करना चाहते हैं?'
+                                    );"
+                                >
+
+                                    ✓ Verify
+
+                                </button>
+
+                            </form>
+
+
+                        {% endif %}
+
+
+
+                        {% if student[7] != "REJECTED" %}
+
+
+                            <form
+                                action="/admin/reject/{{ student[0] }}"
+                                method="POST"
+                                style="display:inline;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="action-btn reject"
+                                    onclick="return confirm(
+                                        'क्या आप इस payment को reject करना चाहते हैं?'
+                                    );"
+                                >
+
+                                    ✕ Reject
+
+                                </button>
+
+                            </form>
+
+
+                        {% endif %}
+
+
+
+                        {% if student[7] == "VERIFIED" %}
+
+
+                            <a
+                                href="/admin/receipt/{{ student[0] }}"
+                                target="_blank"
+                                class="receipt"
+                            >
+
+                                🎫 Receipt
+
+                            </a>
+
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                </tr>
+
+
+                {% else %}
+
+
+                <tr>
+
+                    <td
+                        colspan="12"
+                        class="empty"
+                    >
+
+                        👨‍🎓 अभी कोई registration नहीं है।
+
+                    </td>
+
+                </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ==================================================
+   CALCULATE DASHBOARD STATISTICS
+================================================== */
+
+function calculateStats() {
+
+
+    const rows =
+        document.querySelectorAll(
+            ".student-row"
+        );
+
+
+    let total = 0;
+
+    let submitted = 0;
+
+    let verified = 0;
+
+    let rejected = 0;
+
+    let totalAmount = 0;
+
+
+    rows.forEach(
+        function(row) {
+
+
+            total++;
+
+
+            const status =
+                row.dataset.status;
+
+
+            if (
+                status === "SUBMITTED"
+            ) {
+
+                submitted++;
+
+            }
+
+
+            if (
+                status === "VERIFIED"
+            ) {
+
+                verified++;
+
+            }
+
+
+            if (
+                status === "REJECTED"
+            ) {
+
+                rejected++;
+
+            }
+
+
+            /* GET AMOUNT */
+
+            const amountCell =
+                row.querySelector(
+                    ".amount"
                 );
 
 
-            let total = 0;
-
-            let submitted = 0;
-
-            let verified = 0;
-
-            let rejected = 0;
+            if (amountCell) {
 
 
-            rows.forEach(
-                function(row) {
+                let amountText =
+                    amountCell.innerText
+                    .replace("₹", "")
+                    .replace(/,/g, "")
+                    .trim();
 
 
-                    total++;
+                let amount =
+                    parseFloat(
+                        amountText
+                    );
 
 
-                    const status =
-                        row.dataset.status;
+                if (!isNaN(amount)) {
 
-
-                    if (
-                        status === "SUBMITTED"
-                    ) {
-
-                        submitted++;
-
-                    }
-
-
-                    if (
-                        status === "VERIFIED"
-                    ) {
-
-                        verified++;
-
-                    }
-
-
-                    if (
-                        status === "REJECTED"
-                    ) {
-
-                        rejected++;
-
-                    }
+                    totalAmount += amount;
 
                 }
-            );
 
+            }
 
-            document.getElementById(
-                "totalCount"
-            ).innerText = total;
-
-
-            document.getElementById(
-                "submittedCount"
-            ).innerText = submitted;
-
-
-            document.getElementById(
-                "verifiedCount"
-            ).innerText = verified;
-
-
-            document.getElementById(
-                "rejectedCount"
-            ).innerText = rejected;
 
         }
+    );
 
 
-        /* =========================
-           SEARCH + FILTER
-        ========================= */
-
-        function filterStudents() {
+    document.getElementById(
+        "totalCount"
+    ).innerText = total;
 
 
-            const search =
-                document
-                .getElementById(
-                    "searchInput"
-                )
-                .value
+    document.getElementById(
+        "submittedCount"
+    ).innerText = submitted;
+
+
+    document.getElementById(
+        "verifiedCount"
+    ).innerText = verified;
+
+
+    document.getElementById(
+        "rejectedCount"
+    ).innerText = rejected;
+
+
+    document.getElementById(
+        "totalAmount"
+    ).innerText =
+        "₹" +
+        totalAmount.toLocaleString(
+            "en-IN"
+        );
+
+
+    updateVisibleCount();
+
+}
+
+
+
+/* ==================================================
+   FILTER STUDENTS
+================================================== */
+
+function filterStudents() {
+
+
+    const search =
+        document
+        .getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const statusFilter =
+        document
+        .getElementById(
+            "statusFilter"
+        )
+        .value;
+
+
+    const typeFilter =
+        document
+        .getElementById(
+            "typeFilter"
+        )
+        .value;
+
+
+    const rows =
+        document.querySelectorAll(
+            ".student-row"
+        );
+
+
+    rows.forEach(
+        function(row) {
+
+
+            const text =
+                row.innerText
                 .toLowerCase();
 
 
-            const filter =
-                document
-                .getElementById(
-                    "statusFilter"
-                )
-                .value;
+            const status =
+                row.dataset.status;
 
 
-            const rows =
-                document.querySelectorAll(
-                    ".student-row"
-                );
+            const type =
+                row.dataset.type;
 
 
-            rows.forEach(
-                function(row) {
+            const searchMatch =
+                text.includes(search);
 
 
-                    const text =
-                        row.innerText
-                        .toLowerCase();
+            const statusMatch =
+                statusFilter === "ALL"
+                ||
+                status === statusFilter;
 
 
-                    const status =
-                        row.dataset.status;
+            const typeMatch =
+                typeFilter === "ALL"
+                ||
+                type === typeFilter;
 
 
-                    const searchMatch =
-                        text.includes(search);
+            if (
+                searchMatch
+                &&
+                statusMatch
+                &&
+                typeMatch
+            ) {
 
+                row.style.display = "";
 
-                    const statusMatch =
-                        filter === "ALL"
-                        ||
-                        status === filter;
+            } else {
 
+                row.style.display = "none";
 
-                    if (
-                        searchMatch
-                        &&
-                        statusMatch
-                    ) {
+            }
 
-                        row.style.display =
-                            "";
-
-                    } else {
-
-                        row.style.display =
-                            "none";
-
-                    }
-
-                }
-            );
 
         }
+    );
 
 
-        /* =========================
-           START
-        ========================= */
+    updateVisibleCount();
 
-        calculateStats();
+}
 
 
-    </script>
+
+/* ==================================================
+   VISIBLE COUNT
+================================================== */
+
+function updateVisibleCount() {
+
+
+    const rows =
+        document.querySelectorAll(
+            ".student-row"
+        );
+
+
+    let visible = 0;
+
+
+    rows.forEach(
+        function(row) {
+
+
+            if (
+                row.style.display !== "none"
+            ) {
+
+                visible++;
+
+            }
+
+
+        }
+    );
+
+
+    document.getElementById(
+        "visibleCount"
+    ).innerText = visible;
+
+}
+
+
+
+/* ==================================================
+   RESET FILTERS
+================================================== */
+
+function resetFilters() {
+
+
+    document.getElementById(
+        "searchInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "statusFilter"
+    ).value = "ALL";
+
+
+    document.getElementById(
+        "typeFilter"
+    ).value = "ALL";
+
+
+    filterStudents();
+
+}
+
+
+
+/* ==================================================
+   START
+================================================== */
+
+calculateStats();
+
+
+</script>
 
 
 </body>

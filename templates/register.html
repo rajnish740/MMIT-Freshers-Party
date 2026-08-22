@@ -10,7 +10,6 @@
 
     <title>Registration | MMIT Freshers Party 2026</title>
 
-
     <style>
 
         * {
@@ -18,7 +17,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -36,7 +34,6 @@
             padding: 30px 15px;
 
         }
-
 
         .container {
 
@@ -56,7 +53,6 @@
 
         }
 
-
         .college-image {
 
             display: block;
@@ -73,7 +69,6 @@
 
         }
 
-
         h1 {
 
             text-align: center;
@@ -86,7 +81,6 @@
 
         }
 
-
         .subtitle {
 
             text-align: center;
@@ -97,13 +91,11 @@
 
         }
 
-
         .form-group {
 
             margin-bottom: 20px;
 
         }
-
 
         label {
 
@@ -116,7 +108,6 @@
             margin-bottom: 8px;
 
         }
-
 
         input,
         select {
@@ -135,7 +126,6 @@
 
         }
 
-
         input:focus,
         select:focus {
 
@@ -147,7 +137,6 @@
 
         }
 
-
         .row {
 
             display: grid;
@@ -158,7 +147,6 @@
             gap: 15px;
 
         }
-
 
         .fee-box {
 
@@ -174,13 +162,11 @@
 
         }
 
-
         .fee-box p {
 
             color: #555;
 
         }
-
 
         .fee {
 
@@ -192,6 +178,23 @@
 
         }
 
+        .teacher-note {
+
+            display: none;
+
+            background: #fff7ed;
+
+            border-left: 5px solid #f97316;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            color: #555;
+
+            margin-top: 10px;
+
+        }
 
         button {
 
@@ -213,19 +216,13 @@
 
             cursor: pointer;
 
-            transition: 0.3s;
-
         }
-
 
         button:hover {
 
             background: #1d4ed8;
 
-            transform: translateY(-2px);
-
         }
-
 
         .back {
 
@@ -241,7 +238,6 @@
 
         }
 
-
         @media (max-width: 600px) {
 
             .container {
@@ -249,7 +245,6 @@
                 padding: 25px 20px;
 
             }
-
 
             .row {
 
@@ -283,7 +278,7 @@
 
 
     <p class="subtitle">
-        MMIT KUSHINAGAR — Student Registration
+        MMIT KUSHINAGAR — Registration
     </p>
 
 
@@ -292,6 +287,8 @@
         method="POST"
     >
 
+
+        <!-- NAME -->
 
         <div class="form-group">
 
@@ -309,21 +306,94 @@
         </div>
 
 
-        <div class="row">
+        <!-- PARTICIPANT TYPE -->
+
+        <div class="form-group">
+
+            <label>
+                Registration Type *
+            </label>
+
+            <select
+                name="participant_type"
+                id="participantType"
+                required
+                onchange="changeType()"
+            >
+
+                <option value="">
+                    Select Type
+                </option>
+
+                <option value="Student">
+                    Student
+                </option>
+
+                <option value="Teacher">
+                    Teacher
+                </option>
+
+            </select>
+
+        </div>
 
 
-            <div class="form-group">
+        <!-- STUDENT FIELDS -->
 
-                <label>
-                    Roll Number *
-                </label>
+        <div id="studentFields">
 
-                <input
-                    type="text"
-                    name="roll_number"
-                    placeholder="Enter roll number"
-                    required
-                >
+
+            <div class="row">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Roll Number *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="roll_number"
+                        id="rollNumber"
+                        placeholder="Enter roll number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Year *
+                    </label>
+
+                    <select
+                        name="year"
+                        id="year"
+                        onchange="updateFee()"
+                    >
+
+                        <option value="">
+                            Select Year
+                        </option>
+
+                        <option value="1st Year">
+                            1st Year
+                        </option>
+
+                        <option value="2nd Year">
+                            2nd Year
+                        </option>
+
+                        <option value="3rd Year">
+                            3rd Year
+                        </option>
+
+                    </select>
+
+                </div>
+
 
             </div>
 
@@ -331,40 +401,36 @@
             <div class="form-group">
 
                 <label>
-                    Semester *
+                    Branch *
                 </label>
 
                 <select
-                    name="semester"
-                    required
+                    name="branch"
+                    id="branch"
                 >
 
                     <option value="">
-                        Select Semester
+                        Select Branch
                     </option>
 
-                    <option value="1st">
-                        1st Semester
+                    <option value="Computer Science">
+                        Computer Science
                     </option>
 
-                    <option value="2nd">
-                        2nd Semester
+                    <option value="Information Technology">
+                        Information Technology
                     </option>
 
-                    <option value="3rd">
-                        3rd Semester
+                    <option value="Electrical Engineering">
+                        Electrical Engineering
                     </option>
 
-                    <option value="4th">
-                        4th Semester
+                    <option value="Mechanical Engineering">
+                        Mechanical Engineering
                     </option>
 
-                    <option value="5th">
-                        5th Semester
-                    </option>
-
-                    <option value="6th">
-                        6th Semester
+                    <option value="Civil Engineering">
+                        Civil Engineering
                     </option>
 
                 </select>
@@ -375,45 +441,40 @@
         </div>
 
 
-        <div class="form-group">
+        <!-- TEACHER AMOUNT -->
+
+        <div
+            class="form-group"
+            id="teacherAmountBox"
+            style="display:none;"
+        >
 
             <label>
-                Branch *
+                Teacher Payment Amount (₹) *
             </label>
 
-            <select
-                name="branch"
-                required
+            <input
+                type="number"
+                name="teacher_amount"
+                id="teacherAmount"
+                min="1"
+                step="1"
+                placeholder="Enter amount"
+                oninput="updateTeacherFee()"
             >
 
-                <option value="">
-                    Select Branch
-                </option>
+            <div class="teacher-note"
+                 id="teacherNote">
 
-                <option value="Computer Science">
-                    Computer Science
-                </option>
+                Teacher के लिए amount fixed नहीं है।
+                कृपया अपना payment amount enter करें।
 
-                <option value="Information Technology">
-                    Information Technology
-                </option>
-
-                <option value="Electrical Engineering">
-                    Electrical Engineering
-                </option>
-
-                <option value="Mechanical Engineering">
-                    Mechanical Engineering
-                </option>
-
-                <option value="Civil Engineering">
-                    Civil Engineering
-                </option>
-
-            </select>
+            </div>
 
         </div>
 
+
+        <!-- MOBILE -->
 
         <div class="form-group">
 
@@ -433,6 +494,8 @@
         </div>
 
 
+        <!-- EMAIL -->
+
         <div class="form-group">
 
             <label>
@@ -447,6 +510,8 @@
 
         </div>
 
+
+        <!-- GENDER -->
 
         <div class="form-group">
 
@@ -480,14 +545,19 @@
         </div>
 
 
+        <!-- FEE -->
+
         <div class="fee-box">
 
             <p>
                 Freshers Party Registration Fee
             </p>
 
-            <div class="fee">
-                ₹199
+            <div
+                class="fee"
+                id="fee"
+            >
+                Select Type
             </div>
 
         </div>
@@ -512,6 +582,223 @@
 
 
 </div>
+
+
+<script>
+
+function changeType() {
+
+    const type =
+        document.getElementById(
+            "participantType"
+        ).value;
+
+
+    const studentFields =
+        document.getElementById(
+            "studentFields"
+        );
+
+
+    const teacherBox =
+        document.getElementById(
+            "teacherAmountBox"
+        );
+
+
+    const roll =
+        document.getElementById(
+            "rollNumber"
+        );
+
+
+    const year =
+        document.getElementById(
+            "year"
+        );
+
+
+    const branch =
+        document.getElementById(
+            "branch"
+        );
+
+
+    const teacherAmount =
+        document.getElementById(
+            "teacherAmount"
+        );
+
+
+    const fee =
+        document.getElementById(
+            "fee"
+        );
+
+
+    const teacherNote =
+        document.getElementById(
+            "teacherNote"
+        );
+
+
+    if (type === "Student") {
+
+        studentFields.style.display =
+            "block";
+
+        teacherBox.style.display =
+            "none";
+
+        roll.required = true;
+
+        year.required = true;
+
+        branch.required = true;
+
+        teacherAmount.required = false;
+
+        teacherNote.style.display =
+            "none";
+
+        updateFee();
+
+    }
+
+    else if (type === "Teacher") {
+
+        studentFields.style.display =
+            "none";
+
+        teacherBox.style.display =
+            "block";
+
+        roll.required = false;
+
+        year.required = false;
+
+        branch.required = false;
+
+        teacherAmount.required = true;
+
+        teacherNote.style.display =
+            "block";
+
+        fee.innerText =
+            "Enter Amount";
+
+    }
+
+    else {
+
+        studentFields.style.display =
+            "block";
+
+        teacherBox.style.display =
+            "none";
+
+        roll.required = false;
+
+        year.required = false;
+
+        branch.required = false;
+
+        teacherAmount.required = false;
+
+        fee.innerText =
+            "Select Type";
+
+    }
+
+}
+
+
+function updateFee() {
+
+    const type =
+        document.getElementById(
+            "participantType"
+        ).value;
+
+
+    const year =
+        document.getElementById(
+            "year"
+        ).value;
+
+
+    const fee =
+        document.getElementById(
+            "fee"
+        );
+
+
+    if (type !== "Student") {
+
+        return;
+
+    }
+
+
+    if (year === "1st Year") {
+
+        fee.innerText =
+            "₹199";
+
+    }
+
+    else if (
+        year === "2nd Year"
+        ||
+        year === "3rd Year"
+    ) {
+
+        fee.innerText =
+            "₹300";
+
+    }
+
+    else {
+
+        fee.innerText =
+            "Select Year";
+
+    }
+
+}
+
+
+function updateTeacherFee() {
+
+    const amount =
+        document.getElementById(
+            "teacherAmount"
+        ).value;
+
+
+    const fee =
+        document.getElementById(
+            "fee"
+        );
+
+
+    if (amount) {
+
+        fee.innerText =
+            "₹" + amount;
+
+    }
+
+    else {
+
+        fee.innerText =
+            "Enter Amount";
+
+    }
+
+}
+
+</script>
 
 
 </body>
