@@ -26,6 +26,7 @@ try:
     import cloudinary.utils
 
     CLOUDINARY_AVAILABLE = True
+
 except ImportError:
     CLOUDINARY_AVAILABLE = False
 
@@ -36,17 +37,28 @@ except ImportError:
 
 # Custom static route use kar rahe hain,
 # isliye Flask ka default static folder disable hai.
-app = Flask(__name__, static_folder=None)
+
+app = Flask(
+    __name__,
+    static_folder=None
+)
 
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "development-secret-key"
 )
 
-UPLOAD_FOLDER = os.path.join("static", "uploads")
+UPLOAD_FOLDER = os.path.join(
+    "static",
+    "uploads"
+)
+
 LOCAL_STATIC_FOLDER = "static"
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -80,6 +92,7 @@ CLOUDINARY_ENABLED = bool(
 
 
 if CLOUDINARY_ENABLED:
+
     cloudinary.config(
         cloud_name=CLOUDINARY_CLOUD_NAME,
         api_key=CLOUDINARY_API_KEY,
@@ -88,34 +101,50 @@ if CLOUDINARY_ENABLED:
     )
 
 
-print("==========================================", flush=True)
-print("CLOUDINARY CONFIGURATION", flush=True)
+print(
+    "==========================================",
+    flush=True
+)
+
+print(
+    "CLOUDINARY CONFIGURATION",
+    flush=True
+)
+
 print(
     "Cloudinary package:",
     "YES" if CLOUDINARY_AVAILABLE else "NO",
-    flush=True,
+    flush=True
 )
+
 print(
     "Cloud name found:",
     "YES" if CLOUDINARY_CLOUD_NAME else "NO",
-    flush=True,
+    flush=True
 )
+
 print(
     "API key found:",
     "YES" if CLOUDINARY_API_KEY else "NO",
-    flush=True,
+    flush=True
 )
+
 print(
     "API secret found:",
     "YES" if CLOUDINARY_API_SECRET else "NO",
-    flush=True,
+    flush=True
 )
+
 print(
     "Cloudinary enabled:",
     "YES" if CLOUDINARY_ENABLED else "NO",
-    flush=True,
+    flush=True
 )
-print("==========================================", flush=True)
+
+print(
+    "==========================================",
+    flush=True
+)
 
 
 # ==================================================
@@ -123,9 +152,13 @@ print("==========================================", flush=True)
 # ==================================================
 
 def get_db_connection():
-    database_url = os.environ.get("DATABASE_URL")
+
+    database_url = os.environ.get(
+        "DATABASE_URL"
+    )
 
     if not database_url:
+
         raise RuntimeError(
             "DATABASE_URL environment variable is not set."
         )
@@ -145,6 +178,7 @@ def get_db_connection():
     endpoint="uploaded_file"
 )
 def uploaded_file(filename):
+
     """
     Payment screenshot handler.
 
@@ -162,9 +196,12 @@ def uploaded_file(filename):
     # ------------------------------------------
 
     if CLOUDINARY_ENABLED and filename:
+
         try:
-            # Extension remove karke exact public_id banate hain.
-            base_filename = os.path.splitext(filename)[0]
+
+            base_filename = os.path.splitext(
+                filename
+            )[0]
 
             public_id = (
                 f"mmit_freshers/payments/{base_filename}"
@@ -182,6 +219,7 @@ def uploaded_file(filename):
             )
 
         except Exception as e:
+
             print(
                 "Cloudinary image redirect error:",
                 repr(e),
@@ -198,6 +236,7 @@ def uploaded_file(filename):
     )
 
     if os.path.isfile(local_path):
+
         return send_from_directory(
             app.config["UPLOAD_FOLDER"],
             filename
@@ -210,22 +249,12 @@ def uploaded_file(filename):
 # IMPORTANT STATIC ROUTE
 # ==================================================
 
-# IMPORTANT:
-# Endpoint ka naam "static" hi hona chahiye.
-#
-# Tumhare templates me:
-#
-# {{ url_for('static', filename='images/college.jpg') }}
-#
-# use ho raha hai.
-#
-# Isi wajah se pehle BuildError aa raha tha.
-
 @app.route(
     "/static/<path:filename>",
     endpoint="static"
 )
 def static_files(filename):
+
     """
     Normal static files serve karta hai:
 
@@ -254,10 +283,25 @@ def send_email_notification(
     status
 ):
 
-    print("", flush=True)
-    print("==========================================", flush=True)
-    print("========== BREVO EMAIL START ============", flush=True)
-    print("==========================================", flush=True)
+    print(
+        "",
+        flush=True
+    )
+
+    print(
+        "==========================================",
+        flush=True
+    )
+
+    print(
+        "========== BREVO EMAIL START ============",
+        flush=True
+    )
+
+    print(
+        "==========================================",
+        flush=True
+    )
 
     print(
         "Recipient:",
@@ -289,25 +333,25 @@ def send_email_notification(
         flush=True
     )
 
-
     if not recipient_email:
+
         print(
             "❌ Student email is EMPTY.",
             flush=True
         )
-        return False
 
+        return False
 
     recipient_email = recipient_email.strip()
 
-
     if not recipient_email:
+
         print(
             "❌ Student email became empty after strip().",
             flush=True
         )
-        return False
 
+        return False
 
     brevo_api_key = os.environ.get(
         "BREVO_API_KEY",
@@ -324,7 +368,6 @@ def send_email_notification(
         "MMIT Freshers Party 2026"
     ).strip()
 
-
     print(
         "BREVO_API_KEY found:",
         "YES" if brevo_api_key else "NO",
@@ -337,22 +380,23 @@ def send_email_notification(
         flush=True
     )
 
-
     if not brevo_api_key:
+
         print(
             "❌ BREVO_API_KEY is missing.",
             flush=True
         )
+
         return False
 
-
     if not brevo_sender_email:
+
         print(
             "❌ BREVO_SENDER_EMAIL is missing.",
             flush=True
         )
-        return False
 
+        return False
 
     # ------------------------------------------
     # VERIFIED EMAIL
@@ -382,7 +426,6 @@ MMIT Freshers Party 2026
 MMIT Kushinagar
 """
 
-
     # ------------------------------------------
     # REJECTED EMAIL
     # ------------------------------------------
@@ -409,7 +452,6 @@ MMIT Freshers Party 2026
 MMIT Kushinagar
 """
 
-
     else:
 
         print(
@@ -419,7 +461,6 @@ MMIT Kushinagar
         )
 
         return False
-
 
     # ------------------------------------------
     # BREVO API
@@ -434,6 +475,7 @@ MMIT Kushinagar
     }
 
     payload = {
+
         "sender": {
             "name": brevo_sender_name,
             "email": brevo_sender_email,
@@ -451,7 +493,6 @@ MMIT Kushinagar
         "textContent": body,
     }
 
-
     try:
 
         print(
@@ -466,13 +507,11 @@ MMIT Kushinagar
             timeout=30
         )
 
-
         print(
             "Brevo HTTP Status:",
             response.status_code,
             flush=True
         )
-
 
         if response.status_code == 201:
 
@@ -488,7 +527,6 @@ MMIT Kushinagar
 
             except Exception:
                 pass
-
 
             print(
                 "✅ EMAIL SENT SUCCESSFULLY THROUGH BREVO!",
@@ -508,7 +546,6 @@ MMIT Kushinagar
 
             return True
 
-
         print(
             "❌ BREVO EMAIL FAILED",
             flush=True
@@ -527,7 +564,6 @@ MMIT Kushinagar
 
         return False
 
-
     except requests.exceptions.Timeout:
 
         print(
@@ -536,7 +572,6 @@ MMIT Kushinagar
         )
 
         return False
-
 
     except requests.exceptions.RequestException as e:
 
@@ -547,7 +582,6 @@ MMIT Kushinagar
         )
 
         return False
-
 
     except Exception as e:
 
@@ -574,6 +608,7 @@ def upload_payment_to_cloudinary(
     file_obj,
     student_id
 ):
+
     """
     Payment screenshot ko Cloudinary par upload karta hai.
     """
@@ -588,27 +623,20 @@ def upload_payment_to_cloudinary(
 
         return None
 
-
     original_name = secure_filename(
         file_obj.filename or "payment.jpg"
     )
 
-
     if not original_name:
         original_name = "payment.jpg"
 
-
-    # Collision avoid karne ke liye student ID.
     stored_filename = (
         f"{student_id}_{original_name}"
     )
 
-
-    # Cloudinary public_id ke liye extension remove.
     base_name = os.path.splitext(
         stored_filename
     )[0]
-
 
     try:
 
@@ -617,22 +645,14 @@ def upload_payment_to_cloudinary(
             flush=True
         )
 
-
         result = cloudinary.uploader.upload(
-
             file_obj,
-
             folder="mmit_freshers/payments",
-
             public_id=base_name,
-
             resource_type="image",
-
             overwrite=True,
-
             unique_filename=False,
         )
-
 
         public_id = result.get(
             "public_id",
@@ -644,13 +664,11 @@ def upload_payment_to_cloudinary(
             ""
         )
 
-
         print(
             "Cloudinary public_id:",
             public_id,
             flush=True
         )
-
 
         print(
             "Cloudinary URL created:",
@@ -658,10 +676,7 @@ def upload_payment_to_cloudinary(
             flush=True
         )
 
-
-        # Database me filename save hoga.
         return stored_filename
-
 
     except Exception as e:
 
@@ -684,7 +699,6 @@ def create_database():
 
     cursor = conn.cursor()
 
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id SERIAL PRIMARY KEY,
@@ -701,18 +715,15 @@ def create_database():
         )
     """)
 
-
     cursor.execute("""
         ALTER TABLE students
         ADD COLUMN IF NOT EXISTS participant_type TEXT
     """)
 
-
     cursor.execute("""
         ALTER TABLE students
         ADD COLUMN IF NOT EXISTS payment_amount NUMERIC(10,2)
     """)
-
 
     conn.commit()
 
@@ -768,58 +779,48 @@ def register():
             ""
         ).strip()
 
-
         participant_type = request.form.get(
             "participant_type",
             ""
         ).strip()
 
-
         roll_number = "N/A"
-
 
         year = request.form.get(
             "year",
             ""
         ).strip()
 
-
         teacher_amount = request.form.get(
             "teacher_amount",
             ""
         ).strip()
-
 
         branch = request.form.get(
             "branch",
             ""
         ).strip()
 
-
         mobile = request.form.get(
             "mobile",
             ""
         ).strip()
-
 
         email = request.form.get(
             "email",
             ""
         ).strip()
 
-
         gender = request.form.get(
             "gender",
             ""
         ).strip()
-
 
         if not name or not mobile or not gender:
 
             return (
                 "Required registration details are missing."
             )
-
 
         # ------------------------------------------
         # STUDENT
@@ -838,13 +839,11 @@ def register():
                     "<a href='/register'>Back</a>"
                 )
 
-
             payment_amount = (
                 Decimal("199")
                 if year == "1st Year"
                 else Decimal("300")
             )
-
 
             if not branch:
 
@@ -852,7 +851,6 @@ def register():
                     "❌ Branch is required. "
                     "<a href='/register'>Back</a>"
                 )
-
 
         # ------------------------------------------
         # TEACHER
@@ -867,7 +865,6 @@ def register():
                     "<a href='/register'>Back</a>"
                 )
 
-
             try:
 
                 payment_amount = Decimal(
@@ -881,7 +878,6 @@ def register():
                     "<a href='/register'>Back</a>"
                 )
 
-
             if payment_amount <= 0:
 
                 return (
@@ -889,14 +885,10 @@ def register():
                     "<a href='/register'>Back</a>"
                 )
 
-
             year = "Teacher"
 
-
             if not branch:
-
                 branch = "Teacher"
-
 
         else:
 
@@ -905,11 +897,9 @@ def register():
                 "<a href='/register'>Back</a>"
             )
 
-
         conn = get_db_connection()
 
         cursor = conn.cursor()
-
 
         cursor.execute("""
             INSERT INTO students
@@ -925,7 +915,8 @@ def register():
                 participant_type,
                 payment_amount
             )
-            VALUES (
+            VALUES
+            (
                 %s,
                 %s,
                 %s,
@@ -951,9 +942,7 @@ def register():
             payment_amount,
         ))
 
-
         registration_id = cursor.fetchone()[0]
-
 
         conn.commit()
 
@@ -961,21 +950,14 @@ def register():
 
         conn.close()
 
-
         return render_template(
             "payment.html",
-
             registration_no=registration_id,
-
             student_name=name,
-
             amount=payment_amount,
-
             participant_type=participant_type,
-
             year=year,
         )
-
 
     return render_template(
         "register.html"
@@ -995,7 +977,6 @@ def payment_submit_page(student_id):
 
     cursor = conn.cursor()
 
-
     cursor.execute("""
         SELECT
             id,
@@ -1007,14 +988,11 @@ def payment_submit_page(student_id):
         student_id,
     ))
 
-
     student = cursor.fetchone()
-
 
     cursor.close()
 
     conn.close()
-
 
     if student is None:
 
@@ -1022,16 +1000,11 @@ def payment_submit_page(student_id):
             "Student registration not found."
         )
 
-
     return render_template(
         "payment_submit.html",
-
         registration_id=student[0],
-
         student_id=student[0],
-
         student_name=student[1],
-
         amount=student[2],
     )
 
@@ -1051,17 +1024,14 @@ def save_payment():
         ""
     ).strip()
 
-
     utr = request.form.get(
         "utr",
         ""
     ).strip()
 
-
     screenshot = request.files.get(
         "payment_screenshot"
     )
-
 
     if not student_id:
 
@@ -1069,14 +1039,12 @@ def save_payment():
             "❌ Student ID is missing."
         )
 
-
     if not utr:
 
         return (
             "❌ UTR / Transaction ID is required. "
             "<a href='javascript:history.back()'>Back</a>"
         )
-
 
     if (
         screenshot is None
@@ -1088,7 +1056,6 @@ def save_payment():
             "<a href='javascript:history.back()'>Back</a>"
         )
 
-
     # ------------------------------------------
     # CHECK REGISTRATION
     # ------------------------------------------
@@ -1097,20 +1064,16 @@ def save_payment():
 
     cursor = conn.cursor()
 
-
     cursor.execute(
         "SELECT id FROM students WHERE id = %s",
         (student_id,)
     )
 
-
     exists = cursor.fetchone()
-
 
     cursor.close()
 
     conn.close()
-
 
     if not exists:
 
@@ -1118,9 +1081,7 @@ def save_payment():
             "❌ Registration not found."
         )
 
-
     filename = None
-
 
     # ------------------------------------------
     # CLOUDINARY FIRST
@@ -1133,14 +1094,12 @@ def save_payment():
             student_id
         )
 
-
         if not filename:
 
             return (
                 "❌ Payment screenshot could not "
                 "be uploaded. Please try again."
             )
-
 
     # ------------------------------------------
     # LOCAL FALLBACK
@@ -1152,34 +1111,28 @@ def save_payment():
             screenshot.filename
         )
 
-
         if not original_name:
 
             return (
                 "❌ Invalid screenshot filename."
             )
 
-
         filename = (
             f"{student_id}_{original_name}"
         )
-
 
         filepath = os.path.join(
             app.config["UPLOAD_FOLDER"],
             filename
         )
 
-
         screenshot.save(filepath)
-
 
         print(
             "⚠️ Screenshot saved locally:",
             filepath,
             flush=True
         )
-
 
     # ------------------------------------------
     # DATABASE UPDATE
@@ -1188,7 +1141,6 @@ def save_payment():
     conn = get_db_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         UPDATE students
@@ -1204,13 +1156,11 @@ def save_payment():
         student_id,
     ))
 
-
     conn.commit()
 
     cursor.close()
 
     conn.close()
-
 
     return """
     <div style="
@@ -1256,12 +1206,10 @@ def payment_status():
             ""
         ).strip()
 
-
         mobile = request.form.get(
             "mobile",
             ""
         ).strip()
-
 
         if not utr:
 
@@ -1273,7 +1221,6 @@ def payment_status():
                 )
             )
 
-
         if not mobile:
 
             return render_template(
@@ -1284,11 +1231,9 @@ def payment_status():
                 )
             )
 
-
         conn = get_db_connection()
 
         cursor = conn.cursor()
-
 
         cursor.execute("""
             SELECT
@@ -1310,14 +1255,11 @@ def payment_status():
             mobile,
         ))
 
-
         student = cursor.fetchone()
-
 
         cursor.close()
 
         conn.close()
-
 
         if student is None:
 
@@ -1329,12 +1271,10 @@ def payment_status():
                 )
             )
 
-
         return render_template(
             "student_status.html",
             student=student
         )
-
 
     return render_template(
         "student_status.html"
@@ -1368,23 +1308,19 @@ def admin_login():
         ""
     )
 
-
     password = request.form.get(
         "password",
         ""
     )
-
 
     admin_username = os.environ.get(
         "ADMIN_USERNAME",
         "brijesh"
     )
 
-
     admin_password = os.environ.get(
         "ADMIN_PASSWORD"
     )
-
 
     if not admin_password:
 
@@ -1407,7 +1343,6 @@ def admin_login():
         </div>
         """
 
-
     if (
         username == admin_username
         and password == admin_password
@@ -1418,7 +1353,6 @@ def admin_login():
         return redirect(
             "/admin/dashboard"
         )
-
 
     return """
     <div style="
@@ -1452,11 +1386,9 @@ def admin_dashboard():
 
         return redirect("/admin")
 
-
     conn = get_db_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT
@@ -1475,9 +1407,7 @@ def admin_dashboard():
         ORDER BY id DESC
     """)
 
-
     students = cursor.fetchall()
-
 
     cursor.execute("""
         SELECT
@@ -1489,20 +1419,15 @@ def admin_dashboard():
         WHERE payment_status = 'VERIFIED'
     """)
 
-
     total_collection = cursor.fetchone()[0]
-
 
     cursor.close()
 
     conn.close()
 
-
     return render_template(
         "admin_dashboard.html",
-
         students=students,
-
         total_collection=total_collection,
     )
 
@@ -1533,18 +1458,15 @@ def verify_payment(student_id):
         flush=True
     )
 
-
     if not session.get(
         "admin_logged_in"
     ):
 
         return redirect("/admin")
 
-
     conn = get_db_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT
@@ -1557,9 +1479,7 @@ def verify_payment(student_id):
         student_id,
     ))
 
-
     student = cursor.fetchone()
-
 
     if student is None:
 
@@ -1569,13 +1489,11 @@ def verify_payment(student_id):
 
         return "Student not found."
 
-
     student_name = student[0]
 
     student_email = student[1]
 
     payment_amount = student[2]
-
 
     cursor.execute("""
         UPDATE students
@@ -1586,39 +1504,29 @@ def verify_payment(student_id):
         student_id,
     ))
 
-
     conn.commit()
 
     cursor.close()
 
     conn.close()
 
-
     print(
         "✅ Payment status saved as VERIFIED.",
         flush=True
     )
-
 
     print(
         "Calling send_email_notification()...",
         flush=True
     )
 
-
     email_result = send_email_notification(
-
         recipient_email=student_email,
-
         student_name=student_name,
-
         registration_id=student_id,
-
         amount=payment_amount,
-
         status="VERIFIED",
     )
-
 
     if email_result:
 
@@ -1635,18 +1543,15 @@ def verify_payment(student_id):
             flush=True
         )
 
-
     print(
         "ADMIN VERIFY PAYMENT END",
         flush=True
     )
 
-
     print(
         "==========================================",
         flush=True
     )
-
 
     return redirect(
         "/admin/dashboard"
@@ -1679,18 +1584,15 @@ def reject_payment(student_id):
         flush=True
     )
 
-
     if not session.get(
         "admin_logged_in"
     ):
 
         return redirect("/admin")
 
-
     conn = get_db_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT
@@ -1703,9 +1605,7 @@ def reject_payment(student_id):
         student_id,
     ))
 
-
     student = cursor.fetchone()
-
 
     if student is None:
 
@@ -1715,13 +1615,11 @@ def reject_payment(student_id):
 
         return "Student not found."
 
-
     student_name = student[0]
 
     student_email = student[1]
 
     payment_amount = student[2]
-
 
     cursor.execute("""
         UPDATE students
@@ -1732,39 +1630,29 @@ def reject_payment(student_id):
         student_id,
     ))
 
-
     conn.commit()
 
     cursor.close()
 
     conn.close()
 
-
     print(
         "✅ Payment status saved as REJECTED.",
         flush=True
     )
-
 
     print(
         "Calling send_email_notification()...",
         flush=True
     )
 
-
     email_result = send_email_notification(
-
         recipient_email=student_email,
-
         student_name=student_name,
-
         registration_id=student_id,
-
         amount=payment_amount,
-
         status="REJECTED",
     )
-
 
     if email_result:
 
@@ -1781,22 +1669,515 @@ def reject_payment(student_id):
             flush=True
         )
 
-
     print(
         "ADMIN REJECT PAYMENT END",
         flush=True
     )
-
 
     print(
         "==========================================",
         flush=True
     )
 
-
     return redirect(
         "/admin/dashboard"
     )
+
+
+# ==================================================
+# ADMIN DELETE ONE REGISTRATION
+# ==================================================
+
+@app.route(
+    "/admin/delete/<int:student_id>",
+    methods=["POST"]
+)
+def delete_student(student_id):
+
+    print(
+        "==========================================",
+        flush=True
+    )
+
+    print(
+        "ADMIN DELETE STUDENT START",
+        flush=True
+    )
+
+    print(
+        "Student ID:",
+        student_id,
+        flush=True
+    )
+
+    # ------------------------------------------
+    # ADMIN LOGIN CHECK
+    # ------------------------------------------
+
+    if not session.get(
+        "admin_logged_in"
+    ):
+
+        return redirect("/admin")
+
+    conn = None
+    cursor = None
+
+    try:
+
+        conn = get_db_connection()
+
+        cursor = conn.cursor()
+
+        # --------------------------------------
+        # GET STUDENT DATA
+        # --------------------------------------
+
+        cursor.execute("""
+            SELECT
+                id,
+                name,
+                payment_screenshot
+            FROM students
+            WHERE id = %s
+        """, (
+            student_id,
+        ))
+
+        student = cursor.fetchone()
+
+        if student is None:
+
+            print(
+                "❌ Student not found:",
+                student_id,
+                flush=True
+            )
+
+            return """
+            <div style="
+                font-family:Arial;
+                text-align:center;
+                padding:50px;
+            ">
+
+                <h2>❌ Student Not Found</h2>
+
+                <p>
+                    यह registration database में मौजूद नहीं है।
+                </p>
+
+                <br>
+
+                <a href="/admin/dashboard">
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+            """
+
+        student_name = student[1]
+
+        screenshot_filename = student[2]
+
+        print(
+            "Student Name:",
+            student_name,
+            flush=True
+        )
+
+        print(
+            "Screenshot:",
+            screenshot_filename,
+            flush=True
+        )
+
+        # --------------------------------------
+        # DELETE DATABASE RECORD
+        # --------------------------------------
+
+        cursor.execute("""
+            DELETE FROM students
+            WHERE id = %s
+        """, (
+            student_id,
+        ))
+
+        conn.commit()
+
+        print(
+            "✅ Database record deleted.",
+            flush=True
+        )
+
+        # --------------------------------------
+        # DELETE LOCAL SCREENSHOT
+        # --------------------------------------
+
+        if screenshot_filename:
+
+            local_file = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                screenshot_filename
+            )
+
+            if os.path.isfile(local_file):
+
+                try:
+
+                    os.remove(local_file)
+
+                    print(
+                        "✅ Local screenshot deleted:",
+                        local_file,
+                        flush=True
+                    )
+
+                except Exception as e:
+
+                    print(
+                        "⚠️ Local screenshot delete error:",
+                        repr(e),
+                        flush=True
+                    )
+
+        # --------------------------------------
+        # DELETE CLOUDINARY SCREENSHOT
+        # --------------------------------------
+
+        if (
+            CLOUDINARY_ENABLED
+            and screenshot_filename
+        ):
+
+            try:
+
+                base_filename = os.path.splitext(
+                    screenshot_filename
+                )[0]
+
+                public_id = (
+                    f"mmit_freshers/payments/"
+                    f"{base_filename}"
+                )
+
+                result = cloudinary.uploader.destroy(
+                    public_id,
+                    resource_type="image"
+                )
+
+                print(
+                    "Cloudinary delete result:",
+                    result,
+                    flush=True
+                )
+
+            except Exception as e:
+
+                print(
+                    "⚠️ Cloudinary delete error:",
+                    repr(e),
+                    flush=True
+                )
+
+        print(
+            "✅ ADMIN DELETE STUDENT SUCCESS",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return redirect(
+            "/admin/dashboard"
+        )
+
+    except Exception as e:
+
+        if conn:
+
+            conn.rollback()
+
+        print(
+            "❌ DELETE STUDENT ERROR:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return """
+        <div style="
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        ">
+
+            <h2>❌ Delete Failed</h2>
+
+            <p>
+                Student delete करते समय error आया।
+            </p>
+
+            <p>
+                कृपया वापस जाकर फिर कोशिश करें।
+            </p>
+
+            <br>
+
+            <a href="/admin/dashboard">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+        """
+
+    finally:
+
+        if cursor:
+
+            cursor.close()
+
+        if conn:
+
+            conn.close()
+
+
+# ==================================================
+# ADMIN DELETE ALL REGISTRATIONS
+# ==================================================
+
+@app.route(
+    "/admin/delete-all",
+    methods=["POST"]
+)
+def delete_all_students():
+
+    print(
+        "==========================================",
+        flush=True
+    )
+
+    print(
+        "ADMIN DELETE ALL START",
+        flush=True
+    )
+
+    # ------------------------------------------
+    # ADMIN LOGIN CHECK
+    # ------------------------------------------
+
+    if not session.get(
+        "admin_logged_in"
+    ):
+
+        return redirect("/admin")
+
+    conn = None
+    cursor = None
+
+    try:
+
+        conn = get_db_connection()
+
+        cursor = conn.cursor()
+
+        # --------------------------------------
+        # GET ALL SCREENSHOT FILENAMES
+        # --------------------------------------
+
+        cursor.execute("""
+            SELECT payment_screenshot
+            FROM students
+            WHERE payment_screenshot IS NOT NULL
+        """)
+
+        screenshots = cursor.fetchall()
+
+        print(
+            "Screenshots found:",
+            len(screenshots),
+            flush=True
+        )
+
+        # --------------------------------------
+        # DELETE ALL DATABASE RECORDS
+        # --------------------------------------
+
+        cursor.execute("""
+            DELETE FROM students
+        """)
+
+        # --------------------------------------
+        # RESET ID SEQUENCE
+        # --------------------------------------
+
+        cursor.execute("""
+            ALTER SEQUENCE students_id_seq
+            RESTART WITH 1
+        """)
+
+        conn.commit()
+
+        print(
+            "✅ All database records deleted.",
+            flush=True
+        )
+
+        print(
+            "✅ Registration ID sequence reset to 1.",
+            flush=True
+        )
+
+        # --------------------------------------
+        # DELETE LOCAL SCREENSHOTS
+        # --------------------------------------
+
+        for screenshot in screenshots:
+
+            filename = screenshot[0]
+
+            if not filename:
+
+                continue
+
+            local_file = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                filename
+            )
+
+            if os.path.isfile(local_file):
+
+                try:
+
+                    os.remove(local_file)
+
+                    print(
+                        "✅ Local screenshot deleted:",
+                        filename,
+                        flush=True
+                    )
+
+                except Exception as e:
+
+                    print(
+                        "⚠️ Local file delete error:",
+                        repr(e),
+                        flush=True
+                    )
+
+        # --------------------------------------
+        # DELETE CLOUDINARY SCREENSHOTS
+        # --------------------------------------
+
+        if CLOUDINARY_ENABLED:
+
+            for screenshot in screenshots:
+
+                filename = screenshot[0]
+
+                if not filename:
+
+                    continue
+
+                try:
+
+                    base_filename = os.path.splitext(
+                        filename
+                    )[0]
+
+                    public_id = (
+                        f"mmit_freshers/payments/"
+                        f"{base_filename}"
+                    )
+
+                    result = cloudinary.uploader.destroy(
+                        public_id,
+                        resource_type="image"
+                    )
+
+                    print(
+                        "Cloudinary delete:",
+                        public_id,
+                        result.get("result"),
+                        flush=True
+                    )
+
+                except Exception as e:
+
+                    print(
+                        "⚠️ Cloudinary delete error:",
+                        repr(e),
+                        flush=True
+                    )
+
+        print(
+            "✅ ADMIN DELETE ALL SUCCESS",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return redirect(
+            "/admin/dashboard"
+        )
+
+    except Exception as e:
+
+        if conn:
+
+            conn.rollback()
+
+        print(
+            "❌ DELETE ALL ERROR:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return """
+        <div style="
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        ">
+
+            <h2>❌ Delete All Failed</h2>
+
+            <p>
+                सभी registrations delete करते समय error आया।
+            </p>
+
+            <br>
+
+            <a href="/admin/dashboard">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+        """
+
+    finally:
+
+        if cursor:
+
+            cursor.close()
+
+        if conn:
+
+            conn.close()
 
 
 # ==================================================
@@ -1814,11 +2195,9 @@ def payment_receipt(student_id):
 
         return redirect("/admin")
 
-
     conn = get_db_connection()
 
     cursor = conn.cursor()
-
 
     cursor.execute("""
         SELECT
@@ -1838,19 +2217,15 @@ def payment_receipt(student_id):
         student_id,
     ))
 
-
     student = cursor.fetchone()
-
 
     cursor.close()
 
     conn.close()
 
-
     if student is None:
 
         return "Student not found."
-
 
     if student[7] != "VERIFIED":
 
@@ -1877,7 +2252,6 @@ def payment_receipt(student_id):
         </div>
         """
 
-
     return render_template(
         "receipt.html",
         student=student
@@ -1897,7 +2271,6 @@ def student_receipt(student_id):
 
     cursor = conn.cursor()
 
-
     cursor.execute("""
         SELECT
             id,
@@ -1916,19 +2289,15 @@ def student_receipt(student_id):
         student_id,
     ))
 
-
     student = cursor.fetchone()
-
 
     cursor.close()
 
     conn.close()
 
-
     if student is None:
 
         return "Student not found."
-
 
     if student[7] != "VERIFIED":
 
@@ -1954,7 +2323,6 @@ def student_receipt(student_id):
 
         </div>
         """
-
 
     return render_template(
         "receipt.html",
