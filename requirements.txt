@@ -3,3 +3,5 @@ Werkzeug
 gunicorn
 psycopg2-binary
 razorpay
+requests
+cloudinary

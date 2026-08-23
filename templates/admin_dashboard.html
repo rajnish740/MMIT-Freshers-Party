@@ -5,8 +5,10 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>
         Admin Dashboard | MMIT KUSHINAGAR
@@ -120,6 +122,17 @@
         }
 
 
+        .top-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+        }
+
+
         .logout {
 
             background: #dc3545;
@@ -134,12 +147,70 @@
 
             font-weight: bold;
 
+            border: none;
+
         }
 
 
         .logout:hover {
 
             background: #b02a37;
+
+        }
+
+
+        /* ================= DELETE ALL ================= */
+
+        .delete-all-button {
+
+            background: #991b1b;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 20px;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .delete-all-button:hover {
+
+            background: #7f1d1d;
+
+        }
+
+
+        /* ================= WARNING ================= */
+
+        .danger-box {
+
+            background: #fee2e2;
+
+            border: 1px solid #fecaca;
+
+            color: #991b1b;
+
+            padding: 15px 18px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            line-height: 1.6;
+
+        }
+
+
+        .danger-box strong {
+
+            color: #7f1d1d;
 
         }
 
@@ -357,7 +428,7 @@
             border-collapse:
                 collapse;
 
-            min-width: 1500px;
+            min-width: 1650px;
 
         }
 
@@ -558,6 +629,20 @@
         }
 
 
+        .delete-one {
+
+            background: #991b1b;
+
+        }
+
+
+        .delete-one:hover {
+
+            background: #7f1d1d;
+
+        }
+
+
         .receipt {
 
             display: inline-block;
@@ -606,6 +691,8 @@
         .result-info {
 
             margin-top: 10px;
+
+            margin-bottom: 12px;
 
             color: #64748b;
 
@@ -671,6 +758,23 @@
             }
 
 
+            .top-actions {
+
+                width: 100%;
+
+            }
+
+
+            .delete-all-button,
+            .logout {
+
+                flex: 1;
+
+                text-align: center;
+
+            }
+
+
             .controls {
 
                 flex-direction:
@@ -730,14 +834,65 @@
         </h2>
 
 
-        <a
-            href="/admin/logout"
-            class="logout"
-        >
+        <div class="top-actions">
 
-            🚪 Logout
 
-        </a>
+            <!-- DELETE ALL -->
+
+            <form
+                action="/admin/delete-all"
+                method="POST"
+                onsubmit="return confirmDeleteAll();"
+            >
+
+                <button
+                    type="submit"
+                    class="delete-all-button"
+                >
+
+                    🗑️ Delete All Registrations
+
+                </button>
+
+            </form>
+
+
+            <!-- LOGOUT -->
+
+            <a
+                href="/admin/logout"
+                class="logout"
+            >
+
+                🚪 Logout
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= DANGER WARNING ================= -->
+
+    <div class="danger-box">
+
+        <strong>
+            ⚠️ Important:
+        </strong>
+
+        Delete करने के बाद student का database record
+        और उसका payment screenshot permanently delete हो जाएगा।
+
+        <br>
+
+        <strong>
+            🔥 Delete All
+        </strong>
+
+        सभी registrations को permanently delete कर देगा।
 
     </div>
 
@@ -1268,6 +1423,8 @@
                     <td>
 
 
+                        <!-- VERIFY -->
+
                         {% if student[7] != "VERIFIED" %}
 
 
@@ -1295,6 +1452,8 @@
                         {% endif %}
 
 
+
+                        <!-- REJECT -->
 
                         {% if student[7] != "REJECTED" %}
 
@@ -1324,6 +1483,8 @@
 
 
 
+                        <!-- RECEIPT -->
+
                         {% if student[7] == "VERIFIED" %}
 
 
@@ -1339,6 +1500,31 @@
 
 
                         {% endif %}
+
+
+
+                        <!-- DELETE ONE STUDENT -->
+
+                        <form
+                            action="/admin/delete/{{ student[0] }}"
+                            method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirmDeleteStudent(
+                                '{{ student[1]|e }}',
+                                '{{ student[0] }}'
+                            );"
+                        >
+
+                            <button
+                                type="submit"
+                                class="action-btn delete-one"
+                            >
+
+                                🗑️ Delete
+
+                            </button>
+
+                        </form>
 
 
                     </td>
@@ -1381,6 +1567,141 @@
 
 
 <script>
+
+
+/* ==================================================
+   DELETE ONE STUDENT CONFIRMATION
+================================================== */
+
+function confirmDeleteStudent(
+    studentName,
+    studentId
+) {
+
+    const firstConfirm = confirm(
+
+        "⚠️ WARNING!\n\n" +
+
+        "क्या आप इस student को delete करना चाहते हैं?\n\n" +
+
+        "Student Name: " +
+        studentName +
+        "\n" +
+
+        "Registration ID: " +
+        studentId +
+        "\n\n" +
+
+        "Database record और payment screenshot permanently delete हो जाएगा."
+
+    );
+
+
+    if (!firstConfirm) {
+
+        return false;
+
+    }
+
+
+    const secondConfirm = confirm(
+
+        "🚨 FINAL CONFIRMATION 🚨\n\n" +
+
+        "यह action वापस नहीं किया जा सकता।\n\n" +
+
+        "क्या आप वास्तव में इसे permanently delete करना चाहते हैं?"
+
+    );
+
+
+    return secondConfirm;
+
+}
+
+
+
+/* ==================================================
+   DELETE ALL CONFIRMATION
+================================================== */
+
+function confirmDeleteAll() {
+
+    const firstConfirm = confirm(
+
+        "🔥 DELETE ALL REGISTRATIONS 🔥\n\n" +
+
+        "क्या आप सभी registrations delete करना चाहते हैं?\n\n" +
+
+        "इसमें:\n" +
+
+        "• सभी students\n" +
+
+        "• सभी payment details\n" +
+
+        "• सभी UTR records\n" +
+
+        "• सभी payment screenshots\n\n" +
+
+        "permanently delete हो जाएंगे."
+
+    );
+
+
+    if (!firstConfirm) {
+
+        return false;
+
+    }
+
+
+    const secondConfirm = confirm(
+
+        "🚨 FINAL WARNING 🚨\n\n" +
+
+        "यह action UNDO नहीं किया जा सकता।\n\n" +
+
+        "सभी registrations permanently delete हो जाएँगे और ID फिर से 1 से शुरू होगी।\n\n" +
+
+        "क्या आप CONTINUE करना चाहते हैं?"
+
+    );
+
+
+    if (!secondConfirm) {
+
+        return false;
+
+    }
+
+
+    const finalText = prompt(
+
+        "FINAL CONFIRMATION:\n\n" +
+
+        "सभी registrations delete करने के लिए नीचे EXACTLY लिखें:\n\n" +
+
+        "DELETE ALL"
+
+    );
+
+
+    if (finalText !== "DELETE ALL") {
+
+        alert(
+            "❌ Delete All cancelled.\n\n" +
+            "आपने सही confirmation text नहीं लिखा।"
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
 
 
 /* ==================================================
@@ -1445,8 +1766,6 @@ function calculateStats() {
             }
 
 
-            /* GET AMOUNT */
-
             const amountCell =
                 row.querySelector(
                     ".amount"
@@ -1505,7 +1824,9 @@ function calculateStats() {
     document.getElementById(
         "totalAmount"
     ).innerText =
+
         "₹" +
+
         totalAmount.toLocaleString(
             "en-IN"
         );
@@ -1578,28 +1899,42 @@ function filterStudents() {
 
 
             const statusMatch =
+
                 statusFilter === "ALL"
+
                 ||
+
                 status === statusFilter;
 
 
             const typeMatch =
+
                 typeFilter === "ALL"
+
                 ||
+
                 type === typeFilter;
 
 
             if (
+
                 searchMatch
+
                 &&
+
                 statusMatch
+
                 &&
+
                 typeMatch
+
             ) {
 
                 row.style.display = "";
 
-            } else {
+            }
+
+            else {
 
                 row.style.display = "none";
 
