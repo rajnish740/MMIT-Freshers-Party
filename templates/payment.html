@@ -157,6 +157,10 @@
         }
 
 
+        /* =================================
+           UPI ID DISPLAY
+           ================================= */
+
         .upi-box {
 
             display: flex;
@@ -164,8 +168,6 @@
             justify-content: center;
 
             align-items: center;
-
-            gap: 10px;
 
             margin-top: 15px;
 
@@ -187,32 +189,6 @@
             font-weight: bold;
 
             word-break: break-all;
-
-        }
-
-
-        .copy-button {
-
-            background: #172554;
-
-            color: white;
-
-            border: none;
-
-            padding: 12px 18px;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            font-weight: bold;
-
-        }
-
-
-        .copy-button:hover {
-
-            background: #0f172a;
 
         }
 
@@ -515,28 +491,16 @@
 
         <!-- =================================
              UPI ID
+             COPY BUTTON REMOVED
              ================================= -->
 
         <div class="upi-box">
-
 
             <div class="upi-id">
 
                 prasad*******76-1@oksbi
 
             </div>
-
-
-            <button
-                type="button"
-                class="copy-button"
-                onclick="copyUPI()"
-            >
-
-                📋 Copy UPI
-
-            </button>
-
 
         </div>
 
@@ -576,8 +540,7 @@
         >
 
             अगर UPI app नहीं खुलता है,
-            तो QR code scan करें या UPI ID
-            copy करके payment करें।
+            तो QR code scan करके payment करें।
 
         </div>
 
@@ -599,7 +562,7 @@
 
             1. ऊपर दिए गए QR को scan करें
             या <strong>Pay via UPI</strong>
-            button दबाएँ।
+            button दबाएँ.
 
 
             <br>
@@ -609,21 +572,21 @@
             <strong>
                 ₹{{ amount }}
             </strong>
-            payment करें।
+            payment करें.
 
 
             <br>
 
 
             3. Payment complete होने के बाद
-            UTR / Transaction ID संभालकर रखें।
+            UTR / Transaction ID संभालकर रखें.
 
 
             <br>
 
 
             4. नीचे दिए गए button पर click करके
-            UTR और payment screenshot submit करें।
+            UTR और payment screenshot submit करें.
 
 
         </div>
@@ -687,17 +650,6 @@ const PAYMENT_AMOUNT = "{{ amount }}";
    ========================================== */
 
 function createUPILink() {
-
-
-    /*
-     * UPI payment format:
-     *
-     * upi://pay
-     * ?pa=UPI_ID
-     * &pn=NAME
-     * &am=AMOUNT
-     * &cu=INR
-     */
 
 
     const amount = parseFloat(
@@ -771,7 +723,6 @@ function payViaUPI(event) {
      * खोलने की कोशिश।
      */
 
-
     window.location.href =
         upiLink;
 
@@ -780,7 +731,6 @@ function payViaUPI(event) {
      * अगर app नहीं खुलता तो
      * थोड़ी देर बाद notice दिखाएँ।
      */
-
 
     setTimeout(
         function() {
@@ -791,111 +741,6 @@ function payViaUPI(event) {
 
         },
         2500
-    );
-
-}
-
-
-/* ==========================================
-   COPY UPI ID
-   ========================================== */
-
-function copyUPI() {
-
-
-    if (
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-    ) {
-
-
-        navigator.clipboard.writeText(
-            UPI_ID
-        )
-
-        .then(
-            function() {
-
-                alert(
-                    "UPI ID copied successfully!"
-                );
-
-            }
-        )
-
-        .catch(
-            function() {
-
-                fallbackCopyUPI();
-
-            }
-        );
-
-
-    } else {
-
-        fallbackCopyUPI();
-
-    }
-
-}
-
-
-/* ==========================================
-   FALLBACK COPY
-   ========================================== */
-
-function fallbackCopyUPI() {
-
-
-    const textarea =
-        document.createElement(
-            "textarea"
-        );
-
-
-    textarea.value =
-        UPI_ID;
-
-
-    textarea.style.position =
-        "fixed";
-
-    textarea.style.left =
-        "-9999px";
-
-
-    document.body.appendChild(
-        textarea
-    );
-
-
-    textarea.select();
-
-
-    try {
-
-        document.execCommand(
-            "copy"
-        );
-
-
-        alert(
-            "UPI ID copied successfully!"
-        );
-
-
-    } catch (error) {
-
-        alert(
-            "UPI ID copy नहीं हो सकी।"
-        );
-
-    }
-
-
-    document.body.removeChild(
-        textarea
     );
 
 }
