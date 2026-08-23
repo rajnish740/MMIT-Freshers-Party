@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,10 +5,15 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Payment | MMIT Freshers Party 2026</title>
+    <title>
+        Payment | MMIT Freshers Party 2026
+    </title>
+
 
     <style>
 
@@ -18,6 +22,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
 
         body {
 
@@ -35,6 +40,7 @@
             padding: 30px 15px;
 
         }
+
 
         .container {
 
@@ -54,6 +60,7 @@
 
         }
 
+
         .college-image {
 
             display: block;
@@ -70,6 +77,7 @@
 
         }
 
+
         h1 {
 
             text-align: center;
@@ -80,6 +88,7 @@
 
         }
 
+
         .subtitle {
 
             text-align: center;
@@ -89,6 +98,7 @@
             margin-bottom: 25px;
 
         }
+
 
         .registration-box {
 
@@ -102,11 +112,13 @@
 
         }
 
+
         .registration-box p {
 
             margin: 7px 0;
 
         }
+
 
         .qr-section {
 
@@ -120,6 +132,7 @@
 
         }
 
+
         .qr-code {
 
             width: 280px;
@@ -128,13 +141,18 @@
 
             height: auto;
 
+            min-height: 280px;
+
             border-radius: 10px;
 
             background: white;
 
             padding: 10px;
 
+            object-fit: contain;
+
         }
+
 
         .amount {
 
@@ -147,6 +165,7 @@
             margin: 15px 0;
 
         }
+
 
         .upi-box {
 
@@ -164,6 +183,7 @@
 
         }
 
+
         .upi-id {
 
             background: white;
@@ -177,6 +197,7 @@
             font-weight: bold;
 
         }
+
 
         .copy-button {
 
@@ -194,11 +215,13 @@
 
         }
 
+
         .copy-button:hover {
 
             background: #0f172a;
 
         }
+
 
         .instruction {
 
@@ -216,7 +239,29 @@
 
             color: #555;
 
+            line-height: 1.6;
+
         }
+
+
+        .success-note {
+
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background: #dcfce7;
+
+            border: 1px solid #86efac;
+
+            color: #166534;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+        }
+
 
         .submit-button {
 
@@ -248,11 +293,13 @@
 
         }
 
+
         .submit-button:hover {
 
             background: #1d4ed8;
 
         }
+
 
         .back {
 
@@ -268,6 +315,50 @@
 
         }
 
+
+        .qr-loading {
+
+            width: 280px;
+
+            max-width: 100%;
+
+            height: 280px;
+
+            margin: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: white;
+
+            border-radius: 10px;
+
+            color: #64748b;
+
+            font-weight: bold;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                padding: 25px 18px;
+
+            }
+
+            .amount {
+
+                font-size: 30px;
+
+            }
+
+        }
+
     </style>
 
 </head>
@@ -279,6 +370,8 @@
 <div class="container">
 
 
+    <!-- COLLEGE IMAGE -->
+
     <img
         src="{{ url_for(
             'static',
@@ -288,6 +381,8 @@
         alt="MMIT Kushinagar"
     >
 
+
+    <!-- TITLE -->
 
     <h1>
         💳 Payment
@@ -299,7 +394,10 @@
     </p>
 
 
+    <!-- REGISTRATION DETAILS -->
+
     <div class="registration-box">
+
 
         <p>
 
@@ -344,8 +442,11 @@
 
         </p>
 
+
     </div>
 
+
+    <!-- PAYMENT QR SECTION -->
 
     <div class="qr-section">
 
@@ -355,6 +456,8 @@
         </h2>
 
 
+        <!-- DYNAMIC AMOUNT -->
+
         <div class="amount">
 
             ₹{{ amount }}
@@ -362,17 +465,23 @@
         </div>
 
 
-        <img
-            src="{{ url_for(
-                'static',
-                filename='images/qr.jpeg'
-            ) }}"
-            class="qr-code"
-            alt="Payment QR Code"
-        >
+        <!-- QR CODE -->
 
+        <div id="qrContainer">
+
+            <div class="qr-loading">
+
+                ⏳ Generating Payment QR...
+
+            </div>
+
+        </div>
+
+
+        <!-- UPI ID -->
 
         <div class="upi-box">
+
 
             <div class="upi-id">
 
@@ -391,42 +500,77 @@
 
             </button>
 
+
         </div>
 
 
+        <!-- SUCCESS NOTE -->
+
+        <div class="success-note">
+
+            ✅ QR scan करने पर
+            <strong>
+                ₹{{ amount }}
+            </strong>
+            payment amount automatically दिखाई देगा।
+
+        </div>
+
+
+        <!-- INSTRUCTIONS -->
+
         <div class="instruction">
+
 
             <strong>
                 Payment Instructions:
             </strong>
 
+
             <br><br>
+
 
             1. ऊपर दिए गए QR को scan करें।
 
+
             <br>
 
-            2. केवल
+
+            2. QR scan करने के बाद
             <strong>
                 ₹{{ amount }}
             </strong>
-            payment करें।
+            amount automatically भर जाएगा।
+
 
             <br>
 
-            3. Payment complete होने के बाद
+
+            3. Payment करने से पहले
+            amount और UPI ID जरूर check करें।
+
+
+            <br>
+
+
+            4. Payment complete होने के बाद
             UTR / Transaction ID संभालकर रखें।
 
+
             <br>
 
-            4. नीचे दिए गए button पर click करके
+
+            5. नीचे दिए गए button पर click करके
             UTR और payment screenshot submit करें।
+
 
         </div>
 
 
     </div>
 
+
+    <!-- PAYMENT SUBMIT -->
 
     <a
         href="/payment-submit/{{ registration_no }}"
@@ -437,6 +581,8 @@
 
     </a>
 
+
+    <!-- BACK -->
 
     <a
         href="/"
@@ -453,27 +599,225 @@
 
 <script>
 
-function copyUPI() {
 
-    navigator.clipboard.writeText(
-        "prasadrajnish76-1@oksbi"
-    )
-    .then(function() {
+/* ==================================================
+   PAYMENT DETAILS
+================================================== */
 
-        alert(
-            "UPI ID copied successfully!"
+
+/*
+   IMPORTANT:
+
+   Ye UPI ID tumhari actual payment UPI ID hai.
+*/
+
+const UPI_ID =
+    "prasadrajnish76-1@oksbi";
+
+
+/*
+   Student ka amount Flask se aa raha hai.
+
+   Example:
+
+   199
+   300
+   500
+
+*/
+
+const PAYMENT_AMOUNT =
+    "{{ amount }}";
+
+
+/*
+   Student ka naam
+*/
+
+const STUDENT_NAME =
+    "{{ student_name }}";
+
+
+/*
+   Registration number
+*/
+
+const REGISTRATION_NO =
+    "{{ registration_no }}";
+
+
+/* ==================================================
+   CREATE UPI PAYMENT LINK
+================================================== */
+
+
+/*
+   UPI payment URL:
+
+   pa = UPI ID
+   pn = Payee Name
+   am = Amount
+   cu = Currency
+*/
+
+const upiPaymentLink =
+
+    "upi://pay" +
+
+    "?pa=" +
+    encodeURIComponent(UPI_ID) +
+
+    "&pn=" +
+    encodeURIComponent(
+        "MMIT Freshers Party 2026"
+    ) +
+
+    "&am=" +
+    encodeURIComponent(
+        PAYMENT_AMOUNT
+    ) +
+
+    "&cu=INR" +
+
+    "&tn=" +
+    encodeURIComponent(
+        "MMIT Freshers Party Registration " +
+        REGISTRATION_NO
+    );
+
+
+/* ==================================================
+   GENERATE DYNAMIC QR
+================================================== */
+
+
+function generateQR() {
+
+
+    const qrContainer =
+        document.getElementById(
+            "qrContainer"
         );
 
-    })
-    .catch(function() {
 
-        alert(
-            "UPI ID copy नहीं हो सकी।"
+    /*
+       QR Code API
+
+       Isme actual UPI payment link
+       QR ke andar encode hota hai.
+    */
+
+
+    const qrUrl =
+
+        "https://api.qrserver.com/v1/create-qr-code/" +
+
+        "?size=500x500" +
+
+        "&margin=10" +
+
+        "&data=" +
+
+        encodeURIComponent(
+            upiPaymentLink
         );
 
-    });
+
+    const qrImage =
+        document.createElement(
+            "img"
+        );
+
+
+    qrImage.src = qrUrl;
+
+    qrImage.className =
+        "qr-code";
+
+    qrImage.alt =
+        "MMIT Freshers Party Payment QR";
+
+
+    qrImage.onload =
+        function() {
+
+            qrContainer.innerHTML = "";
+
+            qrContainer.appendChild(
+                qrImage
+            );
+
+        };
+
+
+    qrImage.onerror =
+        function() {
+
+            qrContainer.innerHTML =
+
+                "<div style='" +
+                "padding:25px;" +
+                "color:#dc2626;" +
+                "background:white;" +
+                "border-radius:10px;" +
+                "'>" +
+
+                "❌ QR Code load नहीं हो सका।" +
+
+                "<br><br>" +
+
+                "कृपया internet connection check करें।" +
+
+                "</div>";
+
+        };
+
 
 }
+
+
+/* ==================================================
+   COPY UPI
+================================================== */
+
+
+function copyUPI() {
+
+
+    navigator.clipboard.writeText(
+        UPI_ID
+    )
+
+    .then(
+        function() {
+
+            alert(
+                "UPI ID copied successfully!"
+            );
+
+        }
+    )
+
+    .catch(
+        function() {
+
+            alert(
+                "UPI ID copy नहीं हो सकी।"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==================================================
+   START QR GENERATION
+================================================== */
+
+
+generateQR();
+
 
 </script>
 
@@ -481,4 +825,3 @@ function copyUPI() {
 </body>
 
 </html>
-```
