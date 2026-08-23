@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
 import os
 import psycopg2
+import smtplib
+
 from decimal import Decimal, InvalidOperation
 from werkzeug.utils import secure_filename
+from email.message import EmailMessage
 
 
 app = Flask(__name__)
@@ -38,7 +41,6 @@ def get_db_connection():
     database_url = os.environ.get("DATABASE_URL")
 
     if not database_url:
-
         raise RuntimeError(
             "DATABASE_URL environment variable is not set."
         )
@@ -47,6 +49,600 @@ def get_db_connection():
         database_url,
         sslmode="require"
     )
+
+
+# ==================================================
+# EMAIL NOTIFICATION
+# ==================================================
+
+def send_email_notification(
+    recipient_email,
+    student_name,
+    registration_id,
+    amount,
+    status
+):
+
+    print("", flush=True)
+    print("==========================================", flush=True)
+    print("========== EMAIL DEBUG START ==========", flush=True)
+    print("==========================================", flush=True)
+
+    print(
+        "Recipient:",
+        repr(recipient_email),
+        flush=True
+    )
+
+    print(
+        "Student:",
+        repr(student_name),
+        flush=True
+    )
+
+    print(
+        "Registration ID:",
+        registration_id,
+        flush=True
+    )
+
+    print(
+        "Amount:",
+        amount,
+        flush=True
+    )
+
+    print(
+        "Status:",
+        status,
+        flush=True
+    )
+
+    # ==================================================
+    # CHECK STUDENT EMAIL
+    # ==================================================
+
+    if not recipient_email:
+
+        print(
+            "❌ ERROR: Student email is EMPTY.",
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        return False
+
+
+    # ==================================================
+    # CLEAN EMAIL
+    # ==================================================
+
+    recipient_email = recipient_email.strip()
+
+
+    if not recipient_email:
+
+        print(
+            "❌ ERROR: Student email became empty after strip().",
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        return False
+
+
+    # ==================================================
+    # GET RENDER ENVIRONMENT VARIABLES
+    # ==================================================
+
+    sender_email = os.environ.get(
+        "EMAIL_ADDRESS",
+        ""
+    ).strip()
+
+    sender_password = os.environ.get(
+        "EMAIL_APP_PASSWORD",
+        ""
+    ).strip()
+
+
+    # ==================================================
+    # CHECK EMAIL ADDRESS
+    # ==================================================
+
+    print(
+        "EMAIL_ADDRESS found:",
+        "YES" if sender_email else "NO",
+        flush=True
+    )
+
+
+    if not sender_email:
+
+        print(
+            "❌ ERROR: EMAIL_ADDRESS is missing in Render Environment.",
+            flush=True
+        )
+
+        print(
+            "Please add EMAIL_ADDRESS in Render Environment Variables.",
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        return False
+
+
+    # ==================================================
+    # CHECK APP PASSWORD
+    # ==================================================
+
+    print(
+        "EMAIL_APP_PASSWORD found:",
+        "YES" if sender_password else "NO",
+        flush=True
+    )
+
+
+    if not sender_password:
+
+        print(
+            "❌ ERROR: EMAIL_APP_PASSWORD is missing in Render Environment.",
+            flush=True
+        )
+
+        print(
+            "Please add EMAIL_APP_PASSWORD in Render Environment Variables.",
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        return False
+
+
+    # ==================================================
+    # DISPLAY EMAIL CONFIGURATION
+    # ==================================================
+
+    print(
+        "Sender email:",
+        sender_email,
+        flush=True
+    )
+
+    print(
+        "App password found: YES",
+        flush=True
+    )
+
+    print(
+        "App password length:",
+        len(sender_password),
+        flush=True
+    )
+
+
+    # ==================================================
+    # EMAIL SUBJECT + BODY
+    # ==================================================
+
+    if status == "VERIFIED":
+
+        subject = (
+            "MMIT Freshers Party 2026 - "
+            "Payment Verified"
+        )
+
+        body = f"""
+Hello {student_name},
+
+Your payment for MMIT Freshers Party 2026
+has been successfully verified.
+
+Registration No: {registration_id}
+Amount: ₹{amount}
+Payment Status: VERIFIED
+
+Your registration is now confirmed.
+
+Please keep this email for your records.
+
+Regards,
+MMIT Freshers Party 2026
+MMIT Kushinagar
+"""
+
+
+    elif status == "REJECTED":
+
+        subject = (
+            "MMIT Freshers Party 2026 - "
+            "Payment Rejected"
+        )
+
+        body = f"""
+Hello {student_name},
+
+Your submitted payment for MMIT Freshers Party 2026
+could not be verified.
+
+Registration No: {registration_id}
+Amount: ₹{amount}
+Payment Status: REJECTED
+
+Please contact the event administrator
+and provide the correct payment details.
+
+Regards,
+MMIT Freshers Party 2026
+MMIT Kushinagar
+"""
+
+
+    else:
+
+        print(
+            "❌ ERROR: Invalid email status:",
+            status,
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        return False
+
+
+    # ==================================================
+    # CREATE EMAIL MESSAGE
+    # ==================================================
+
+    try:
+
+        print(
+            "Creating email message...",
+            flush=True
+        )
+
+        message = EmailMessage()
+
+        message["Subject"] = subject
+
+        message["From"] = sender_email
+
+        message["To"] = recipient_email
+
+        message.set_content(body)
+
+        print(
+            "Email message created successfully.",
+            flush=True
+        )
+
+
+        # ==================================================
+        # CONNECT TO GMAIL SMTP
+        # ==================================================
+
+        print(
+            "Connecting to Gmail SMTP...",
+            flush=True
+        )
+
+        print(
+            "SMTP Host: smtp.gmail.com",
+            flush=True
+        )
+
+        print(
+            "SMTP Port: 587",
+            flush=True
+        )
+
+
+        with smtplib.SMTP(
+            "smtp.gmail.com",
+            587,
+            timeout=30
+        ) as server:
+
+            print(
+                "SMTP connection established.",
+                flush=True
+            )
+
+
+            # ==================================================
+            # EHLO
+            # ==================================================
+
+            print(
+                "Sending EHLO...",
+                flush=True
+            )
+
+            server.ehlo()
+
+            print(
+                "EHLO successful.",
+                flush=True
+            )
+
+
+            # ==================================================
+            # START TLS
+            # ==================================================
+
+            print(
+                "Starting TLS...",
+                flush=True
+            )
+
+            server.starttls()
+
+            print(
+                "TLS started successfully.",
+                flush=True
+            )
+
+
+            # ==================================================
+            # SECOND EHLO
+            # ==================================================
+
+            print(
+                "Sending EHLO after TLS...",
+                flush=True
+            )
+
+            server.ehlo()
+
+            print(
+                "EHLO after TLS successful.",
+                flush=True
+            )
+
+
+            # ==================================================
+            # LOGIN
+            # ==================================================
+
+            print(
+                "Logging into Gmail...",
+                flush=True
+            )
+
+            server.login(
+                sender_email,
+                sender_password
+            )
+
+            print(
+                "✅ Gmail login successful.",
+                flush=True
+            )
+
+
+            # ==================================================
+            # SEND EMAIL
+            # ==================================================
+
+            print(
+                "Sending email...",
+                flush=True
+            )
+
+            server.send_message(
+                message
+            )
+
+            print(
+                "✅ EMAIL SENT SUCCESSFULLY!",
+                flush=True
+            )
+
+            print(
+                "Email sent to:",
+                recipient_email,
+                flush=True
+            )
+
+
+        # ==================================================
+        # SUCCESS
+        # ==================================================
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "========== EMAIL DEBUG END ==========",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return True
+
+
+    # ==================================================
+    # EMAIL ERROR
+    # ==================================================
+
+    except smtplib.SMTPAuthenticationError as e:
+
+        print("", flush=True)
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "❌ GMAIL AUTHENTICATION ERROR",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "Gmail rejected the email/password.",
+            flush=True
+        )
+
+        print(
+            "Check EMAIL_ADDRESS and EMAIL_APP_PASSWORD.",
+            flush=True
+        )
+
+        print(
+            "Error:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return False
+
+
+    except smtplib.SMTPConnectError as e:
+
+        print("", flush=True)
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "❌ SMTP CONNECTION ERROR",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "Could not connect to Gmail SMTP server.",
+            flush=True
+        )
+
+        print(
+            "Error:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return False
+
+
+    except smtplib.SMTPException as e:
+
+        print("", flush=True)
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "❌ SMTP ERROR",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "Error:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return False
+
+
+    except Exception as e:
+
+        print("", flush=True)
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "❌ EMAIL ERROR",
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        print(
+            "Email sending error:",
+            repr(e),
+            flush=True
+        )
+
+        print(
+            "Error type:",
+            type(e).__name__,
+            flush=True
+        )
+
+        print(
+            "==========================================",
+            flush=True
+        )
+
+        return False
 
 
 # ==================================================
@@ -62,11 +658,6 @@ def create_database():
 
     # ==================================================
     # CREATE TABLE
-    # ==================================================
-    # NOTE:
-    # roll_number column database me rakha gaya hai.
-    # Webpage se roll number hata diya gaya hai.
-    # Student ke liye automatically "N/A" save hoga.
     # ==================================================
 
     cursor.execute("""
@@ -99,7 +690,7 @@ def create_database():
 
 
     # ==================================================
-    # NEW COLUMNS
+    # ADD NEW COLUMNS
     # ==================================================
 
     cursor.execute("""
@@ -129,11 +720,17 @@ try:
 
     create_database()
 
+    print(
+        "✅ Database initialized successfully.",
+        flush=True
+    )
+
 except Exception as e:
 
     print(
-        "Database initialization error:",
-        e
+        "❌ Database initialization error:",
+        repr(e),
+        flush=True
     )
 
 
@@ -161,6 +758,7 @@ def register():
 
     if request.method == "POST":
 
+
         # ==================================================
         # BASIC DETAILS
         # ==================================================
@@ -177,9 +775,6 @@ def register():
 
         # ==================================================
         # ROLL NUMBER
-        # ==================================================
-        # Roll Number webpage se hata diya gaya hai.
-        # Database column ke liye automatically N/A save hoga.
         # ==================================================
 
         roll_number = "N/A"
@@ -225,9 +820,10 @@ def register():
 
         if participant_type == "Student":
 
-            # ----------------------------------------------
+
+            # ==================================================
             # VALID YEAR
-            # ----------------------------------------------
+            # ==================================================
 
             if year not in [
                 "1st Year",
@@ -254,9 +850,9 @@ def register():
                 """
 
 
-            # ----------------------------------------------
+            # ==================================================
             # STUDENT PAYMENT
-            # ----------------------------------------------
+            # ==================================================
 
             if year == "1st Year":
 
@@ -267,9 +863,9 @@ def register():
                 payment_amount = Decimal("300")
 
 
-            # ----------------------------------------------
+            # ==================================================
             # BRANCH VALIDATION
-            # ----------------------------------------------
+            # ==================================================
 
             if not branch:
 
@@ -298,6 +894,7 @@ def register():
 
         elif participant_type == "Teacher":
 
+
             if not teacher_amount:
 
                 return """
@@ -324,6 +921,7 @@ def register():
                 payment_amount = Decimal(
                     teacher_amount
                 )
+
 
             except InvalidOperation:
 
@@ -367,12 +965,8 @@ def register():
                 """
 
 
-            # Teacher ke liye year database me Teacher save hoga
             year = "Teacher"
 
-
-            # Teacher ke liye branch agar empty hai
-            # to Teacher save hoga
 
             if not branch:
 
@@ -447,7 +1041,6 @@ def register():
 
             name,
 
-            # Database column ke liye N/A
             roll_number,
 
             year,
@@ -501,7 +1094,7 @@ def register():
 
 
     # ==================================================
-    # GET REQUEST
+    # GET
     # ==================================================
 
     return render_template(
@@ -664,7 +1257,9 @@ def save_payment():
     )
 
 
-    screenshot.save(filepath)
+    screenshot.save(
+        filepath
+    )
 
 
     # ==================================================
@@ -680,15 +1275,11 @@ def save_payment():
         UPDATE students
 
         SET
-
             payment_status = %s,
-
             utr = %s,
-
             payment_screenshot = %s
 
         WHERE id = %s
-
     """, (
 
         "SUBMITTED",
@@ -754,6 +1345,7 @@ def payment_status():
 
     if request.method == "POST":
 
+
         utr = request.form.get(
             "utr",
             ""
@@ -809,31 +1401,20 @@ def payment_status():
 
         cursor.execute("""
             SELECT
-
                 id,
-
                 name,
-
                 roll_number,
-
                 semester,
-
                 branch,
-
                 mobile,
-
                 utr,
-
                 payment_status,
-
                 participant_type,
-
                 payment_amount
 
             FROM students
 
             WHERE utr = %s
-
             AND mobile = %s
 
         """, (
@@ -872,7 +1453,7 @@ def payment_status():
 
 
         # ==================================================
-        # SHOW PAYMENT STATUS
+        # SHOW STATUS
         # ==================================================
 
         return render_template(
@@ -928,9 +1509,34 @@ def admin_login():
 
 
     ADMIN_PASSWORD = os.environ.get(
-        "ADMIN_PASSWORD",
-        "Rajnish@01#200674"
+        "ADMIN_PASSWORD"
     )
+
+
+    if not ADMIN_PASSWORD:
+
+        print(
+            "WARNING: ADMIN_PASSWORD is not configured in Render.",
+            flush=True
+        )
+
+        return """
+        <div style="
+            font-family: Arial;
+            text-align: center;
+            padding: 50px;
+        ">
+
+            <h2>
+                ❌ Admin password is not configured.
+            </h2>
+
+            <p>
+                Please set ADMIN_PASSWORD in Render Environment.
+            </p>
+
+        </div>
+        """
 
 
     if (
@@ -997,27 +1603,16 @@ def admin_dashboard():
 
     cursor.execute("""
         SELECT
-
             id,
-
             name,
-
             roll_number,
-
             semester,
-
             branch,
-
             mobile,
-
             utr,
-
             payment_status,
-
             payment_screenshot,
-
             participant_type,
-
             payment_amount
 
         FROM students
@@ -1075,9 +1670,33 @@ def admin_dashboard():
 )
 def verify_payment(student_id):
 
+    print("", flush=True)
+
+    print(
+        "==========================================",
+        flush=True
+    )
+
+    print(
+        "ADMIN VERIFY PAYMENT START",
+        flush=True
+    )
+
+    print(
+        "Student ID:",
+        student_id,
+        flush=True
+    )
+
+
     if not session.get(
         "admin_logged_in"
     ):
+
+        print(
+            "❌ Admin session not found.",
+            flush=True
+        )
 
         return redirect(
             "/admin"
@@ -1089,13 +1708,91 @@ def verify_payment(student_id):
     cursor = conn.cursor()
 
 
+    # ==================================================
+    # GET STUDENT EMAIL DETAILS
+    # ==================================================
+
+    print(
+        "Getting student details from database...",
+        flush=True
+    )
+
+
+    cursor.execute("""
+        SELECT
+            name,
+            email,
+            payment_amount
+
+        FROM students
+
+        WHERE id = %s
+    """, (
+
+        student_id,
+
+    ))
+
+
+    student = cursor.fetchone()
+
+
+    if student is None:
+
+        print(
+            "❌ Student not found.",
+            flush=True
+        )
+
+        cursor.close()
+
+        conn.close()
+
+        return "Student not found."
+
+
+    student_name = student[0]
+
+    student_email = student[1]
+
+    payment_amount = student[2]
+
+
+    print(
+        "Student name:",
+        student_name,
+        flush=True
+    )
+
+    print(
+        "Student email:",
+        repr(student_email),
+        flush=True
+    )
+
+    print(
+        "Payment amount:",
+        payment_amount,
+        flush=True
+    )
+
+
+    # ==================================================
+    # VERIFY PAYMENT
+    # ==================================================
+
+    print(
+        "Updating payment status to VERIFIED...",
+        flush=True
+    )
+
+
     cursor.execute("""
         UPDATE students
 
         SET payment_status = %s
 
         WHERE id = %s
-
     """, (
 
         "VERIFIED",
@@ -1107,9 +1804,67 @@ def verify_payment(student_id):
 
     conn.commit()
 
+
+    print(
+        "✅ Payment status saved as VERIFIED.",
+        flush=True
+    )
+
+
     cursor.close()
 
     conn.close()
+
+
+    # ==================================================
+    # SEND VERIFIED EMAIL
+    # ==================================================
+
+    print(
+        "Calling send_email_notification()...",
+        flush=True
+    )
+
+
+    email_result = send_email_notification(
+
+        recipient_email=student_email,
+
+        student_name=student_name,
+
+        registration_id=student_id,
+
+        amount=payment_amount,
+
+        status="VERIFIED"
+
+    )
+
+
+    if email_result:
+
+        print(
+            "✅ Verified email process completed successfully.",
+            flush=True
+        )
+
+    else:
+
+        print(
+            "⚠️ Verified payment saved, but email was NOT sent.",
+            flush=True
+        )
+
+
+    print(
+        "ADMIN VERIFY PAYMENT END",
+        flush=True
+    )
+
+    print(
+        "==========================================",
+        flush=True
+    )
 
 
     return redirect(
@@ -1127,6 +1882,25 @@ def verify_payment(student_id):
 )
 def reject_payment(student_id):
 
+    print("", flush=True)
+
+    print(
+        "==========================================",
+        flush=True
+    )
+
+    print(
+        "ADMIN REJECT PAYMENT START",
+        flush=True
+    )
+
+    print(
+        "Student ID:",
+        student_id,
+        flush=True
+    )
+
+
     if not session.get(
         "admin_logged_in"
     ):
@@ -1141,13 +1915,79 @@ def reject_payment(student_id):
     cursor = conn.cursor()
 
 
+    # ==================================================
+    # GET STUDENT EMAIL DETAILS
+    # ==================================================
+
+    cursor.execute("""
+        SELECT
+            name,
+            email,
+            payment_amount
+
+        FROM students
+
+        WHERE id = %s
+    """, (
+
+        student_id,
+
+    ))
+
+
+    student = cursor.fetchone()
+
+
+    if student is None:
+
+        print(
+            "❌ Student not found.",
+            flush=True
+        )
+
+        cursor.close()
+
+        conn.close()
+
+        return "Student not found."
+
+
+    student_name = student[0]
+
+    student_email = student[1]
+
+    payment_amount = student[2]
+
+
+    print(
+        "Student name:",
+        student_name,
+        flush=True
+    )
+
+    print(
+        "Student email:",
+        repr(student_email),
+        flush=True
+    )
+
+    print(
+        "Payment amount:",
+        payment_amount,
+        flush=True
+    )
+
+
+    # ==================================================
+    # REJECT PAYMENT
+    # ==================================================
+
     cursor.execute("""
         UPDATE students
 
         SET payment_status = %s
 
         WHERE id = %s
-
     """, (
 
         "REJECTED",
@@ -1159,9 +1999,67 @@ def reject_payment(student_id):
 
     conn.commit()
 
+
+    print(
+        "✅ Payment status saved as REJECTED.",
+        flush=True
+    )
+
+
     cursor.close()
 
     conn.close()
+
+
+    # ==================================================
+    # SEND REJECTED EMAIL
+    # ==================================================
+
+    print(
+        "Calling send_email_notification()...",
+        flush=True
+    )
+
+
+    email_result = send_email_notification(
+
+        recipient_email=student_email,
+
+        student_name=student_name,
+
+        registration_id=student_id,
+
+        amount=payment_amount,
+
+        status="REJECTED"
+
+    )
+
+
+    if email_result:
+
+        print(
+            "✅ Rejected email process completed successfully.",
+            flush=True
+        )
+
+    else:
+
+        print(
+            "⚠️ Rejected payment saved, but email was NOT sent.",
+            flush=True
+        )
+
+
+    print(
+        "ADMIN REJECT PAYMENT END",
+        flush=True
+    )
+
+    print(
+        "==========================================",
+        flush=True
+    )
 
 
     return redirect(
@@ -1194,25 +2092,15 @@ def payment_receipt(student_id):
 
     cursor.execute("""
         SELECT
-
             id,
-
             name,
-
             roll_number,
-
             semester,
-
             branch,
-
             mobile,
-
             utr,
-
             payment_status,
-
             participant_type,
-
             payment_amount
 
         FROM students
@@ -1220,7 +2108,9 @@ def payment_receipt(student_id):
         WHERE id = %s
 
     """, (
+
         student_id,
+
     ))
 
 
@@ -1294,25 +2184,15 @@ def student_receipt(student_id):
 
     cursor.execute("""
         SELECT
-
             id,
-
             name,
-
             roll_number,
-
             semester,
-
             branch,
-
             mobile,
-
             utr,
-
             payment_status,
-
             participant_type,
-
             payment_amount
 
         FROM students
@@ -1320,7 +2200,9 @@ def student_receipt(student_id):
         WHERE id = %s
 
     """, (
+
         student_id,
+
     ))
 
 
