@@ -5,15 +5,10 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Payment | MMIT Freshers Party 2026
-    </title>
-
+    <title>Payment | MMIT Freshers Party 2026</title>
 
     <style>
 
@@ -22,7 +17,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -141,15 +135,11 @@
 
             height: auto;
 
-            min-height: 280px;
-
             border-radius: 10px;
 
             background: white;
 
             padding: 10px;
-
-            object-fit: contain;
 
         }
 
@@ -196,6 +186,8 @@
 
             font-weight: bold;
 
+            word-break: break-all;
+
         }
 
 
@@ -213,12 +205,67 @@
 
             cursor: pointer;
 
+            font-weight: bold;
+
         }
 
 
         .copy-button:hover {
 
             background: #0f172a;
+
+        }
+
+
+        /* =================================
+           PAY VIA UPI BUTTON
+           ================================= */
+
+        .upi-pay-button {
+
+            width: 100%;
+
+            padding: 16px;
+
+            margin-top: 20px;
+
+            border: none;
+
+            border-radius: 30px;
+
+            background: #16a34a;
+
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            display: block;
+
+            text-align: center;
+
+        }
+
+
+        .upi-pay-button:hover {
+
+            background: #15803d;
+
+        }
+
+
+        .upi-pay-info {
+
+            margin-top: 10px;
+
+            font-size: 13px;
+
+            color: #666;
 
         }
 
@@ -238,27 +285,6 @@
             border-radius: 8px;
 
             color: #555;
-
-            line-height: 1.6;
-
-        }
-
-
-        .success-note {
-
-            margin-top: 15px;
-
-            padding: 12px;
-
-            background: #dcfce7;
-
-            border: 1px solid #86efac;
-
-            color: #166534;
-
-            border-radius: 8px;
-
-            font-weight: bold;
 
         }
 
@@ -316,44 +342,42 @@
         }
 
 
-        .qr-loading {
+        .notice {
 
-            width: 280px;
+            margin-top: 15px;
 
-            max-width: 100%;
+            padding: 12px;
 
-            height: 280px;
+            border-radius: 8px;
 
-            margin: auto;
+            background: #fef2f2;
 
-            display: flex;
+            color: #991b1b;
 
-            align-items: center;
+            font-size: 14px;
 
-            justify-content: center;
-
-            background: white;
-
-            border-radius: 10px;
-
-            color: #64748b;
-
-            font-weight: bold;
+            display: none;
 
         }
 
 
-        @media (max-width: 600px) {
+        @media (max-width: 500px) {
 
             .container {
 
-                padding: 25px 18px;
+                padding: 22px 15px;
 
             }
 
             .amount {
 
-                font-size: 30px;
+                font-size: 32px;
+
+            }
+
+            .qr-code {
+
+                width: 250px;
 
             }
 
@@ -370,7 +394,9 @@
 <div class="container">
 
 
-    <!-- COLLEGE IMAGE -->
+    <!-- =====================================
+         COLLEGE IMAGE
+         ===================================== -->
 
     <img
         src="{{ url_for(
@@ -382,7 +408,9 @@
     >
 
 
-    <!-- TITLE -->
+    <!-- =====================================
+         TITLE
+         ===================================== -->
 
     <h1>
         💳 Payment
@@ -394,7 +422,9 @@
     </p>
 
 
-    <!-- REGISTRATION DETAILS -->
+    <!-- =====================================
+         REGISTRATION DETAILS
+         ===================================== -->
 
     <div class="registration-box">
 
@@ -446,7 +476,9 @@
     </div>
 
 
-    <!-- PAYMENT QR SECTION -->
+    <!-- =====================================
+         PAYMENT SECTION
+         ===================================== -->
 
     <div class="qr-section">
 
@@ -456,7 +488,9 @@
         </h2>
 
 
-        <!-- DYNAMIC AMOUNT -->
+        <!-- =================================
+             DYNAMIC AMOUNT
+             ================================= -->
 
         <div class="amount">
 
@@ -465,20 +499,23 @@
         </div>
 
 
-        <!-- QR CODE -->
+        <!-- =================================
+             QR CODE
+             ================================= -->
 
-        <div id="qrContainer">
+        <img
+            src="{{ url_for(
+                'static',
+                filename='images/qr.jpeg'
+            ) }}"
+            class="qr-code"
+            alt="Payment QR Code"
+        >
 
-            <div class="qr-loading">
 
-                ⏳ Generating Payment QR...
-
-            </div>
-
-        </div>
-
-
-        <!-- UPI ID -->
+        <!-- =================================
+             UPI ID
+             ================================= -->
 
         <div class="upi-box">
 
@@ -504,20 +541,50 @@
         </div>
 
 
-        <!-- SUCCESS NOTE -->
+        <!-- =================================
+             PAY VIA UPI BUTTON
+             ================================= -->
 
-        <div class="success-note">
+        <a
+            href="#"
+            id="upiPayButton"
+            class="upi-pay-button"
+            onclick="payViaUPI(event)"
+        >
 
-            ✅ QR scan करने पर
-            <strong>
-                ₹{{ amount }}
-            </strong>
-            payment amount automatically दिखाई देगा।
+            💳 Pay ₹{{ amount }} via UPI
+
+        </a>
+
+
+        <div class="upi-pay-info">
+
+            📱 Mobile में button दबाने पर
+            UPI app खुलने की कोशिश होगी और
+            amount automatically भरा जाएगा।
 
         </div>
 
 
-        <!-- INSTRUCTIONS -->
+        <!-- =================================
+             NOTICE
+             ================================= -->
+
+        <div
+            id="upiNotice"
+            class="notice"
+        >
+
+            अगर UPI app नहीं खुलता है,
+            तो QR code scan करें या UPI ID
+            copy करके payment करें।
+
+        </div>
+
+
+        <!-- =================================
+             PAYMENT INSTRUCTIONS
+             ================================= -->
 
         <div class="instruction">
 
@@ -530,37 +597,32 @@
             <br><br>
 
 
-            1. ऊपर दिए गए QR को scan करें।
+            1. ऊपर दिए गए QR को scan करें
+            या <strong>Pay via UPI</strong>
+            button दबाएँ।
 
 
             <br>
 
 
-            2. QR scan करने के बाद
+            2. केवल
             <strong>
                 ₹{{ amount }}
             </strong>
-            amount automatically भर जाएगा।
+            payment करें।
 
 
             <br>
 
 
-            3. Payment करने से पहले
-            amount और UPI ID जरूर check करें।
-
-
-            <br>
-
-
-            4. Payment complete होने के बाद
+            3. Payment complete होने के बाद
             UTR / Transaction ID संभालकर रखें।
 
 
             <br>
 
 
-            5. नीचे दिए गए button पर click करके
+            4. नीचे दिए गए button पर click करके
             UTR और payment screenshot submit करें।
 
 
@@ -570,7 +632,9 @@
     </div>
 
 
-    <!-- PAYMENT SUBMIT -->
+    <!-- =====================================
+         PAYMENT SUBMIT BUTTON
+         ===================================== -->
 
     <a
         href="/payment-submit/{{ registration_no }}"
@@ -582,7 +646,9 @@
     </a>
 
 
-    <!-- BACK -->
+    <!-- =====================================
+         BACK HOME
+         ===================================== -->
 
     <a
         href="/"
@@ -600,223 +666,239 @@
 <script>
 
 
-/* ==================================================
-   PAYMENT DETAILS
-================================================== */
+/* ==========================================
+   UPI DETAILS
+   ========================================== */
+
+const UPI_ID = "prasadrajnish76-1@oksbi";
+
+const UPI_NAME = "MMIT Freshers Party 2026";
 
 
-/*
-   IMPORTANT:
+/* ==========================================
+   AMOUNT FROM FLASK
+   ========================================== */
 
-   Ye UPI ID tumhari actual payment UPI ID hai.
-*/
-
-const UPI_ID =
-    "prasadrajnish76-1@oksbi";
+const PAYMENT_AMOUNT = "{{ amount }}";
 
 
-/*
-   Student ka amount Flask se aa raha hai.
-
-   Example:
-
-   199
-   300
-   500
-
-*/
-
-const PAYMENT_AMOUNT =
-    "{{ amount }}";
-
-
-/*
-   Student ka naam
-*/
-
-const STUDENT_NAME =
-    "{{ student_name }}";
-
-
-/*
-   Registration number
-*/
-
-const REGISTRATION_NO =
-    "{{ registration_no }}";
-
-
-/* ==================================================
+/* ==========================================
    CREATE UPI PAYMENT LINK
-================================================== */
+   ========================================== */
 
-
-/*
-   UPI payment URL:
-
-   pa = UPI ID
-   pn = Payee Name
-   am = Amount
-   cu = Currency
-*/
-
-const upiPaymentLink =
-
-    "upi://pay" +
-
-    "?pa=" +
-    encodeURIComponent(UPI_ID) +
-
-    "&pn=" +
-    encodeURIComponent(
-        "MMIT Freshers Party 2026"
-    ) +
-
-    "&am=" +
-    encodeURIComponent(
-        PAYMENT_AMOUNT
-    ) +
-
-    "&cu=INR" +
-
-    "&tn=" +
-    encodeURIComponent(
-        "MMIT Freshers Party Registration " +
-        REGISTRATION_NO
-    );
-
-
-/* ==================================================
-   GENERATE DYNAMIC QR
-================================================== */
-
-
-function generateQR() {
-
-
-    const qrContainer =
-        document.getElementById(
-            "qrContainer"
-        );
+function createUPILink() {
 
 
     /*
-       QR Code API
+     * UPI payment format:
+     *
+     * upi://pay
+     * ?pa=UPI_ID
+     * &pn=NAME
+     * &am=AMOUNT
+     * &cu=INR
+     */
 
-       Isme actual UPI payment link
-       QR ke andar encode hota hai.
-    */
+
+    const amount = parseFloat(
+        PAYMENT_AMOUNT
+    );
 
 
-    const qrUrl =
+    if (
+        isNaN(amount) ||
+        amount <= 0
+    ) {
 
-        "https://api.qrserver.com/v1/create-qr-code/" +
+        return null;
 
-        "?size=500x500" +
+    }
 
-        "&margin=10" +
 
-        "&data=" +
+    const upiLink =
+        "upi://pay" +
 
+        "?pa=" +
         encodeURIComponent(
-            upiPaymentLink
-        );
+            UPI_ID
+        ) +
+
+        "&pn=" +
+        encodeURIComponent(
+            UPI_NAME
+        ) +
+
+        "&am=" +
+        encodeURIComponent(
+            amount.toFixed(2)
+        ) +
+
+        "&cu=INR";
 
 
-    const qrImage =
-        document.createElement(
-            "img"
-        );
-
-
-    qrImage.src = qrUrl;
-
-    qrImage.className =
-        "qr-code";
-
-    qrImage.alt =
-        "MMIT Freshers Party Payment QR";
-
-
-    qrImage.onload =
-        function() {
-
-            qrContainer.innerHTML = "";
-
-            qrContainer.appendChild(
-                qrImage
-            );
-
-        };
-
-
-    qrImage.onerror =
-        function() {
-
-            qrContainer.innerHTML =
-
-                "<div style='" +
-                "padding:25px;" +
-                "color:#dc2626;" +
-                "background:white;" +
-                "border-radius:10px;" +
-                "'>" +
-
-                "❌ QR Code load नहीं हो सका।" +
-
-                "<br><br>" +
-
-                "कृपया internet connection check करें।" +
-
-                "</div>";
-
-        };
-
+    return upiLink;
 
 }
 
 
-/* ==================================================
-   COPY UPI
-================================================== */
+/* ==========================================
+   PAY VIA UPI
+   ========================================== */
 
+function payViaUPI(event) {
+
+
+    event.preventDefault();
+
+
+    const upiLink =
+        createUPILink();
+
+
+    if (!upiLink) {
+
+        alert(
+            "Payment amount invalid है।"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Mobile browser में UPI app
+     * खोलने की कोशिश।
+     */
+
+
+    window.location.href =
+        upiLink;
+
+
+    /*
+     * अगर app नहीं खुलता तो
+     * थोड़ी देर बाद notice दिखाएँ।
+     */
+
+
+    setTimeout(
+        function() {
+
+            document.getElementById(
+                "upiNotice"
+            ).style.display = "block";
+
+        },
+        2500
+    );
+
+}
+
+
+/* ==========================================
+   COPY UPI ID
+   ========================================== */
 
 function copyUPI() {
 
 
-    navigator.clipboard.writeText(
-        UPI_ID
-    )
+    if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+    ) {
 
-    .then(
-        function() {
 
-            alert(
-                "UPI ID copied successfully!"
-            );
+        navigator.clipboard.writeText(
+            UPI_ID
+        )
 
-        }
-    )
+        .then(
+            function() {
 
-    .catch(
-        function() {
+                alert(
+                    "UPI ID copied successfully!"
+                );
 
-            alert(
-                "UPI ID copy नहीं हो सकी।"
-            );
+            }
+        )
 
-        }
-    );
+        .catch(
+            function() {
+
+                fallbackCopyUPI();
+
+            }
+        );
+
+
+    } else {
+
+        fallbackCopyUPI();
+
+    }
 
 }
 
 
-/* ==================================================
-   START QR GENERATION
-================================================== */
+/* ==========================================
+   FALLBACK COPY
+   ========================================== */
+
+function fallbackCopyUPI() {
 
 
-generateQR();
+    const textarea =
+        document.createElement(
+            "textarea"
+        );
+
+
+    textarea.value =
+        UPI_ID;
+
+
+    textarea.style.position =
+        "fixed";
+
+    textarea.style.left =
+        "-9999px";
+
+
+    document.body.appendChild(
+        textarea
+    );
+
+
+    textarea.select();
+
+
+    try {
+
+        document.execCommand(
+            "copy"
+        );
+
+
+        alert(
+            "UPI ID copied successfully!"
+        );
+
+
+    } catch (error) {
+
+        alert(
+            "UPI ID copy नहीं हो सकी।"
+        );
+
+    }
+
+
+    document.body.removeChild(
+        textarea
+    );
+
+}
 
 
 </script>
