@@ -1,3 +1,6 @@
+# Updated `payment.html`
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -476,22 +479,18 @@
 
 
         <!-- =================================
-             QR CODE
+             DYNAMIC UPI QR CODE
              ================================= -->
 
         <img
-            src="{{ url_for(
-                'static',
-                filename='images/qr.jpeg'
-            ) }}"
+            id="dynamicQRCode"
             class="qr-code"
-            alt="Payment QR Code"
+            alt="Dynamic Payment QR Code"
         >
 
 
         <!-- =================================
              UPI ID
-             COPY BUTTON REMOVED
              ================================= -->
 
         <div class="upi-box">
@@ -524,7 +523,7 @@
         <div class="upi-pay-info">
 
             📱 Mobile में button दबाने पर
-            UPI app खुलने की कोशिश होगी और
+            UPI app खुलेगा और
             amount automatically भरा जाएगा।
 
         </div>
@@ -540,7 +539,7 @@
         >
 
             अगर UPI app नहीं खुलता है,
-            तो QR code scan करके payment करें।
+            तो QR code scan करें।
 
         </div>
 
@@ -626,6 +625,13 @@
 </div>
 
 
+<!-- =========================================
+     QR CODE LIBRARY
+     ========================================= -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
 <script>
 
 
@@ -633,16 +639,20 @@
    UPI DETAILS
    ========================================== */
 
-const UPI_ID = "prasadrajnish76-1@oksbi";
+const UPI_ID =
+    "prasadrajnish76-1@oksbi";
 
-const UPI_NAME = "MMIT Freshers Party 2026";
+
+const UPI_NAME =
+    "MMIT Freshers Party 2026";
 
 
 /* ==========================================
    AMOUNT FROM FLASK
    ========================================== */
 
-const PAYMENT_AMOUNT = "{{ amount }}";
+const PAYMENT_AMOUNT =
+    "{{ amount }}";
 
 
 /* ==========================================
@@ -652,9 +662,10 @@ const PAYMENT_AMOUNT = "{{ amount }}";
 function createUPILink() {
 
 
-    const amount = parseFloat(
-        PAYMENT_AMOUNT
-    );
+    const amount =
+        parseFloat(
+            PAYMENT_AMOUNT
+        );
 
 
     if (
@@ -668,6 +679,7 @@ function createUPILink() {
 
 
     const upiLink =
+
         "upi://pay" +
 
         "?pa=" +
@@ -689,6 +701,91 @@ function createUPILink() {
 
 
     return upiLink;
+
+}
+
+
+/* ==========================================
+   GENERATE DYNAMIC QR
+   ========================================== */
+
+function generateDynamicQR() {
+
+
+    const upiLink =
+        createUPILink();
+
+
+    if (!upiLink) {
+
+        console.error(
+            "Invalid payment amount."
+        );
+
+        return;
+
+    }
+
+
+    const qrContainer =
+        document.getElementById(
+            "dynamicQRCode"
+        );
+
+
+    if (!qrContainer) {
+
+        return;
+
+    }
+
+
+    /*
+     * Temporary container
+     */
+
+    const qrWrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    qrWrapper.style.width =
+        "280px";
+
+    qrWrapper.style.height =
+        "280px";
+
+    qrWrapper.style.margin =
+        "0 auto";
+
+
+    qrContainer.parentNode.insertBefore(
+        qrWrapper,
+        qrContainer
+    );
+
+
+    qrContainer.remove();
+
+
+    /*
+     * Generate QR
+     */
+
+    new QRCode(
+        qrWrapper,
+        {
+            text: upiLink,
+
+            width: 260,
+
+            height: 260,
+
+            correctLevel:
+                QRCode.CorrectLevel.H
+        }
+    );
 
 }
 
@@ -729,7 +826,7 @@ function payViaUPI(event) {
 
     /*
      * अगर app नहीं खुलता तो
-     * थोड़ी देर बाद notice दिखाएँ।
+     * notice दिखाएँ।
      */
 
     setTimeout(
@@ -737,7 +834,8 @@ function payViaUPI(event) {
 
             document.getElementById(
                 "upiNotice"
-            ).style.display = "block";
+            ).style.display =
+                "block";
 
         },
         2500
@@ -746,9 +844,24 @@ function payViaUPI(event) {
 }
 
 
+/* ==========================================
+   GENERATE QR WHEN PAGE LOADS
+   ========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        generateDynamicQR();
+
+    }
+);
+
+
 </script>
 
 
 </body>
 
 </html>
+```
