@@ -9,6 +9,7 @@ from flask import (
     redirect as flask_redirect,
 )
 import os
+import re
 import psycopg2
 import requests
 from decimal import Decimal, InvalidOperation
@@ -725,6 +726,15 @@ def create_database():
         ADD COLUMN IF NOT EXISTS payment_amount NUMERIC(10,2)
     """)
 
+    # Duplicate UTR protection:
+    # the same non-empty UTR can belong to only one registration.
+    cursor.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS
+        idx_students_utr_unique
+        ON students (LOWER(TRIM(utr)))
+        WHERE utr IS NOT NULL AND TRIM(utr) <> ''
+    """)
+
     conn.commit()
 
     cursor.close()
@@ -1033,16 +1043,32 @@ def save_payment():
         "payment_screenshot"
     )
 
-    if not student_id:
+    # ------------------------------------------
+    # BASIC VALIDATION
+    # ------------------------------------------
 
+    if not student_id:
         return (
             "❌ Student ID is missing."
         )
 
     if not utr:
-
         return (
             "❌ UTR / Transaction ID is required. "
+            "<a href='javascript:history.back()'>Back</a>"
+        )
+
+    # UTR should be reasonably short and contain
+    # only common transaction-ID characters.
+    if len(utr) < 6 or len(utr) > 100:
+        return (
+            "❌ Invalid UTR / Transaction ID length. "
+            "<a href='javascript:history.back()'>Back</a>"
+        )
+
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", utr):
+        return (
+            "❌ Invalid UTR / Transaction ID format. "
             "<a href='javascript:history.back()'>Back</a>"
         )
 
@@ -1050,42 +1076,155 @@ def save_payment():
         screenshot is None
         or screenshot.filename == ""
     ):
-
         return (
             "❌ Payment screenshot is required. "
             "<a href='javascript:history.back()'>Back</a>"
         )
 
     # ------------------------------------------
-    # CHECK REGISTRATION
+    # CHECK REGISTRATION + SERVER-SIDE AMOUNT
     # ------------------------------------------
 
     conn = get_db_connection()
-
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT id FROM students WHERE id = %s",
-        (student_id,)
-    )
+    cursor.execute("""
+        SELECT
+            id,
+            name,
+            email,
+            payment_amount,
+            payment_status,
+            utr
+        FROM students
+        WHERE id = %s
+    """, (
+        student_id,
+    ))
 
-    exists = cursor.fetchone()
+    student = cursor.fetchone()
 
-    cursor.close()
-
-    conn.close()
-
-    if not exists:
+    if student is None:
+        cursor.close()
+        conn.close()
 
         return (
             "❌ Registration not found."
         )
 
-    filename = None
+    stored_amount = student[3]
+    current_status = student[4]
+    existing_utr = student[5]
+
+    # The payable amount comes ONLY from the database.
+    # Do not trust any amount supplied by the browser.
+    if stored_amount is None:
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ Payment amount is not configured for this registration."
+        )
+
+    try:
+        expected_amount = Decimal(
+            str(stored_amount)
+        ).quantize(Decimal("0.01"))
+    except (InvalidOperation, ValueError):
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ Invalid payment amount configured."
+        )
+
+    # ------------------------------------------
+    # BLOCK ALREADY SUBMITTED / VERIFIED RECORDS
+    # ------------------------------------------
+
+    if current_status in (
+        "SUBMITTED",
+        "VERIFIED"
+    ):
+        cursor.close()
+        conn.close()
+
+        return (
+            "⚠️ Payment details for this registration "
+            "have already been submitted/verified."
+        )
+
+    # ------------------------------------------
+    # DUPLICATE UTR CHECK
+    # ------------------------------------------
+
+    cursor.execute("""
+        SELECT
+            id,
+            name,
+            payment_status
+        FROM students
+        WHERE LOWER(TRIM(utr)) = LOWER(TRIM(%s))
+          AND id <> %s
+        LIMIT 1
+    """, (
+        utr,
+        student_id,
+    ))
+
+    duplicate = cursor.fetchone()
+
+    if duplicate is not None:
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ This UTR / Transaction ID has already "
+            "been submitted for another registration. "
+            "Please enter the correct UTR."
+        )
+
+    # ------------------------------------------
+    # FILE VALIDATION
+    # ------------------------------------------
+
+    original_name = secure_filename(
+        screenshot.filename
+    )
+
+    if not original_name:
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ Invalid screenshot filename."
+        )
+
+    allowed_extensions = {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    }
+
+    extension = os.path.splitext(
+        original_name
+    )[1].lower()
+
+    if extension not in allowed_extensions:
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ Only JPG, JPEG, PNG or WEBP "
+            "payment screenshots are allowed."
+        )
 
     # ------------------------------------------
     # CLOUDINARY FIRST
     # ------------------------------------------
+
+    filename = None
 
     if CLOUDINARY_ENABLED:
 
@@ -1095,6 +1234,8 @@ def save_payment():
         )
 
         if not filename:
+            cursor.close()
+            conn.close()
 
             return (
                 "❌ Payment screenshot could not "
@@ -1106,16 +1247,6 @@ def save_payment():
     # ------------------------------------------
 
     else:
-
-        original_name = secure_filename(
-            screenshot.filename
-        )
-
-        if not original_name:
-
-            return (
-                "❌ Invalid screenshot filename."
-            )
 
         filename = (
             f"{student_id}_{original_name}"
@@ -1135,34 +1266,61 @@ def save_payment():
         )
 
     # ------------------------------------------
-    # DATABASE UPDATE
+    # SAVE PAYMENT SUBMISSION
     # ------------------------------------------
 
-    conn = get_db_connection()
+    try:
 
-    cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE students
+            SET
+                payment_status = %s,
+                utr = %s,
+                payment_screenshot = %s
+            WHERE id = %s
+              AND payment_status = 'PENDING'
+        """, (
+            "SUBMITTED",
+            utr,
+            filename,
+            student_id,
+        ))
 
-    cursor.execute("""
-        UPDATE students
-        SET
-            payment_status = %s,
-            utr = %s,
-            payment_screenshot = %s
-        WHERE id = %s
-    """, (
-        "SUBMITTED",
-        utr,
-        filename,
-        student_id,
-    ))
+        if cursor.rowcount != 1:
+            conn.rollback()
+            cursor.close()
+            conn.close()
 
-    conn.commit()
+            return (
+                "⚠️ Payment details could not be submitted. "
+                "Please refresh and try again."
+            )
+
+        conn.commit()
+
+    except psycopg2.errors.UniqueViolation:
+        conn.rollback()
+
+        cursor.close()
+        conn.close()
+
+        return (
+            "❌ This UTR / Transaction ID has already "
+            "been submitted."
+        )
+
+    except Exception:
+        conn.rollback()
+
+        cursor.close()
+        conn.close()
+
+        raise
 
     cursor.close()
-
     conn.close()
 
-    return """
+    return f"""
     <div style="
         font-family:Arial;
         text-align:center;
@@ -1173,6 +1331,14 @@ def save_payment():
 
         <p>
             आपका payment record successfully submit हो गया है।
+        </p>
+
+        <p>
+            <strong>Registration No:</strong> {student_id}
+        </p>
+
+        <p>
+            <strong>Expected Amount:</strong> ₹{expected_amount}
         </p>
 
         <p>
@@ -1187,6 +1353,7 @@ def save_payment():
 
     </div>
     """
+
 
 
 # ==================================================
