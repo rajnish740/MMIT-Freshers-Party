@@ -543,7 +543,7 @@
 
         .fee-box {
 
-            max-width: 500px;
+            max-width: 650px;
 
             margin: auto;
 
@@ -571,7 +571,7 @@
 
         .fee {
 
-            font-size: 55px;
+            font-size: 45px;
 
             font-weight: 900;
 
@@ -587,6 +587,70 @@
             color: #777;
 
             margin-bottom: 25px;
+
+        }
+
+
+        /* =========================
+           FEE DETAILS
+        ========================= */
+
+        .fee-details {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 15px;
+
+            margin: 25px 0;
+
+        }
+
+
+        .fee-card {
+
+            background: #eff6ff;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            border: 1px solid #dbeafe;
+
+        }
+
+
+        .fee-card h3 {
+
+            color: #172554;
+
+            font-size: 19px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .fee-card .amount {
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #2563eb;
+
+        }
+
+
+        .fee-card p {
+
+            color: #666;
+
+            font-size: 14px;
+
+            margin-top: 5px;
 
         }
 
@@ -807,7 +871,14 @@
 
             .fee {
 
-                font-size: 45px;
+                font-size: 40px;
+
+            }
+
+
+            .fee-details {
+
+                grid-template-columns: 1fr;
 
             }
 
@@ -1027,6 +1098,10 @@
 
 
 
+            <!-- =========================
+                 UPDATED REGISTRATION FEE
+            ========================== -->
+
             <div class="card">
 
                 <div class="card-icon">
@@ -1038,7 +1113,11 @@
                 </h3>
 
                 <p>
-                    ₹299 per student
+                    1st Year: ₹199
+                    <br>
+                    2nd Year: ₹300
+                    <br>
+                    3rd Year: ₹300
                 </p>
 
             </div>
@@ -1144,17 +1223,79 @@
             </div>
 
 
+            <!-- MAIN FEE DISPLAY -->
+
             <div class="fee">
 
-                ₹299
+                ₹199 / ₹300
 
             </div>
 
 
             <div class="fee-note">
 
-                Registration करके
-                अपनी seat confirm करें।
+                Year के अनुसार registration fee अलग है।
+
+            </div>
+
+
+            <!-- =========================
+                 YEAR WISE FEE
+            ========================== -->
+
+            <div class="fee-details">
+
+
+                <div class="fee-card">
+
+                    <h3>
+                        🎓 1st Year
+                    </h3>
+
+                    <div class="amount">
+                        ₹199
+                    </div>
+
+                    <p>
+                        Registration Fee
+                    </p>
+
+                </div>
+
+
+                <div class="fee-card">
+
+                    <h3>
+                        🎓 2nd Year
+                    </h3>
+
+                    <div class="amount">
+                        ₹300
+                    </div>
+
+                    <p>
+                        Registration Fee
+                    </p>
+
+                </div>
+
+
+                <div class="fee-card">
+
+                    <h3>
+                        🎓 3rd Year
+                    </h3>
+
+                    <div class="amount">
+                        ₹300
+                    </div>
+
+                    <p>
+                        Registration Fee
+                    </p>
+
+                </div>
+
 
             </div>
 
