@@ -34,7 +34,6 @@
             min-height: 100vh;
 
             padding: 30px 15px;
-
         }
 
 
@@ -53,7 +52,6 @@
             box-shadow:
                 0 10px 40px
                 rgba(0,0,0,0.12);
-
         }
 
 
@@ -70,7 +68,6 @@
             border-radius: 12px;
 
             margin: 0 auto 15px auto;
-
         }
 
 
@@ -83,7 +80,6 @@
             font-size: 30px;
 
             margin-bottom: 5px;
-
         }
 
 
@@ -94,14 +90,12 @@
             color: #666;
 
             margin-bottom: 30px;
-
         }
 
 
         .form-group {
 
             margin-bottom: 20px;
-
         }
 
 
@@ -114,7 +108,6 @@
             color: #333;
 
             margin-bottom: 8px;
-
         }
 
 
@@ -135,8 +128,8 @@
 
             transition:
                 border-color 0.2s,
-                box-shadow 0.2s;
-
+                box-shadow 0.2s,
+                background-color 0.2s;
         }
 
 
@@ -148,7 +141,6 @@
             box-shadow:
                 0 0 0 3px
                 rgba(37,99,235,0.10);
-
         }
 
 
@@ -160,7 +152,6 @@
                 1fr 1fr;
 
             gap: 15px;
-
         }
 
 
@@ -175,14 +166,12 @@
             margin: 25px 0;
 
             text-align: center;
-
         }
 
 
         .fee-box p {
 
             color: #555;
-
         }
 
 
@@ -193,7 +182,6 @@
             font-weight: bold;
 
             color: #2563eb;
-
         }
 
 
@@ -212,7 +200,6 @@
             color: #555;
 
             margin-top: 10px;
-
         }
 
 
@@ -235,14 +222,12 @@
             font-weight: bold;
 
             cursor: pointer;
-
         }
 
 
         button:hover {
 
             background: #1d4ed8;
-
         }
 
 
@@ -257,21 +242,38 @@
             color: #2563eb;
 
             text-decoration: none;
-
         }
 
 
-        /* EMAIL ERROR */
+        /* ==========================================
+           EMAIL ERROR
+        ========================================== */
 
         .input-error {
 
             border:
-                2px solid red !important;
+                2px solid #dc2626 !important;
+
+            background-color:
+                #fff5f5 !important;
 
             box-shadow:
                 0 0 0 3px
-                rgba(255,0,0,0.08) !important;
+                rgba(220,38,38,0.10) !important;
+        }
 
+
+        .field-error {
+
+            display: none;
+
+            color: #dc2626;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            margin-top: 6px;
         }
 
 
@@ -280,15 +282,12 @@
             .container {
 
                 padding: 25px 20px;
-
             }
 
             .row {
 
                 grid-template-columns: 1fr;
-
             }
-
         }
 
     </style>
@@ -340,9 +339,9 @@
 
         <div class="form-group">
 
-            <label>
+            <label for="name">
 
-                Full Name *
+                Full Name <span style="color:red;">*</span>
 
             </label>
 
@@ -361,9 +360,9 @@
 
         <div class="form-group">
 
-            <label>
+            <label for="participantType">
 
-                Registration Type *
+                Registration Type <span style="color:red;">*</span>
 
             </label>
 
@@ -406,9 +405,9 @@
 
             <div class="form-group">
 
-                <label>
+                <label for="year">
 
-                    Year *
+                    Year <span style="color:red;">*</span>
 
                 </label>
 
@@ -451,9 +450,9 @@
 
             <div class="form-group">
 
-                <label>
+                <label for="branch">
 
-                    Branch *
+                    Branch <span style="color:red;">*</span>
 
                 </label>
 
@@ -514,9 +513,10 @@
             style="display:none;"
         >
 
-            <label>
+            <label for="teacherAmount">
 
-                Teacher Payment Amount (₹) *
+                Teacher Payment Amount (₹)
+                <span style="color:red;">*</span>
 
             </label>
 
@@ -547,9 +547,9 @@
 
         <div class="form-group">
 
-            <label>
+            <label for="mobile">
 
-                Mobile Number *
+                Mobile Number <span style="color:red;">*</span>
 
             </label>
 
@@ -571,9 +571,9 @@
 
         <div class="form-group">
 
-            <label>
+            <label for="email">
 
-                Email Address *
+                Email Address <span style="color:red;">*</span>
 
             </label>
 
@@ -582,8 +582,16 @@
                 id="email"
                 name="email"
                 placeholder="Enter your email address"
+                autocomplete="email"
                 required
             >
+
+            <div
+                id="emailError"
+                class="field-error"
+            >
+                ❌ Email is required.
+            </div>
 
         </div>
 
@@ -592,9 +600,9 @@
 
         <div class="form-group">
 
-            <label>
+            <label for="gender">
 
-                Gender *
+                Gender <span style="color:red;">*</span>
 
             </label>
 
@@ -682,13 +690,12 @@
 </div>
 
 
-
 <script>
 
 
 /* ==================================================
    PARTICIPANT TYPE CHANGE
-   ================================================== */
+================================================== */
 
 function changeType() {
 
@@ -742,7 +749,7 @@ function changeType() {
 
     /* ==================================================
        STUDENT
-       ================================================== */
+    ================================================== */
 
     if (type === "Student") {
 
@@ -774,7 +781,7 @@ function changeType() {
 
     /* ==================================================
        TEACHER
-       ================================================== */
+    ================================================== */
 
     else if (type === "Teacher") {
 
@@ -807,7 +814,7 @@ function changeType() {
 
     /* ==================================================
        NOTHING SELECTED
-       ================================================== */
+    ================================================== */
 
     else {
 
@@ -836,10 +843,9 @@ function changeType() {
 }
 
 
-
 /* ==================================================
    STUDENT FEE
-   ================================================== */
+================================================== */
 
 function updateFee() {
 
@@ -898,10 +904,9 @@ function updateFee() {
 }
 
 
-
 /* ==================================================
    TEACHER FEE
-   ================================================== */
+================================================== */
 
 function updateTeacherFee() {
 
@@ -935,10 +940,9 @@ function updateTeacherFee() {
 }
 
 
-
 /* ==================================================
    EMAIL VALIDATION
-   ================================================== */
+================================================== */
 
 function validateEmail() {
 
@@ -947,20 +951,31 @@ function validateEmail() {
             "email"
         );
 
+    const emailError =
+        document.getElementById(
+            "emailError"
+        );
+
 
     const value =
         email.value.trim();
 
 
-    /*
-       Empty email
-    */
+    /* ------------------------------------------
+       EMPTY EMAIL
+    ------------------------------------------ */
 
     if (value === "") {
 
         email.classList.add(
             "input-error"
         );
+
+        emailError.textContent =
+            "❌ Email is required.";
+
+        emailError.style.display =
+            "block";
 
         email.focus();
 
@@ -969,9 +984,9 @@ function validateEmail() {
     }
 
 
-    /*
-       Email format
-    */
+    /* ------------------------------------------
+       EMAIL FORMAT
+    ------------------------------------------ */
 
     const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -983,6 +998,12 @@ function validateEmail() {
             "input-error"
         );
 
+        emailError.textContent =
+            "❌ Please enter a valid email address.";
+
+        emailError.style.display =
+            "block";
+
         email.focus();
 
         return false;
@@ -990,24 +1011,25 @@ function validateEmail() {
     }
 
 
-    /*
-       Valid email
-    */
+    /* ------------------------------------------
+       VALID EMAIL
+    ------------------------------------------ */
 
     email.classList.remove(
         "input-error"
     );
 
+    emailError.style.display =
+        "none";
 
     return true;
 
 }
 
 
-
 /* ==================================================
    EMAIL LIVE VALIDATION
-   ================================================== */
+================================================== */
 
 document
     .getElementById("email")
@@ -1018,14 +1040,31 @@ document
             const value =
                 this.value.trim();
 
+            const emailError =
+                document.getElementById(
+                    "emailError"
+                );
+
 
             const emailPattern =
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
+            if (value === "") {
+
+                this.classList.remove(
+                    "input-error"
+                );
+
+                emailError.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
             if (
-                value !== ""
-                &&
                 emailPattern.test(value)
             ) {
 
@@ -1033,23 +1072,47 @@ document
                     "input-error"
                 );
 
+                emailError.style.display =
+                    "none";
+
             }
 
         }
     );
 
 
+/* ==================================================
+   EMAIL BLUR VALIDATION
+================================================== */
+
+document
+    .getElementById("email")
+    .addEventListener(
+        "blur",
+        function () {
+
+            if (
+                this.value.trim() !== ""
+            ) {
+
+                validateEmail();
+
+            }
+
+        }
+    );
+
 
 /* ==================================================
    COMPLETE FORM VALIDATION
-   ================================================== */
+================================================== */
 
 function validateRegistrationForm() {
 
 
     /* ------------------------------------------
        EMAIL
-       ------------------------------------------ */
+    ------------------------------------------ */
 
     if (!validateEmail()) {
 
@@ -1060,7 +1123,7 @@ function validateRegistrationForm() {
 
     /* ------------------------------------------
        PARTICIPANT TYPE
-       ------------------------------------------ */
+    ------------------------------------------ */
 
     const type =
         document.getElementById(
@@ -1083,7 +1146,7 @@ function validateRegistrationForm() {
 
     /* ------------------------------------------
        STUDENT VALIDATION
-       ------------------------------------------ */
+    ------------------------------------------ */
 
     if (type === "Student") {
 
@@ -1129,7 +1192,7 @@ function validateRegistrationForm() {
 
     /* ------------------------------------------
        TEACHER VALIDATION
-       ------------------------------------------ */
+    ------------------------------------------ */
 
     if (type === "Teacher") {
 
@@ -1161,7 +1224,6 @@ function validateRegistrationForm() {
     return true;
 
 }
-
 
 </script>
 
