@@ -10,6 +10,7 @@
 
     <title>Registration | MMIT Freshers Party 2026</title>
 
+
     <style>
 
         * {
@@ -17,6 +18,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
 
         body {
 
@@ -34,6 +36,7 @@
             padding: 30px 15px;
 
         }
+
 
         .container {
 
@@ -53,6 +56,7 @@
 
         }
 
+
         .college-image {
 
             display: block;
@@ -69,6 +73,7 @@
 
         }
 
+
         h1 {
 
             text-align: center;
@@ -81,6 +86,7 @@
 
         }
 
+
         .subtitle {
 
             text-align: center;
@@ -91,11 +97,13 @@
 
         }
 
+
         .form-group {
 
             margin-bottom: 20px;
 
         }
+
 
         label {
 
@@ -108,6 +116,7 @@
             margin-bottom: 8px;
 
         }
+
 
         input,
         select {
@@ -124,7 +133,12 @@
 
             outline: none;
 
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
+
         }
+
 
         input:focus,
         select:focus {
@@ -137,6 +151,7 @@
 
         }
 
+
         .row {
 
             display: grid;
@@ -147,6 +162,7 @@
             gap: 15px;
 
         }
+
 
         .fee-box {
 
@@ -162,11 +178,13 @@
 
         }
 
+
         .fee-box p {
 
             color: #555;
 
         }
+
 
         .fee {
 
@@ -177,6 +195,7 @@
             color: #2563eb;
 
         }
+
 
         .teacher-note {
 
@@ -195,6 +214,7 @@
             margin-top: 10px;
 
         }
+
 
         button {
 
@@ -218,11 +238,13 @@
 
         }
 
+
         button:hover {
 
             background: #1d4ed8;
 
         }
+
 
         .back {
 
@@ -237,6 +259,21 @@
             text-decoration: none;
 
         }
+
+
+        /* EMAIL ERROR */
+
+        .input-error {
+
+            border:
+                2px solid red !important;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,0,0,0.08) !important;
+
+        }
+
 
         @media (max-width: 600px) {
 
@@ -295,6 +332,7 @@
     <form
         action="/register"
         method="POST"
+        onsubmit="return validateRegistrationForm()"
     >
 
 
@@ -311,6 +349,7 @@
             <input
                 type="text"
                 name="name"
+                id="name"
                 placeholder="Enter your full name"
                 required
             >
@@ -517,9 +556,11 @@
             <input
                 type="tel"
                 name="mobile"
+                id="mobile"
                 placeholder="Enter 10 digit mobile number"
                 pattern="[0-9]{10}"
                 maxlength="10"
+                inputmode="numeric"
                 required
             >
 
@@ -532,14 +573,16 @@
 
             <label>
 
-                Email Address
+                Email Address *
 
             </label>
 
             <input
                 type="email"
+                id="email"
                 name="email"
-                placeholder="Enter your email"
+                placeholder="Enter your email address"
+                required
             >
 
         </div>
@@ -557,6 +600,7 @@
 
             <select
                 name="gender"
+                id="gender"
                 required
             >
 
@@ -636,6 +680,7 @@
 
 
 </div>
+
 
 
 <script>
@@ -791,6 +836,7 @@ function changeType() {
 }
 
 
+
 /* ==================================================
    STUDENT FEE
    ================================================== */
@@ -852,6 +898,7 @@ function updateFee() {
 }
 
 
+
 /* ==================================================
    TEACHER FEE
    ================================================== */
@@ -886,6 +933,235 @@ function updateTeacherFee() {
     }
 
 }
+
+
+
+/* ==================================================
+   EMAIL VALIDATION
+   ================================================== */
+
+function validateEmail() {
+
+    const email =
+        document.getElementById(
+            "email"
+        );
+
+
+    const value =
+        email.value.trim();
+
+
+    /*
+       Empty email
+    */
+
+    if (value === "") {
+
+        email.classList.add(
+            "input-error"
+        );
+
+        email.focus();
+
+        return false;
+
+    }
+
+
+    /*
+       Email format
+    */
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if (!emailPattern.test(value)) {
+
+        email.classList.add(
+            "input-error"
+        );
+
+        email.focus();
+
+        return false;
+
+    }
+
+
+    /*
+       Valid email
+    */
+
+    email.classList.remove(
+        "input-error"
+    );
+
+
+    return true;
+
+}
+
+
+
+/* ==================================================
+   EMAIL LIVE VALIDATION
+   ================================================== */
+
+document
+    .getElementById("email")
+    .addEventListener(
+        "input",
+        function () {
+
+            const value =
+                this.value.trim();
+
+
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+            if (
+                value !== ""
+                &&
+                emailPattern.test(value)
+            ) {
+
+                this.classList.remove(
+                    "input-error"
+                );
+
+            }
+
+        }
+    );
+
+
+
+/* ==================================================
+   COMPLETE FORM VALIDATION
+   ================================================== */
+
+function validateRegistrationForm() {
+
+
+    /* ------------------------------------------
+       EMAIL
+       ------------------------------------------ */
+
+    if (!validateEmail()) {
+
+        return false;
+
+    }
+
+
+    /* ------------------------------------------
+       PARTICIPANT TYPE
+       ------------------------------------------ */
+
+    const type =
+        document.getElementById(
+            "participantType"
+        ).value;
+
+
+    if (!type) {
+
+        document
+            .getElementById(
+                "participantType"
+            )
+            .focus();
+
+        return false;
+
+    }
+
+
+    /* ------------------------------------------
+       STUDENT VALIDATION
+       ------------------------------------------ */
+
+    if (type === "Student") {
+
+        const year =
+            document.getElementById(
+                "year"
+            ).value;
+
+
+        const branch =
+            document.getElementById(
+                "branch"
+            ).value;
+
+
+        if (!year) {
+
+            document
+                .getElementById(
+                    "year"
+                )
+                .focus();
+
+            return false;
+
+        }
+
+
+        if (!branch) {
+
+            document
+                .getElementById(
+                    "branch"
+                )
+                .focus();
+
+            return false;
+
+        }
+
+    }
+
+
+    /* ------------------------------------------
+       TEACHER VALIDATION
+       ------------------------------------------ */
+
+    if (type === "Teacher") {
+
+        const teacherAmount =
+            document.getElementById(
+                "teacherAmount"
+            ).value;
+
+
+        if (
+            !teacherAmount
+            ||
+            Number(teacherAmount) <= 0
+        ) {
+
+            document
+                .getElementById(
+                    "teacherAmount"
+                )
+                .focus();
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
 
 </script>
 
