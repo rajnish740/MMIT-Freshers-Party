@@ -312,67 +312,43 @@ def send_email_notification(
 ):
 
     if not recipient_email:
-
         print("Student email missing.")
-
         return False
-
 
     recipient_email = recipient_email.strip()
 
-
     if not is_valid_email(recipient_email):
-
         print("Invalid student email.")
-
         return False
-
 
     brevo_api_key = os.environ.get(
         "BREVO_API_KEY",
         ""
     ).strip()
 
-
     sender_email = os.environ.get(
         "BREVO_SENDER_EMAIL",
         ""
     ).strip()
-
 
     sender_name = os.environ.get(
         "BREVO_SENDER_NAME",
         "MMIT Freshers Party 2026"
     ).strip()
 
-
     if not brevo_api_key:
-
         print("BREVO_API_KEY missing.")
-
         return False
 
-
-    if (
-        not sender_email
-        or not is_valid_email(sender_email)
-    ):
-
-        print(
-            "BREVO_SENDER_EMAIL missing/invalid."
-        )
-
+    if not sender_email or not is_valid_email(sender_email):
+        print("BREVO_SENDER_EMAIL missing/invalid.")
         return False
 
-
     # ========================================================
-    # SAFE NAME
+    # SAFE STUDENT NAME
     # ========================================================
 
-    raw_name = str(
-        student_name or ""
-    ).strip()
-
+    raw_name = str(student_name or "").strip()
 
     first_name = (
         raw_name.split()[0]
@@ -380,12 +356,10 @@ def send_email_notification(
         else "Student"
     )
 
-
     display_name = (
         first_name[:1].upper()
         + first_name[1:].lower()
     )
-
 
     # ========================================================
     # AMOUNT
@@ -401,29 +375,30 @@ def send_email_notification(
 
     except Exception:
 
-        formatted_amount = Decimal(
-            "0.00"
-        )
+        formatted_amount = Decimal("0.00")
 
-
-    amount_display = (
-        f"{formatted_amount:.2f}"
-    )
-
+    amount_display = f"{formatted_amount:.2f}"
 
     # ========================================================
     # REGISTRATION NUMBER
     # ========================================================
 
-    registration_display = (
-        format_registration_no(
+    # Important:
+    # Agar caller already MMIT-2026-0012 bhej raha hai,
+    # to dobara MMIT-2026 lagne se bachayenge.
+
+    registration_display = str(
+        registration_id or ""
+    ).strip()
+
+    if not registration_display.startswith("MMIT-2026-"):
+
+        registration_display = format_registration_no(
             registration_id
         )
-    )
-
 
     # ========================================================
-    # VERIFIED
+    # VERIFIED EMAIL
     # ========================================================
 
     if status == "VERIFIED":
@@ -433,15 +408,13 @@ def send_email_notification(
             "Payment Verified Successfully"
         )
 
-
         body = f"""Hello {display_name},
 
 Your payment for MMIT Freshers Party 2026 has been successfully verified.
 
 Registration No: {registration_display}
-
-Amount: ₹{amount_display}
-
+Amount: Rs. {amount_display}
+UTR / Transaction ID: {utr or "Not Available"}
 Payment Status: VERIFIED
 
 Your registration is now confirmed.
@@ -449,31 +422,20 @@ Your registration is now confirmed.
 Please keep this email for your records.
 
 Regards,
-
 MMIT Freshers Party 2026
-
 MMIT Kushinagar
 """
 
-
         html_content = f"""
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0">
 
-<title>
-Payment Verified
-</title>
-
+<title>Payment Verified</title>
 </head>
-
 
 <body style="
 margin:0;
@@ -482,7 +444,6 @@ background:#f4f6f8;
 font-family:Arial,Helvetica,sans-serif;
 color:#222;
 ">
-
 
 <div style="
 max-width:650px;
@@ -493,40 +454,23 @@ border-radius:14px;
 box-shadow:0 4px 18px rgba(0,0,0,0.08);
 ">
 
-
 <h2 style="
 margin-top:0;
 color:#198754;
 ">
-
 MMIT Freshers Party 2026
-
 </h2>
 
-
 <p>
-
 Hello
-
-<strong>
-{html.escape(display_name)}
-</strong>,
-
+<strong>{html.escape(display_name)}</strong>,
 </p>
-
 
 <p>
-
 Your payment for
-
-<strong>
-MMIT Freshers Party 2026
-</strong>
-
+<strong>MMIT Freshers Party 2026</strong>
 has been successfully verified.
-
 </p>
-
 
 <table
 width="100%"
@@ -537,86 +481,39 @@ margin-top:20px;
 margin-bottom:20px;
 ">
 
-
 <tr>
-
-<td style="
-border:1px solid #ddd;
-">
-
-<strong>
-Registration No.
-</strong>
-
+<td style="border:1px solid #ddd;">
+<strong>Registration No.</strong>
 </td>
 
-<td style="
-border:1px solid #ddd;
-">
-
+<td style="border:1px solid #ddd;">
 {html.escape(registration_display)}
-
 </td>
-
 </tr>
 
-
 <tr>
-
-<td style="
-border:1px solid #ddd;
-">
-
-<strong>
-Amount
-</strong>
-
+<td style="border:1px solid #ddd;">
+<strong>Amount</strong>
 </td>
 
-<td style="
-border:1px solid #ddd;
-">
-
-₹{html.escape(amount_display)}
-
+<td style="border:1px solid #ddd;">
+Rs. {html.escape(amount_display)}
 </td>
-
 </tr>
 
-
 <tr>
-
-<td style="
-border:1px solid #ddd;
-">
-
-<strong>
-UTR / Transaction ID
-</strong>
-
+<td style="border:1px solid #ddd;">
+<strong>UTR / Transaction ID</strong>
 </td>
 
-<td style="
-border:1px solid #ddd;
-">
-
+<td style="border:1px solid #ddd;">
 {html.escape(str(utr or "Not Available"))}
-
 </td>
-
 </tr>
 
-
 <tr>
-
-<td style="
-border:1px solid #ddd;
-">
-
-<strong>
-Payment Status
-</strong>
-
+<td style="border:1px solid #ddd;">
+<strong>Payment Status</strong>
 </td>
 
 <td style="
@@ -624,38 +521,23 @@ border:1px solid #ddd;
 color:#198754;
 ">
 
-<strong>
-VERIFIED
-</strong>
+<strong>VERIFIED</strong>
 
 </td>
-
 </tr>
-
 
 </table>
 
-
 <p>
-
 Your registration is now
-
-<strong>
-confirmed
-</strong>.
-
+<strong>confirmed</strong>.
 </p>
 
-
 <p>
-
 Please keep this email for your records.
-
 </p>
 
-
 <p>
-
 Regards,<br>
 
 <strong>
@@ -665,20 +547,16 @@ MMIT Freshers Party 2026
 <br>
 
 MMIT Kushinagar
-
 </p>
-
 
 </div>
 
 </body>
-
 </html>
 """
 
-
     # ========================================================
-    # REJECTED
+    # REJECTED EMAIL
     # ========================================================
 
     elif status == "REJECTED":
@@ -688,32 +566,24 @@ MMIT Kushinagar
             "Payment Verification Update"
         )
 
-
         body = f"""Hello {display_name},
 
 Your submitted payment for MMIT Freshers Party 2026 could not be verified.
 
 Registration No: {registration_display}
-
-Amount: ₹{amount_display}
-
-UTR / Transaction ID: {utr}
-
+Amount: Rs. {amount_display}
+UTR / Transaction ID: {utr or "Not Available"}
 Payment Status: REJECTED
 
 Please contact the event administrator and provide the correct payment details if required.
 
 Regards,
-
 MMIT Freshers Party 2026
-
 MMIT Kushinagar
 """
 
-
         html_content = f"""
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -721,140 +591,96 @@ MMIT Kushinagar
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+      content="width=device-width, initial-scale=1.0">
 
-<title>
-Payment Update
-</title>
+<title>Payment Update</title>
 
 </head>
-
 
 <body style="
 margin:0;
 padding:0;
 background:#f4f6f8;
 font-family:Arial,Helvetica,sans-serif;
+color:#222;
 ">
-
 
 <div style="
 max-width:650px;
 margin:30px auto;
-background:white;
+background:#ffffff;
 padding:30px;
 border-radius:14px;
+box-shadow:0 4px 18px rgba(0,0,0,0.08);
 ">
-
 
 <h2 style="
+margin-top:0;
 color:#dc3545;
 ">
-
 MMIT Freshers Party 2026
-
 </h2>
 
-
 <p>
-
 Hello
-
-<strong>
-{html.escape(display_name)}
-</strong>,
-
+<strong>{html.escape(display_name)}</strong>,
 </p>
-
 
 <p>
-
 Your submitted payment for
-
-<strong>
-MMIT Freshers Party 2026
-</strong>
-
+<strong>MMIT Freshers Party 2026</strong>
 could not be verified.
-
 </p>
-
 
 <table
 width="100%"
-cellpadding="10"
+cellpadding="12"
 style="
 border-collapse:collapse;
+margin-top:20px;
+margin-bottom:20px;
 ">
 
-
 <tr>
 
 <td style="border:1px solid #ddd;">
-
-<strong>
-Registration No.
-</strong>
-
+<strong>Registration No.</strong>
 </td>
 
 <td style="border:1px solid #ddd;">
-
 {html.escape(registration_display)}
-
 </td>
 
 </tr>
 
-
 <tr>
 
 <td style="border:1px solid #ddd;">
-
-<strong>
-Amount
-</strong>
-
+<strong>Amount</strong>
 </td>
 
 <td style="border:1px solid #ddd;">
-
-₹{html.escape(amount_display)}
-
+Rs. {html.escape(amount_display)}
 </td>
 
 </tr>
 
-
 <tr>
 
 <td style="border:1px solid #ddd;">
-
-<strong>
-UTR / Transaction ID
-</strong>
-
+<strong>UTR / Transaction ID</strong>
 </td>
 
 <td style="border:1px solid #ddd;">
-
-{html.escape(
-    str(utr or "Not Available")
-)}
-
+{html.escape(str(utr or "Not Available"))}
 </td>
 
 </tr>
 
-
 <tr>
 
 <td style="border:1px solid #ddd;">
-
-<strong>
-Payment Status
-</strong>
-
+<strong>Payment Status</strong>
 </td>
 
 <td style="
@@ -862,24 +688,17 @@ border:1px solid #ddd;
 color:#dc3545;
 ">
 
-<strong>
-REJECTED
-</strong>
+<strong>REJECTED</strong>
 
 </td>
 
 </tr>
 
-
 </table>
 
-
 <p>
-
 Please contact the event administrator and provide the correct payment details if required.
-
 </p>
-
 
 <p>
 
@@ -895,7 +714,6 @@ MMIT Kushinagar
 
 </p>
 
-
 </div>
 
 </body>
@@ -903,11 +721,14 @@ MMIT Kushinagar
 </html>
 """
 
-
     else:
 
-        return False
+        print(
+            "Unknown email status:",
+            status
+        )
 
+        return False
 
     # ========================================================
     # BREVO API
@@ -915,38 +736,24 @@ MMIT Kushinagar
 
     url = "https://api.brevo.com/v3/smtp/email"
 
-
     headers = {
-
         "accept": "application/json",
-
         "api-key": brevo_api_key,
-
         "content-type": "application/json",
-
     }
-
 
     payload = {
 
         "sender": {
-
             "name": sender_name,
-
             "email": sender_email,
-
         },
 
         "to": [
-
             {
-
                 "email": recipient_email,
-
                 "name": student_name,
-
             }
-
         ],
 
         "subject": subject,
@@ -957,33 +764,24 @@ MMIT Kushinagar
 
     }
 
-
     try:
 
         response = requests.post(
-
             url,
-
             headers=headers,
-
             json=payload,
-
             timeout=30
-
         )
-
 
         print(
             "Brevo status:",
             response.status_code
         )
 
-
         print(
             "Brevo response:",
             response.text
         )
-
 
         if response.status_code == 201:
 
@@ -993,16 +791,17 @@ MMIT Kushinagar
 
             return True
 
+        print(
+            "EMAIL SEND FAILED"
+        )
 
         return False
-
 
     except requests.exceptions.Timeout:
 
         print("Brevo timeout.")
 
         return False
-
 
     except requests.exceptions.RequestException as e:
 
@@ -1013,7 +812,6 @@ MMIT Kushinagar
 
         return False
 
-
     except Exception as e:
 
         print(
@@ -1022,8 +820,6 @@ MMIT Kushinagar
         )
 
         return False
-
-
 # ============================================================
 # CLOUDINARY UPLOAD
 # ============================================================
