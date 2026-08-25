@@ -13,7 +13,6 @@ import uuid
 import html
 import requests
 import psycopg2
-
 from decimal import Decimal, InvalidOperation
 from datetime import timedelta
 from werkzeug.utils import secure_filename
@@ -44,10 +43,17 @@ app.secret_key = os.environ.get(
     "development-secret-key"
 )
 
-UPLOAD_FOLDER = os.path.join("static", "uploads")
+UPLOAD_FOLDER = os.path.join(
+    "static",
+    "uploads"
+)
+
 LOCAL_STATIC_FOLDER = "static"
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
@@ -57,7 +63,9 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 if os.environ.get("RENDER"):
     app.config["SESSION_COOKIE_SECURE"] = True
 
-app.permanent_session_lifetime = timedelta(minutes=60)
+app.permanent_session_lifetime = timedelta(
+    minutes=60
+)
 
 
 # ============================================================
@@ -85,6 +93,13 @@ def get_base_url():
 # ============================================================
 
 def format_registration_no(registration_id):
+    """
+    Database ID:
+        1  -> MMIT-2026-0001
+        12 -> MMIT-2026-0012
+        14 -> MMIT-2026-0014
+    """
+
     try:
         return f"MMIT-2026-{int(registration_id):04d}"
     except (TypeError, ValueError):
@@ -110,12 +125,14 @@ CLOUDINARY_API_SECRET = os.environ.get(
     ""
 ).strip()
 
+
 CLOUDINARY_ENABLED = bool(
     CLOUDINARY_AVAILABLE
     and CLOUDINARY_CLOUD_NAME
     and CLOUDINARY_API_KEY
     and CLOUDINARY_API_SECRET
 )
+
 
 if CLOUDINARY_ENABLED:
     cloudinary.config(
@@ -125,8 +142,12 @@ if CLOUDINARY_ENABLED:
         secure=True,
     )
 
+
 print("=" * 60)
-print("CLOUDINARY:", "ENABLED" if CLOUDINARY_ENABLED else "DISABLED")
+print(
+    "CLOUDINARY:",
+    "ENABLED" if CLOUDINARY_ENABLED else "DISABLED"
+)
 print("=" * 60)
 
 
@@ -143,6 +164,7 @@ ALLOWED_IMAGE_EXTENSIONS = {
 
 
 def allowed_image(filename):
+
     if not filename:
         return False
 
@@ -161,7 +183,10 @@ def allowed_image(filename):
 # ============================================================
 
 def get_db_connection():
-    database_url = os.environ.get("DATABASE_URL")
+
+    database_url = os.environ.get(
+        "DATABASE_URL"
+    )
 
     if not database_url:
         raise RuntimeError(
@@ -179,6 +204,7 @@ def get_db_connection():
 # ============================================================
 
 def is_valid_email(email):
+
     if not email:
         return False
 
@@ -207,10 +233,14 @@ def uploaded_file(filename):
     if CLOUDINARY_ENABLED and filename:
 
         try:
-            base_filename = os.path.splitext(filename)[0]
+
+            base_filename = os.path.splitext(
+                filename
+            )[0]
 
             public_id = (
-                f"mmit_freshers/payments/{base_filename}"
+                f"mmit_freshers/payments/"
+                f"{base_filename}"
             )
 
             url = cloudinary.utils.cloudinary_url(
@@ -222,6 +252,7 @@ def uploaded_file(filename):
             return redirect(url)
 
         except Exception as e:
+
             print(
                 "Cloudinary image error:",
                 repr(e)
@@ -233,6 +264,7 @@ def uploaded_file(filename):
     )
 
     if os.path.isfile(local_path):
+
         return send_from_directory(
             app.config["UPLOAD_FOLDER"],
             filename
@@ -277,8 +309,10 @@ def send_email_notification(
     recipient_email = recipient_email.strip()
 
     if not is_valid_email(recipient_email):
+
         print("Invalid student email.")
         return False
+
 
     brevo_api_key = os.environ.get(
         "BREVO_API_KEY",
@@ -295,19 +329,32 @@ def send_email_notification(
         "MMIT Freshers Party 2026"
     ).strip()
 
+
     if not brevo_api_key:
+
         print("BREVO_API_KEY missing.")
         return False
 
-    if not sender_email or not is_valid_email(sender_email):
-        print("BREVO_SENDER_EMAIL missing/invalid.")
+
+    if (
+        not sender_email
+        or not is_valid_email(sender_email)
+    ):
+
+        print(
+            "BREVO_SENDER_EMAIL missing/invalid."
+        )
+
         return False
 
-    # --------------------------------------------------------
-    # SAFE VALUES
-    # --------------------------------------------------------
 
-    raw_name = str(student_name or "").strip()
+    # ========================================================
+    # SAFE NAME
+    # ========================================================
+
+    raw_name = str(
+        student_name or ""
+    ).strip()
 
     first_name = (
         raw_name.split()[0]
@@ -320,12 +367,41 @@ def send_email_notification(
         + first_name[1:].lower()
     )
 
+
+    # ========================================================
+    # AMOUNT
+    # ========================================================
+
     try:
+
         formatted_amount = Decimal(
             str(amount or "0")
-        ).quantize(Decimal("0.01"))
+        ).quantize(
+            Decimal("0.01")
+        )
+
     except Exception:
-        formatted_amount = Decimal("0.00")
+
+        formatted_amount = Decimal(
+            "0.00"
+        )
+
+
+    amount_display = (
+        f"{formatted_amount:.2f}"
+    )
+
+
+    # ========================================================
+    # REGISTRATION NUMBER
+    # ========================================================
+
+    registration_display = (
+        format_registration_no(
+            registration_id
+        )
+    )
+
 
     # ========================================================
     # VERIFIED
@@ -333,40 +409,20 @@ def send_email_notification(
 
     if status == "VERIFIED":
 
-        # IMPORTANT:
-        # Email में केवल numeric database ID दिखेगा.
-        # Example: 12
-        try:
-            registration_display = str(
-                int(registration_id)
-            )
-        except (TypeError, ValueError):
-
-            try:
-                registration_display = str(
-                    int(
-                        str(registration_id)
-                        .split("-")[-1]
-                    )
-                )
-            except Exception:
-                registration_display = str(
-                    registration_id or ""
-                )
-
-        amount_display = f"{formatted_amount:.2f}"
-
         subject = (
             "MMIT Freshers Party 2026 - "
             "Payment Verified Successfully"
         )
+
 
         body = f"""Hello {display_name},
 
 Your payment for MMIT Freshers Party 2026 has been successfully verified.
 
 Registration No: {registration_display}
+
 Amount: ₹{amount_display}
+
 Payment Status: VERIFIED
 
 Your registration is now confirmed.
@@ -374,76 +430,222 @@ Your registration is now confirmed.
 Please keep this email for your records.
 
 Regards,
+
 MMIT Freshers Party 2026
+
 MMIT Kushinagar
 """
 
+
         html_content = f"""
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Payment Verified</title>
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
+
+<title>
+Payment Verified
+</title>
+
 </head>
 
 <body style="
 margin:0;
 padding:0;
-background:#ffffff;
+background:#f4f6f8;
 font-family:Arial,Helvetica,sans-serif;
 color:#222;
 ">
 
 <div style="
 max-width:650px;
-margin:auto;
-padding:30px 20px;
-font-size:15px;
-line-height:1.7;
+margin:30px auto;
+background:#ffffff;
+padding:30px;
+border-radius:14px;
+box-shadow:0 4px 18px rgba(0,0,0,0.08);
 ">
 
-<p>
-Hello <strong>{html.escape(display_name)}</strong>,
-</p>
+<h2 style="
+margin-top:0;
+color:#198754;
+">
+
+MMIT Freshers Party 2026
+
+</h2>
+
 
 <p>
-Your payment for MMIT Freshers Party 2026 has been
-successfully verified.
+
+Hello
+<strong>
+{html.escape(display_name)}
+</strong>,
+
 </p>
 
+
 <p>
-<strong>Registration No:</strong>
+
+Your payment for
+<strong>
+MMIT Freshers Party 2026
+</strong>
+has been successfully verified.
+
+</p>
+
+
+<table
+width="100%"
+cellpadding="12"
+style="
+border-collapse:collapse;
+margin-top:20px;
+margin-bottom:20px;
+">
+
+<tr>
+
+<td style="
+border:1px solid #ddd;
+">
+
+<strong>
+Registration No.
+</strong>
+
+</td>
+
+<td style="
+border:1px solid #ddd;
+">
+
 {html.escape(registration_display)}
-<br>
 
-<strong>Amount:</strong>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+border:1px solid #ddd;
+">
+
+<strong>
+Amount
+</strong>
+
+</td>
+
+<td style="
+border:1px solid #ddd;
+">
+
 ₹{html.escape(amount_display)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+border:1px solid #ddd;
+">
+
+<strong>
+UTR / Transaction ID
+</strong>
+
+</td>
+
+<td style="
+border:1px solid #ddd;
+">
+
+{html.escape(str(utr or "Not Available"))}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="
+border:1px solid #ddd;
+">
+
+<strong>
+Payment Status
+</strong>
+
+</td>
+
+<td style="
+border:1px solid #ddd;
+color:#198754;
+">
+
+<strong>
+VERIFIED
+</strong>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<p>
+
+Your registration is now
+<strong>
+confirmed
+</strong>.
+
+</p>
+
+
+<p>
+
+Please keep this email for your records.
+
+</p>
+
+
+<p>
+
+Regards,<br>
+
+<strong>
+MMIT Freshers Party 2026
+</strong>
 <br>
 
-<strong>Payment Status:</strong>
-VERIFIED
-</p>
-
-<p>
-Your registration is now confirmed.
-</p>
-
-<p>
-Please keep this email for your records.
-</p>
-
-<p>
-Regards,<br>
-<strong>MMIT Freshers Party 2026</strong><br>
 MMIT Kushinagar
+
 </p>
 
 </div>
 
 </body>
+
 </html>
 """
+
 
     # ========================================================
     # REJECTED
@@ -456,34 +658,47 @@ MMIT Kushinagar
             "Payment Verification Update"
         )
 
-        registration_display = str(
-            registration_id or ""
-        )
 
         body = f"""Hello {display_name},
 
 Your submitted payment for MMIT Freshers Party 2026 could not be verified.
 
 Registration No: {registration_display}
-Amount: ₹{formatted_amount:.2f}
+
+Amount: ₹{amount_display}
+
 UTR / Transaction ID: {utr}
+
 Payment Status: REJECTED
 
 Please contact the event administrator and provide the correct payment details if required.
 
 Regards,
+
 MMIT Freshers Party 2026
+
 MMIT Kushinagar
 """
 
+
         html_content = f"""
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Payment Update</title>
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
+
+<title>
+Payment Update
+</title>
+
 </head>
+
 
 <body style="
 margin:0;
@@ -497,69 +712,164 @@ max-width:650px;
 margin:30px auto;
 background:white;
 padding:30px;
-border-radius:12px;
+border-radius:14px;
 ">
 
-<h2 style="color:#dc3545;">
+<h2 style="
+color:#dc3545;
+">
+
 MMIT Freshers Party 2026
+
 </h2>
 
-<p>
-Hello <strong>{html.escape(display_name)}</strong>,
-</p>
 
 <p>
+
+Hello
+<strong>
+{html.escape(display_name)}
+</strong>,
+
+</p>
+
+
+<p>
+
 Your submitted payment for
-<strong>MMIT Freshers Party 2026</strong>
+<strong>
+MMIT Freshers Party 2026
+</strong>
 could not be verified.
+
 </p>
 
-<table width="100%" cellpadding="10"
-style="border-collapse:collapse;">
+
+<table
+width="100%"
+cellpadding="10"
+style="
+border-collapse:collapse;
+">
 
 <tr>
-<td><strong>Registration No.</strong></td>
-<td>{html.escape(registration_display)}</td>
-</tr>
 
-<tr>
-<td><strong>Amount</strong></td>
-<td>₹{formatted_amount:.2f}</td>
-</tr>
+<td style="border:1px solid #ddd;">
 
-<tr>
-<td><strong>UTR / Transaction ID</strong></td>
-<td>{html.escape(str(utr or "Not Available"))}</td>
-</tr>
+<strong>
+Registration No.
+</strong>
 
-<tr>
-<td><strong>Payment Status</strong></td>
-<td style="color:#dc3545;">
-<strong>REJECTED</strong>
 </td>
+
+<td style="border:1px solid #ddd;">
+
+{html.escape(registration_display)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="border:1px solid #ddd;">
+
+<strong>
+Amount
+</strong>
+
+</td>
+
+<td style="border:1px solid #ddd;">
+
+₹{html.escape(amount_display)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="border:1px solid #ddd;">
+
+<strong>
+UTR / Transaction ID
+</strong>
+
+</td>
+
+<td style="border:1px solid #ddd;">
+
+{html.escape(
+    str(utr or "Not Available")
+)}
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td style="border:1px solid #ddd;">
+
+<strong>
+Payment Status
+</strong>
+
+</td>
+
+<td style="
+border:1px solid #ddd;
+color:#dc3545;
+">
+
+<strong>
+REJECTED
+</strong>
+
+</td>
+
 </tr>
 
 </table>
 
-<p>
-Please contact the event administrator and provide
-the correct payment details if required.
-</p>
 
 <p>
+
+Please contact the event administrator and provide the correct payment details if required.
+
+</p>
+
+
+<p>
+
 Regards,<br>
-<strong>MMIT Freshers Party 2026</strong><br>
+
+<strong>
+MMIT Freshers Party 2026
+</strong>
+
+<br>
+
 MMIT Kushinagar
+
 </p>
 
 </div>
 
 </body>
+
 </html>
 """
 
+
     else:
+
         return False
+
 
     # ========================================================
     # BREVO API
@@ -568,26 +878,46 @@ MMIT Kushinagar
     url = "https://api.brevo.com/v3/smtp/email"
 
     headers = {
+
         "accept": "application/json",
+
         "api-key": brevo_api_key,
+
         "content-type": "application/json",
+
     }
 
+
     payload = {
+
         "sender": {
+
             "name": sender_name,
+
             "email": sender_email,
+
         },
+
         "to": [
+
             {
+
                 "email": recipient_email,
+
                 "name": student_name,
+
             }
+
         ],
+
         "subject": subject,
+
         "textContent": body,
+
         "htmlContent": html_content,
+
     }
+
 
     try:
 
@@ -597,6 +927,7 @@ MMIT Kushinagar
             json=payload,
             timeout=30
         )
+
 
         print(
             "Brevo status:",
@@ -608,6 +939,7 @@ MMIT Kushinagar
             response.text
         )
 
+
         if response.status_code == 201:
 
             print(
@@ -616,24 +948,33 @@ MMIT Kushinagar
 
             return True
 
+
         return False
 
+
     except requests.exceptions.Timeout:
+
         print("Brevo timeout.")
         return False
 
+
     except requests.exceptions.RequestException as e:
+
         print(
             "Brevo connection error:",
             repr(e)
         )
+
         return False
 
+
     except Exception as e:
+
         print(
             "Brevo error:",
             repr(e)
         )
+
         return False
 
 
@@ -649,23 +990,29 @@ def upload_payment_to_cloudinary(
     if not CLOUDINARY_ENABLED:
         return None
 
+
     original_name = secure_filename(
         file_obj.filename or "payment.jpg"
     )
 
+
     if not original_name:
         original_name = "payment.jpg"
 
+
     if not allowed_image(original_name):
         return None
+
 
     stored_filename = (
         f"{student_id}_{original_name}"
     )
 
+
     base_name = os.path.splitext(
         stored_filename
     )[0]
+
 
     try:
 
@@ -678,10 +1025,13 @@ def upload_payment_to_cloudinary(
             unique_filename=False,
         )
 
+
         if result.get("secure_url"):
             return stored_filename
 
+
         return None
+
 
     except Exception as e:
 
@@ -699,8 +1049,12 @@ def upload_payment_to_cloudinary(
 
 def delete_cloudinary_file(filename):
 
-    if not CLOUDINARY_ENABLED or not filename:
+    if not CLOUDINARY_ENABLED:
         return
+
+    if not filename:
+        return
+
 
     try:
 
@@ -708,14 +1062,18 @@ def delete_cloudinary_file(filename):
             filename
         )[0]
 
+
         public_id = (
-            f"mmit_freshers/payments/{base_filename}"
+            f"mmit_freshers/payments/"
+            f"{base_filename}"
         )
+
 
         cloudinary.uploader.destroy(
             public_id,
             resource_type="image"
         )
+
 
     except Exception as e:
 
@@ -734,23 +1092,30 @@ def delete_local_file(filename):
     if not filename:
         return
 
+
     safe_filename = secure_filename(
         os.path.basename(filename)
     )
 
+
     if not safe_filename:
         return
+
 
     path = os.path.join(
         app.config["UPLOAD_FOLDER"],
         safe_filename
     )
 
+
     if os.path.isfile(path):
 
         try:
+
             os.remove(path)
+
         except Exception as e:
+
             print(
                 "Local delete error:",
                 repr(e)
@@ -764,43 +1129,63 @@ def delete_local_file(filename):
 def create_database():
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     try:
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS students (
+
                 id SERIAL PRIMARY KEY,
+
                 name TEXT NOT NULL,
+
                 roll_number TEXT NOT NULL,
+
                 semester TEXT NOT NULL,
+
                 branch TEXT NOT NULL,
+
                 mobile TEXT NOT NULL,
+
                 email TEXT,
+
                 gender TEXT NOT NULL,
+
                 payment_status TEXT DEFAULT 'PENDING',
+
                 utr TEXT,
+
                 payment_screenshot TEXT,
+
                 participant_type TEXT,
+
                 payment_amount NUMERIC(10,2)
+
             )
         """)
+
 
         cursor.execute("""
             ALTER TABLE students
             ADD COLUMN IF NOT EXISTS participant_type TEXT
         """)
 
+
         cursor.execute("""
             ALTER TABLE students
             ADD COLUMN IF NOT EXISTS payment_amount NUMERIC(10,2)
         """)
 
+
         conn.commit()
 
-        # ----------------------------------------------------
+
+        # ====================================================
         # UNIQUE MOBILE
-        # ----------------------------------------------------
+        # ====================================================
 
         try:
 
@@ -821,9 +1206,10 @@ def create_database():
                 repr(e)
             )
 
-        # ----------------------------------------------------
+
+        # ====================================================
         # UNIQUE EMAIL
-        # ----------------------------------------------------
+        # ====================================================
 
         try:
 
@@ -846,9 +1232,10 @@ def create_database():
                 repr(e)
             )
 
-        # ----------------------------------------------------
+
+        # ====================================================
         # UNIQUE UTR
-        # ----------------------------------------------------
+        # ====================================================
 
         try:
 
@@ -870,6 +1257,7 @@ def create_database():
                 "UTR unique index:",
                 repr(e)
             )
+
 
     finally:
 
@@ -921,73 +1309,113 @@ def register():
             "register.html"
         )
 
+
     name = request.form.get(
         "name",
         ""
     ).strip()
+
 
     participant_type = request.form.get(
         "participant_type",
         ""
     ).strip()
 
+
     year = request.form.get(
         "year",
         ""
     ).strip()
+
 
     teacher_amount = request.form.get(
         "teacher_amount",
         ""
     ).strip()
 
+
     branch = request.form.get(
         "branch",
         ""
     ).strip()
+
 
     mobile = request.form.get(
         "mobile",
         ""
     ).strip()
 
+
     email = request.form.get(
         "email",
         ""
     ).strip().lower()
+
 
     gender = request.form.get(
         "gender",
         ""
     ).strip()
 
+
     roll_number = "N/A"
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # BASIC VALIDATION
-    # --------------------------------------------------------
+    # ========================================================
 
     if not name:
-        return "Name is required. <a href='/register'>Back</a>"
+
+        return (
+            "Name is required. "
+            "<a href='/register'>Back</a>"
+        )
+
 
     if not mobile:
-        return "Mobile Number is required. <a href='/register'>Back</a>"
+
+        return (
+            "Mobile Number is required. "
+            "<a href='/register'>Back</a>"
+        )
+
 
     if not email:
-        return "Email is required. <a href='/register'>Back</a>"
+
+        return (
+            "Email is required. "
+            "<a href='/register'>Back</a>"
+        )
+
 
     if not gender:
-        return "Gender is required. <a href='/register'>Back</a>"
+
+        return (
+            "Gender is required. "
+            "<a href='/register'>Back</a>"
+        )
+
 
     if not is_valid_email(email):
-        return "Invalid Email. <a href='/register'>Back</a>"
+
+        return (
+            "Invalid Email. "
+            "<a href='/register'>Back</a>"
+        )
+
 
     if not mobile.isdigit() or len(mobile) != 10:
-        return "Invalid Mobile Number. <a href='/register'>Back</a>"
 
-    # --------------------------------------------------------
+        return (
+            "Invalid Mobile Number. "
+            "<a href='/register'>Back</a>"
+        )
+
+
+    # ========================================================
     # STUDENT
-    # --------------------------------------------------------
+    # ========================================================
 
     if participant_type == "Student":
 
@@ -996,50 +1424,90 @@ def register():
             "2nd Year",
             "3rd Year"
         ]:
-            return "Please select valid Year. <a href='/register'>Back</a>"
+
+            return (
+                "Please select valid Year. "
+                "<a href='/register'>Back</a>"
+            )
+
 
         if not branch:
-            return "Branch is required. <a href='/register'>Back</a>"
+
+            return (
+                "Branch is required. "
+                "<a href='/register'>Back</a>"
+            )
+
 
         if year == "1st Year":
+
             payment_amount = Decimal("199")
+
         else:
+
             payment_amount = Decimal("300")
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # TEACHER
-    # --------------------------------------------------------
+    # ========================================================
 
     elif participant_type == "Teacher":
 
         if not teacher_amount:
-            return "Teacher amount is required. <a href='/register'>Back</a>"
+
+            return (
+                "Teacher amount is required. "
+                "<a href='/register'>Back</a>"
+            )
+
 
         try:
+
             payment_amount = Decimal(
                 teacher_amount
             )
+
         except InvalidOperation:
-            return "Invalid teacher amount. <a href='/register'>Back</a>"
+
+            return (
+                "Invalid teacher amount. "
+                "<a href='/register'>Back</a>"
+            )
+
 
         if payment_amount <= 0:
-            return "Amount must be greater than 0. <a href='/register'>Back</a>"
+
+            return (
+                "Amount must be greater than 0. "
+                "<a href='/register'>Back</a>"
+            )
+
 
         year = "Teacher"
 
+
         if not branch:
+
             branch = "Teacher"
+
 
     else:
 
-        return "Invalid participant type. <a href='/register'>Back</a>"
+        return (
+            "Invalid participant type. "
+            "<a href='/register'>Back</a>"
+        )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # DUPLICATE CHECK
-    # --------------------------------------------------------
+    # ========================================================
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     try:
 
@@ -1050,7 +1518,9 @@ def register():
             LIMIT 1
         """, (mobile,))
 
+
         existing_mobile = cursor.fetchone()
+
 
         cursor.execute("""
             SELECT id
@@ -1059,57 +1529,100 @@ def register():
             LIMIT 1
         """, (email,))
 
+
         existing_email = cursor.fetchone()
+
 
     finally:
 
         cursor.close()
         conn.close()
 
+
     if existing_mobile:
 
         return """
         <h2>Mobile Number Already Registered</h2>
-        <p>This mobile number is already registered.</p>
-        <a href="/register">Back to Registration</a>
+
+        <p>
+        This mobile number is already registered.
+        </p>
+
+        <a href="/register">
+        Back to Registration
+        </a>
         """
+
 
     if existing_email:
 
         return """
         <h2>Email Already Registered</h2>
-        <p>This email is already registered.</p>
-        <a href="/register">Back to Registration</a>
+
+        <p>
+        This email is already registered.
+        </p>
+
+        <a href="/register">
+        Back to Registration
+        </a>
         """
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # SESSION
-    # --------------------------------------------------------
+    # ========================================================
 
     session.permanent = True
 
+
     session["pending_registration"] = {
+
         "name": name,
-        "participant_type": participant_type,
-        "roll_number": roll_number,
-        "year": year,
-        "branch": branch,
-        "mobile": mobile,
-        "email": email,
-        "gender": gender,
-        "payment_amount": str(payment_amount),
+
+        "participant_type":
+            participant_type,
+
+        "roll_number":
+            roll_number,
+
+        "year":
+            year,
+
+        "branch":
+            branch,
+
+        "mobile":
+            mobile,
+
+        "email":
+            email,
+
+        "gender":
+            gender,
+
+        "payment_amount":
+            str(payment_amount),
+
     }
 
-    # --------------------------------------------------------
-    # PAYMENT
-    # --------------------------------------------------------
+
+    # ========================================================
+    # PAYMENT PAGE
+    # ========================================================
 
     return render_template(
         "payment.html",
+
         registration_no="Pending",
+
         student_name=name,
+
         amount=payment_amount,
-        participant_type=participant_type,
+
+        participant_type=
+            participant_type,
+
         year=year,
     )
 
@@ -1118,34 +1631,57 @@ def register():
 # PAYMENT SUBMIT GET
 # ============================================================
 
-@app.route("/payment-submit", methods=["GET"])
+@app.route(
+    "/payment-submit",
+    methods=["GET"]
+)
 def payment_submit_get():
 
     pending = session.get(
         "pending_registration"
     )
 
+
     if not pending:
+
         return """
         <h2>Registration Session Expired</h2>
-        <a href="/register">New Registration</a>
+
+        <a href="/register">
+        New Registration
+        </a>
         """
+
 
     return render_template(
         "payment_submit.html",
+
         registration_id="",
+
         student_id="",
-        student_name=pending.get("name", ""),
-        email=pending.get("email", ""),
-        amount=pending.get("payment_amount", "0"),
+
+        student_name=
+            pending.get("name", ""),
+
+        email=
+            pending.get("email", ""),
+
+        amount=
+            pending.get(
+                "payment_amount",
+                "0"
+            ),
+
     )
 
 
 # ============================================================
-# PAYMENT SUBMIT OLD URL COMPATIBILITY
+# OLD URL COMPATIBILITY
 # ============================================================
 
-@app.route("/payment-submit/<int:student_id>")
+@app.route(
+    "/payment-submit/<int:student_id>"
+)
 def payment_submit_page(student_id):
 
     return payment_submit_get()
@@ -1165,60 +1701,124 @@ def save_payment():
         "pending_registration"
     )
 
+
     if not pending:
 
         return """
         <h2>Registration Session Expired</h2>
-        <a href="/register">New Registration</a>
+
+        <a href="/register">
+        New Registration
+        </a>
         """
+
 
     utr = request.form.get(
         "utr",
         ""
     ).strip()
 
+
     screenshot = request.files.get(
         "payment_screenshot"
     )
 
+
     if not utr:
+
         return """
-        <h2>UTR / Transaction ID is required.</h2>
-        <a href="javascript:history.back()">Back</a>
+        <h2>
+        UTR / Transaction ID is required.
+        </h2>
+
+        <a href="javascript:history.back()">
+        Back
+        </a>
         """
+
 
     if (
         screenshot is None
         or not screenshot.filename
     ):
+
         return """
-        <h2>Payment screenshot is required.</h2>
-        <a href="javascript:history.back()">Back</a>
+        <h2>
+        Payment screenshot is required.
+        </h2>
+
+        <a href="javascript:history.back()">
+        Back
+        </a>
         """
+
 
     if not allowed_image(
         screenshot.filename
     ):
+
         return """
-        <h2>Invalid Screenshot Format</h2>
-        <p>Only JPG, JPEG, PNG and WEBP are allowed.</p>
-        <a href="javascript:history.back()">Back</a>
+        <h2>
+        Invalid Screenshot Format
+        </h2>
+
+        <p>
+        Only JPG, JPEG, PNG and WEBP are allowed.
+        </p>
+
+        <a href="javascript:history.back()">
+        Back
+        </a>
         """
 
-    name = pending.get("name", "")
+
+    name = pending.get(
+        "name",
+        ""
+    )
+
+
     participant_type = pending.get(
         "participant_type",
         ""
     )
+
+
     roll_number = pending.get(
         "roll_number",
         "N/A"
     )
-    year = pending.get("year", "")
-    branch = pending.get("branch", "")
-    mobile = pending.get("mobile", "")
-    email = pending.get("email", "")
-    gender = pending.get("gender", "")
+
+
+    year = pending.get(
+        "year",
+        ""
+    )
+
+
+    branch = pending.get(
+        "branch",
+        ""
+    )
+
+
+    mobile = pending.get(
+        "mobile",
+        ""
+    )
+
+
+    email = pending.get(
+        "email",
+        ""
+    )
+
+
+    gender = pending.get(
+        "gender",
+        ""
+    )
+
 
     try:
 
@@ -1233,18 +1833,34 @@ def save_payment():
 
         return "Invalid payment amount."
 
-    if not name or not mobile or not email or not gender:
-        return "Registration information incomplete."
+
+    if (
+        not name
+        or not mobile
+        or not email
+        or not gender
+    ):
+
+        return (
+            "Registration information incomplete."
+        )
+
 
     if not participant_type or not branch:
-        return "Registration information incomplete."
 
-    # --------------------------------------------------------
+        return (
+            "Registration information incomplete."
+        )
+
+
+    # ========================================================
     # DUPLICATE UTR
-    # --------------------------------------------------------
+    # ========================================================
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     try:
 
@@ -1255,27 +1871,41 @@ def save_payment():
             LIMIT 1
         """, (utr,))
 
+
         existing_utr = cursor.fetchone()
+
 
     finally:
 
         cursor.close()
         conn.close()
 
+
     if existing_utr:
 
         return """
-        <h2>UTR Already Used</h2>
-        <p>This UTR / Transaction ID is already registered.</p>
-        <a href="/register">Back</a>
+        <h2>
+        UTR Already Used
+        </h2>
+
+        <p>
+        This UTR / Transaction ID is already registered.
+        </p>
+
+        <a href="/register">
+        Back
+        </a>
         """
 
-    # --------------------------------------------------------
-    # FILE
-    # --------------------------------------------------------
+
+    # ========================================================
+    # FILE UPLOAD
+    # ========================================================
 
     temporary_file_id = uuid.uuid4().hex[:12]
+
     filename = None
+
 
     if CLOUDINARY_ENABLED:
 
@@ -1284,12 +1914,19 @@ def save_payment():
             temporary_file_id
         )
 
+
         if not filename:
 
             return """
-            <h2>Screenshot Upload Failed</h2>
-            <a href="javascript:history.back()">Back</a>
+            <h2>
+            Screenshot Upload Failed
+            </h2>
+
+            <a href="javascript:history.back()">
+            Back
+            </a>
             """
+
 
     else:
 
@@ -1297,19 +1934,28 @@ def save_payment():
             screenshot.filename
         )
 
+
         if not original_name:
-            return "Invalid screenshot filename."
+
+            return (
+                "Invalid screenshot filename."
+            )
+
 
         filename = (
-            f"{temporary_file_id}_{original_name}"
+            f"{temporary_file_id}_"
+            f"{original_name}"
         )
+
 
         filepath = os.path.join(
             app.config["UPLOAD_FOLDER"],
             filename
         )
 
+
         try:
+
             screenshot.save(filepath)
 
         except Exception as e:
@@ -1319,18 +1965,24 @@ def save_payment():
                 repr(e)
             )
 
-            return "Payment screenshot could not be saved."
+            return (
+                "Payment screenshot could not be saved."
+            )
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # FINAL INSERT
-    # --------------------------------------------------------
+    # ========================================================
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     try:
 
         # Final duplicate protection
+
         cursor.execute("""
             SELECT id
             FROM students
@@ -1344,22 +1996,42 @@ def save_payment():
             utr,
         ))
 
+
         duplicate = cursor.fetchone()
+
 
         if duplicate:
 
             conn.rollback()
 
+
             if CLOUDINARY_ENABLED:
-                delete_cloudinary_file(filename)
+
+                delete_cloudinary_file(
+                    filename
+                )
+
             else:
-                delete_local_file(filename)
+
+                delete_local_file(
+                    filename
+                )
+
 
             return """
-            <h2>Duplicate Registration</h2>
-            <p>Mobile, Email या UTR पहले से registered है.</p>
-            <a href="/register">Back</a>
+            <h2>
+            Duplicate Registration
+            </h2>
+
+            <p>
+            Mobile, Email या UTR पहले से registered है.
+            </p>
+
+            <a href="/register">
+            Back
+            </a>
             """
+
 
         cursor.execute("""
             INSERT INTO students
@@ -1398,57 +2070,101 @@ def save_payment():
             payment_amount,
         ))
 
+
         registration_id = cursor.fetchone()[0]
 
+
         conn.commit()
+
 
     except psycopg2.errors.UniqueViolation:
 
         conn.rollback()
 
+
         if CLOUDINARY_ENABLED:
-            delete_cloudinary_file(filename)
+
+            delete_cloudinary_file(
+                filename
+            )
+
         else:
-            delete_local_file(filename)
+
+            delete_local_file(
+                filename
+            )
+
 
         return """
-        <h2>Duplicate Registration</h2>
-        <a href="/register">Back</a>
+        <h2>
+        Duplicate Registration
+        </h2>
+
+        <a href="/register">
+        Back
+        </a>
         """
+
 
     except Exception as e:
 
         conn.rollback()
+
 
         print(
             "INSERT ERROR:",
             repr(e)
         )
 
+
         if CLOUDINARY_ENABLED:
-            delete_cloudinary_file(filename)
+
+            delete_cloudinary_file(
+                filename
+            )
+
         else:
-            delete_local_file(filename)
+
+            delete_local_file(
+                filename
+            )
+
 
         return """
-        <h2>Payment Submission Failed</h2>
-        <p>Please try again.</p>
-        <a href="/register">Back</a>
+        <h2>
+        Payment Submission Failed
+        </h2>
+
+        <p>
+        Please try again.
+        </p>
+
+        <a href="/register">
+        Back
+        </a>
         """
+
 
     finally:
 
         cursor.close()
         conn.close()
 
-    # --------------------------------------------------------
+
+    # ========================================================
     # CLEAR SESSION
-    # --------------------------------------------------------
+    # ========================================================
 
     session.pop(
         "pending_registration",
         None
     )
+
+
+    # ========================================================
+    # IMPORTANT:
+    # DATABASE ID -> FORMATTED REGISTRATION NUMBER
+    # ========================================================
 
     formatted_registration_no = (
         format_registration_no(
@@ -1456,55 +2172,127 @@ def save_payment():
         )
     )
 
-    # --------------------------------------------------------
-    # SUCCESS
-    # --------------------------------------------------------
+
+    # ========================================================
+    # SUCCESS PAGE
+    # ========================================================
 
     return f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width,initial-scale=1.0">
-        <title>Payment Submitted</title>
-    </head>
+<!DOCTYPE html>
 
-    <body style="
-        font-family:Arial;
-        text-align:center;
-        padding:50px;
-    ">
+<html>
 
-        <h1>Payment Details Submitted!</h1>
+<head>
 
-        <h2>
-            Registration No:
-            {formatted_registration_no}
-        </h2>
+<meta charset="UTF-8">
 
-        <p>
-            आपका payment record successfully submit हो गया है।
-        </p>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
 
-        <p>
-            Payment Status:
-            <strong>SUBMITTED</strong>
-        </p>
+<title>
+Payment Submitted
+</title>
 
-        <p>
-            Admin payment verify करेगा।
-        </p>
+</head>
 
-        <br>
 
-        <a href="/">
-            Back to Home
-        </a>
+<body style="
+font-family:Arial,Helvetica,sans-serif;
+text-align:center;
+padding:50px;
+background:#f4f6f8;
+">
 
-    </body>
-    </html>
-    """
+
+<div style="
+max-width:600px;
+margin:auto;
+background:white;
+padding:35px;
+border-radius:15px;
+box-shadow:0 4px 20px rgba(0,0,0,0.08);
+">
+
+
+<h1 style="
+color:#198754;
+">
+
+Payment Details Submitted!
+
+</h1>
+
+
+<h2>
+
+Registration No:
+
+<br>
+
+<span style="
+color:#0d6efd;
+">
+
+{html.escape(
+    formatted_registration_no
+)}
+
+</span>
+
+</h2>
+
+
+<p>
+
+आपका payment record successfully submit हो गया है।
+
+</p>
+
+
+<p>
+
+Payment Status:
+
+<strong>
+SUBMITTED
+</strong>
+
+</p>
+
+
+<p>
+
+Admin payment verify करेगा।
+
+</p>
+
+
+<br>
+
+
+<a
+href="/"
+style="
+display:inline-block;
+padding:12px 22px;
+background:#0d6efd;
+color:white;
+text-decoration:none;
+border-radius:8px;
+"
+>
+
+Back to Home
+
+</a>
+
+
+</div>
+
+</body>
+
+</html>
+"""
 
 
 # ============================================================
@@ -1518,36 +2306,48 @@ def save_payment():
 def payment_status():
 
     if request.method == "GET":
+
         return render_template(
             "student_status.html"
         )
+
 
     utr = request.form.get(
         "utr",
         ""
     ).strip()
 
+
     mobile = request.form.get(
         "mobile",
         ""
     ).strip()
 
+
     if not utr:
 
         return render_template(
             "student_status.html",
-            error="UTR / Transaction ID डालना जरूरी है।"
+            error=(
+                "UTR / Transaction ID डालना जरूरी है।"
+            )
         )
+
 
     if not mobile:
 
         return render_template(
             "student_status.html",
-            error="Mobile Number डालना जरूरी है।"
+            error=(
+                "Mobile Number डालना जरूरी है।"
+            )
         )
 
+
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
@@ -1569,21 +2369,38 @@ def payment_status():
         mobile,
     ))
 
+
     student = cursor.fetchone()
+
 
     cursor.close()
     conn.close()
+
 
     if student is None:
 
         return render_template(
             "student_status.html",
-            error="UTR / Transaction ID या Mobile Number गलत है।"
+            error=(
+                "UTR / Transaction ID या "
+                "Mobile Number गलत है।"
+            )
         )
+
+
+    # Formatted registration number
+
+    registration_no = format_registration_no(
+        student[0]
+    )
+
 
     return render_template(
         "student_status.html",
-        student=student
+
+        student=student,
+
+        registration_no=registration_no
     )
 
 
@@ -1610,28 +2427,38 @@ def admin_login():
         ""
     ).strip()
 
+
     password = request.form.get(
         "password",
         ""
     )
+
 
     admin_username = os.environ.get(
         "ADMIN_USERNAME",
         "brijesh"
     ).strip()
 
+
     admin_password = os.environ.get(
         "ADMIN_PASSWORD",
         ""
     )
 
+
     if not admin_password:
 
         return """
-        <h2>Admin password is not configured.</h2>
-        <p>Render Environment Variables में
-        ADMIN_PASSWORD set करो.</p>
+        <h2>
+        Admin password is not configured.
+        </h2>
+
+        <p>
+        Render Environment Variables में
+        ADMIN_PASSWORD set करो.
+        </p>
         """
+
 
     if (
         username == admin_username
@@ -1639,15 +2466,22 @@ def admin_login():
     ):
 
         session.permanent = True
+
         session["admin_logged_in"] = True
 
         return redirect(
             "/admin/dashboard"
         )
 
+
     return """
-    <h2>Invalid Username or Password</h2>
-    <a href="/admin">Try Again</a>
+    <h2>
+    Invalid Username or Password
+    </h2>
+
+    <a href="/admin">
+    Try Again
+    </a>
     """
 
 
@@ -1661,10 +2495,14 @@ def admin_dashboard():
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
 
+
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
@@ -1683,7 +2521,30 @@ def admin_dashboard():
         ORDER BY id DESC
     """)
 
+
     students = cursor.fetchall()
+
+
+    # ========================================================
+    # ADD FORMATTED REGISTRATION NUMBER
+    # ========================================================
+
+    formatted_students = []
+
+    for student in students:
+
+        formatted_students.append(
+            (
+                student[0],
+
+                format_registration_no(
+                    student[0]
+                ),
+
+                *student[1:]
+            )
+        )
+
 
     cursor.execute("""
         SELECT COALESCE(
@@ -1694,15 +2555,22 @@ def admin_dashboard():
         WHERE payment_status = 'VERIFIED'
     """)
 
+
     total_collection = cursor.fetchone()[0]
+
 
     cursor.close()
     conn.close()
 
+
     return render_template(
         "admin_dashboard.html",
-        students=students,
-        total_collection=total_collection,
+
+        students=formatted_students,
+
+        total_collection=
+            total_collection,
+
     )
 
 
@@ -1719,13 +2587,18 @@ def verify_payment(student_id):
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
 
+
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+            id,
             name,
             email,
             payment_amount,
@@ -1735,7 +2608,9 @@ def verify_payment(student_id):
         WHERE id = %s
     """, (student_id,))
 
+
     student = cursor.fetchone()
+
 
     if not student:
 
@@ -1744,22 +2619,40 @@ def verify_payment(student_id):
 
         return "Student not found."
 
-    student_name = student[0]
-    student_email = student[1]
-    payment_amount = student[2]
-    payment_status = student[3]
-    student_utr = student[4]
+
+    database_id = student[0]
+
+    student_name = student[1]
+
+    student_email = student[2]
+
+    payment_amount = student[3]
+
+    payment_status = student[4]
+
+    student_utr = student[5]
+
 
     if payment_status != "SUBMITTED":
 
         cursor.close()
         conn.close()
 
+
         return """
-        <h2>Cannot Verify Payment</h2>
-        <p>Payment SUBMITTED status में नहीं है.</p>
-        <a href="/admin/dashboard">Back</a>
+        <h2>
+        Cannot Verify Payment
+        </h2>
+
+        <p>
+        Payment SUBMITTED status में नहीं है.
+        </p>
+
+        <a href="/admin/dashboard">
+        Back
+        </a>
         """
+
 
     if (
         not student_email
@@ -1769,48 +2662,87 @@ def verify_payment(student_id):
         cursor.close()
         conn.close()
 
+
         return """
-        <h2>Verification Blocked</h2>
-        <p>Student का valid email मौजूद नहीं है.</p>
-        <a href="/admin/dashboard">Back</a>
+        <h2>
+        Verification Blocked
+        </h2>
+
+        <p>
+        Student का valid email मौजूद नहीं है.
+        </p>
+
+        <a href="/admin/dashboard">
+        Back
+        </a>
         """
+
 
     cursor.execute("""
         UPDATE students
+
         SET payment_status = 'VERIFIED'
+
         WHERE id = %s
+
         AND payment_status = 'SUBMITTED'
     """, (student_id,))
+
 
     if cursor.rowcount != 1:
 
         conn.rollback()
+
         cursor.close()
         conn.close()
 
-        return "Payment verification failed."
+        return (
+            "Payment verification failed."
+        )
+
 
     conn.commit()
 
     cursor.close()
     conn.close()
 
-    # IMPORTANT:
-    # Email में numeric ID जाएगा.
-    # Example: Registration No: 12
-    email_result = send_email_notification(
-        recipient_email=student_email,
-        student_name=student_name,
-        registration_id=student_id,
-        amount=payment_amount,
-        utr=student_utr,
-        status="VERIFIED",
+
+    # ========================================================
+    # SEND VERIFIED EMAIL
+    # ========================================================
+
+    formatted_registration_no = (
+        format_registration_no(
+            database_id
+        )
     )
+
+
+    email_result = send_email_notification(
+
+        recipient_email=student_email,
+
+        student_name=student_name,
+
+        registration_id=
+            formatted_registration_no,
+
+        amount=payment_amount,
+
+        utr=student_utr,
+
+        status="VERIFIED",
+
+    )
+
 
     print(
         "Verified email:",
-        "SENT" if email_result else "FAILED"
+        "SENT"
+        if email_result
+        else "FAILED"
     )
+
 
     return redirect(
         "/admin/dashboard"
@@ -1830,13 +2762,18 @@ def reject_payment(student_id):
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
 
+
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
+            id,
             name,
             email,
             payment_amount,
@@ -1846,7 +2783,9 @@ def reject_payment(student_id):
         WHERE id = %s
     """, (student_id,))
 
+
     student = cursor.fetchone()
+
 
     if not student:
 
@@ -1855,11 +2794,19 @@ def reject_payment(student_id):
 
         return "Student not found."
 
-    student_name = student[0]
-    student_email = student[1]
-    payment_amount = student[2]
-    payment_status = student[3]
-    student_utr = student[4]
+
+    database_id = student[0]
+
+    student_name = student[1]
+
+    student_email = student[2]
+
+    payment_amount = student[3]
+
+    payment_status = student[4]
+
+    student_utr = student[5]
+
 
     if payment_status != "SUBMITTED":
 
@@ -1867,49 +2814,77 @@ def reject_payment(student_id):
         conn.close()
 
         return """
-        <h2>Cannot Reject Payment</h2>
-        <a href="/admin/dashboard">Back</a>
+        <h2>
+        Cannot Reject Payment
+        </h2>
+
+        <a href="/admin/dashboard">
+        Back
+        </a>
         """
+
 
     cursor.execute("""
         UPDATE students
+
         SET payment_status = 'REJECTED'
+
         WHERE id = %s
+
         AND payment_status = 'SUBMITTED'
     """, (student_id,))
+
 
     if cursor.rowcount != 1:
 
         conn.rollback()
+
         cursor.close()
         conn.close()
 
-        return "Payment rejection failed."
+        return (
+            "Payment rejection failed."
+        )
+
 
     conn.commit()
 
     cursor.close()
     conn.close()
 
+
     formatted_registration_no = (
         format_registration_no(
-            student_id
+            database_id
         )
     )
 
+
     email_result = send_email_notification(
+
         recipient_email=student_email,
+
         student_name=student_name,
-        registration_id=formatted_registration_no,
+
+        registration_id=
+            formatted_registration_no,
+
         amount=payment_amount,
+
         utr=student_utr,
+
         status="REJECTED",
+
     )
+
 
     print(
         "Rejected email:",
-        "SENT" if email_result else "FAILED"
+        "SENT"
+        if email_result
+        else "FAILED"
     )
+
 
     return redirect(
         "/admin/dashboard"
@@ -1929,15 +2904,20 @@ def delete_student(student_id):
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
+
 
     conn = None
     cursor = None
 
+
     try:
 
         conn = get_db_connection()
+
         cursor = conn.cursor()
+
 
         cursor.execute("""
             SELECT payment_screenshot
@@ -1945,19 +2925,26 @@ def delete_student(student_id):
             WHERE id = %s
         """, (student_id,))
 
+
         student = cursor.fetchone()
 
+
         if not student:
+
             return "Student not found."
 
+
         screenshot = student[0]
+
 
         cursor.execute("""
             DELETE FROM students
             WHERE id = %s
         """, (student_id,))
 
+
         conn.commit()
+
 
         if screenshot:
 
@@ -1969,28 +2956,37 @@ def delete_student(student_id):
                 screenshot
             )
 
+
         return redirect(
             "/admin/dashboard"
         )
 
+
     except Exception as e:
 
         if conn:
+
             conn.rollback()
+
 
         print(
             "Delete error:",
             repr(e)
         )
 
+
         return "Delete failed."
+
 
     finally:
 
         if cursor:
+
             cursor.close()
 
+
         if conn:
+
             conn.close()
 
 
@@ -2007,15 +3003,20 @@ def delete_all_students():
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
+
 
     conn = None
     cursor = None
 
+
     try:
 
         conn = get_db_connection()
+
         cursor = conn.cursor()
+
 
         cursor.execute("""
             SELECT payment_screenshot
@@ -2023,22 +3024,28 @@ def delete_all_students():
             WHERE payment_screenshot IS NOT NULL
         """)
 
+
         screenshots = cursor.fetchall()
+
 
         cursor.execute("""
             DELETE FROM students
         """)
+
 
         cursor.execute("""
             ALTER SEQUENCE students_id_seq
             RESTART WITH 1
         """)
 
+
         conn.commit()
+
 
         for row in screenshots:
 
             filename = row[0]
+
 
             if filename:
 
@@ -2050,28 +3057,37 @@ def delete_all_students():
                     filename
                 )
 
+
         return redirect(
             "/admin/dashboard"
         )
 
+
     except Exception as e:
 
         if conn:
+
             conn.rollback()
+
 
         print(
             "Delete all error:",
             repr(e)
         )
 
+
         return "Delete All Failed."
+
 
     finally:
 
         if cursor:
+
             cursor.close()
 
+
         if conn:
+
             conn.close()
 
 
@@ -2087,7 +3103,9 @@ def payment_receipt(student_id):
     if not session.get(
         "admin_logged_in"
     ):
+
         return redirect("/admin")
+
 
     return get_receipt(
         student_id,
@@ -2120,7 +3138,9 @@ def get_receipt(
 ):
 
     conn = get_db_connection()
+
     cursor = conn.cursor()
+
 
     cursor.execute("""
         SELECT
@@ -2138,41 +3158,63 @@ def get_receipt(
         WHERE id = %s
     """, (student_id,))
 
+
     student = cursor.fetchone()
+
 
     cursor.close()
     conn.close()
 
+
     if student is None:
+
         return "Student not found."
+
 
     if student[7] != "VERIFIED":
 
         return f"""
-        <div style="font-family:Arial;text-align:center;padding:50px;">
+        <div style="
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        ">
 
-            <h2>Payment Not Verified</h2>
+            <h2>
+            Payment Not Verified
+            </h2>
 
             <p>
-                Receipt केवल verified payment के बाद
-                generate की जा सकती है।
+            Receipt केवल verified payment के बाद
+            generate की जा सकती है।
             </p>
 
             <a href="{back_url}">
-                Back
+            Back
             </a>
 
         </div>
         """
 
-    registration_no = format_registration_no(
-        student[0]
+
+    # ========================================================
+    # FORMATTED REGISTRATION NUMBER
+    # ========================================================
+
+    registration_no = (
+        format_registration_no(
+            student[0]
+        )
     )
+
 
     return render_template(
         "receipt.html",
+
         student=student,
-        registration_no=registration_no
+
+        registration_no=
+            registration_no
     )
 
 
@@ -2198,12 +3240,15 @@ def admin_logout():
 if __name__ == "__main__":
 
     app.run(
+
         host="0.0.0.0",
+
         port=int(
             os.environ.get(
                 "PORT",
                 5000
             )
         ),
+
         debug=False,
     )
