@@ -539,12 +539,14 @@
     </h2>
 
 
+    <!-- REGISTRATION NUMBER -->
+
     <div class="receipt-number">
 
-        Receipt No:
+        Registration No:
 
         <strong>
-            MMIT-2026-{{ student[0] }}
+            {{ registration_no }}
         </strong>
 
     </div>
@@ -553,6 +555,8 @@
     <table class="details">
 
 
+        <!-- REGISTRATION ID -->
+
         <tr>
 
             <td>
@@ -560,7 +564,11 @@
             </td>
 
             <td>
-                {{ student[0] }}
+
+                <strong>
+                    {{ registration_no }}
+                </strong>
+
             </td>
 
         </tr>
@@ -622,9 +630,7 @@
             </td>
 
             <td>
-
                 {{ student[3] }}
-
             </td>
 
         </tr>
@@ -637,9 +643,7 @@
             </td>
 
             <td>
-
                 {{ student[4] }}
-
             </td>
 
         </tr>
@@ -652,9 +656,7 @@
             </td>
 
             <td>
-
                 {{ student[5] }}
-
             </td>
 
         </tr>
