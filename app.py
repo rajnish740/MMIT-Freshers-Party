@@ -2415,44 +2415,23 @@ def admin_login():
 @app.route("/admin/dashboard")
 def admin_dashboard():
 
-    if not session.get(
-        "admin_logged_in"
-    ):
+    # ========================================================
+    # ADMIN LOGIN CHECK
+    # ========================================================
 
+    if not session.get("admin_logged_in"):
         return redirect("/admin")
-
 
     conn = None
     cursor = None
 
-
     try:
 
         conn = get_db_connection()
-
         cursor = conn.cursor()
 
-
         # ====================================================
-        # IMPORTANT:
-        # DATABASE से data जिस order में लिया गया है,
-        # उसे नीचे template के EXACT order में convert
-        # किया जा रहा है.
-        #
-        # Template order:
-        #
-        # 0 = Database ID
-        # 1 = Registration No
-        # 2 = Name
-        # 3 = Participant Type
-        # 4 = Roll Number
-        # 5 = Year / Semester
-        # 6 = Branch
-        # 7 = Mobile
-        # 8 = UTR
-        # 9 = Payment Amount
-        # 10 = Payment Status
-        # 11 = Payment Screenshot
+        # GET ALL STUDENTS
         # ====================================================
 
         cursor.execute("""
@@ -2472,85 +2451,57 @@ def admin_dashboard():
             ORDER BY id DESC
         """)
 
-
         database_students = cursor.fetchall()
 
-
         # ====================================================
-        # TEMPLATE FRIENDLY DATA
+        # CONVERT DATABASE DATA TO TEMPLATE ORDER
+        #
+        # admin_dashboard.html में exact order:
+        #
+        # 0  = ID
+        # 1  = Name
+        # 2  = Roll Number
+        # 3  = Year
+        # 4  = Branch
+        # 5  = Mobile
+        # 6  = UTR
+        # 7  = Payment Status
+        # 8  = Screenshot
+        # 9  = Participant Type
+        # 10 = Payment Amount
         # ====================================================
 
         students = []
 
-
         for row in database_students:
 
             student_id = row[0]
-
             name = row[1]
-
             roll_number = row[2]
-
             semester = row[3]
-
             branch = row[4]
-
             mobile = row[5]
-
             utr = row[6]
-
             payment_status = row[7]
-
             payment_screenshot = row[8]
-
             participant_type = row[9]
-
             payment_amount = row[10]
 
-
-            registration_no = (
-                format_registration_no(
-                    student_id
-                )
-            )
-
-
-            # =================================================
-            # VERY IMPORTANT FIX
-            # =================================================
-
             students.append(
-
                 (
-
-                    student_id,           # 0
-
-                    registration_no,      # 1
-
-                    name,                 # 2
-
-                    participant_type,     # 3
-
-                    roll_number,          # 4
-
-                    semester,             # 5
-
-                    branch,               # 6
-
-                    mobile,               # 7
-
-                    utr,                  # 8
-
-                    payment_amount,       # 9
-
-                    payment_status,       # 10
-
-                    payment_screenshot,   # 11
-
+                    student_id,          # 0
+                    name,                # 1
+                    roll_number,        # 2
+                    semester,           # 3 = Year
+                    branch,             # 4
+                    mobile,             # 5
+                    utr,                # 6
+                    payment_status,     # 7
+                    payment_screenshot, # 8
+                    participant_type,   # 9
+                    payment_amount      # 10
                 )
-
             )
-
 
         # ====================================================
         # TOTAL REGISTRATIONS
@@ -2561,11 +2512,7 @@ def admin_dashboard():
             FROM students
         """)
 
-
-        total_registrations = (
-            cursor.fetchone()[0]
-        )
-
+        total_registrations = cursor.fetchone()[0]
 
         # ====================================================
         # PAYMENT SUBMITTED
@@ -2577,11 +2524,7 @@ def admin_dashboard():
             WHERE payment_status = 'SUBMITTED'
         """)
 
-
-        payment_submitted = (
-            cursor.fetchone()[0]
-        )
-
+        payment_submitted = cursor.fetchone()[0]
 
         # ====================================================
         # PAYMENT VERIFIED
@@ -2593,11 +2536,7 @@ def admin_dashboard():
             WHERE payment_status = 'VERIFIED'
         """)
 
-
-        payment_verified = (
-            cursor.fetchone()[0]
-        )
-
+        payment_verified = cursor.fetchone()[0]
 
         # ====================================================
         # PAYMENT REJECTED
@@ -2609,14 +2548,13 @@ def admin_dashboard():
             WHERE payment_status = 'REJECTED'
         """)
 
-
-        payment_rejected = (
-            cursor.fetchone()[0]
-        )
-
+        payment_rejected = cursor.fetchone()[0]
 
         # ====================================================
-        # TOTAL VERIFIED PAYMENT COLLECTION
+        # TOTAL PAYMENT AMOUNT
+        #
+        # Dashboard में "Total Payment Amount"
+        # सभी registrations की amount दिखाएगा.
         # ====================================================
 
         cursor.execute("""
@@ -2625,47 +2563,36 @@ def admin_dashboard():
                 0
             )
             FROM students
-            WHERE payment_status = 'VERIFIED'
         """)
 
-
-        total_collection = (
-            cursor.fetchone()[0]
-        )
-
+        total_collection = cursor.fetchone()[0]
 
         if total_collection is None:
-
             total_collection = Decimal("0.00")
-
 
         # ====================================================
         # RENDER DASHBOARD
         # ====================================================
 
         return render_template(
-
             "admin_dashboard.html",
 
             students=students,
 
-            total_registrations=
-                total_registrations,
+            total_registrations=total_registrations,
 
-            payment_submitted=
-                payment_submitted,
+            payment_submitted=payment_submitted,
 
-            payment_verified=
-                payment_verified,
+            payment_verified=payment_verified,
 
-            payment_rejected=
-                payment_rejected,
+            payment_rejected=payment_rejected,
 
-            total_collection=
-                total_collection,
-
+            total_collection=total_collection,
         )
 
+    # ========================================================
+    # ERROR
+    # ========================================================
 
     except Exception as e:
 
@@ -2674,9 +2601,7 @@ def admin_dashboard():
             repr(e)
         )
 
-
         return """
-
         <h2>
         Admin Dashboard Error
         </h2>
@@ -2688,22 +2613,19 @@ def admin_dashboard():
         <a href="/admin">
         Back to Admin Login
         </a>
-
         """
 
+    # ========================================================
+    # CLOSE DATABASE
+    # ========================================================
 
     finally:
 
         if cursor:
-
             cursor.close()
 
-
         if conn:
-
             conn.close()
-
-
 # ============================================================
 # VERIFY PAYMENT
 # ============================================================
