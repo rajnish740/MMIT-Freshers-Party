@@ -2324,7 +2324,9 @@ def payment_status():
 
         )
 
-
+# Student verification successful hone ke baad
+# sirf isi student ki receipt allow hogi
+    session["receipt_student_id"] = student[0]
     registration_no = format_registration_no(
         student[0]
     )
@@ -3210,11 +3212,35 @@ def payment_receipt(student_id):
 )
 def student_receipt(student_id):
 
+    allowed_student_id = session.get(
+        "receipt_student_id"
+    )
+
+    if allowed_student_id != student_id:
+        return """
+        <div style="
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        ">
+
+            <h2>Access Denied</h2>
+
+            <p>
+            यह receipt आपके लिए उपलब्ध नहीं है।
+            </p>
+
+            <a href="/payment-status">
+            Payment Status पर जाएँ
+            </a>
+
+        </div>
+        """, 403
+
     return get_receipt(
         student_id,
         "/payment-status"
     )
-
 
 # ============================================================
 # RECEIPT HELPER
