@@ -7,7 +7,7 @@ from flask import (
     send_from_directory,
     abort,
 )
-
+from flask_wtf.csrf import CSRFProtect
 import os
 import re
 import uuid
@@ -43,7 +43,7 @@ app = Flask(
     __name__,
     static_folder=None
 )
-
+csrf = CSRFProtect(app)
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "development-secret-key"
