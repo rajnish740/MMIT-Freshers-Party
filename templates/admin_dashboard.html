@@ -843,9 +843,9 @@
                 action="/admin/delete-all"
                 method="POST"
                 onsubmit="return confirmDeleteAll();"
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
             >
-
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button
                     type="submit"
                     class="delete-all-button"
@@ -1433,9 +1433,9 @@
                                 action="/admin/verify/{{ student[0] }}"
                                 method="POST"
                                 style="display:inline;"
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                              
                             >
-
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button
                                     type="submit"
                                     class="action-btn verify"
@@ -1464,9 +1464,9 @@
                                 action="/admin/reject/{{ student[0] }}"
                                 method="POST"
                                 style="display:inline;"
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                               
                             >
-
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button
                                     type="submit"
                                     class="action-btn reject"
@@ -1516,9 +1516,9 @@
                                 '{{ student[1]|e }}',
                                 '{{ student[0] }}'
                             );"
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                           
                         >
-
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button
                                 type="submit"
                                 class="action-btn delete-one"

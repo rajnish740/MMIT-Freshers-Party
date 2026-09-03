@@ -93,13 +93,13 @@
         <div class="card">
 
             <h1>🔐 Admin Login</h1>
+<form action="/admin-login" method="POST">
 
-            <form action="/admin-login" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <label>
-                    Username
-                </label>
-
+    <label>
+        Username
+    </label>
                 <input
                     type="text"
                     name="username"

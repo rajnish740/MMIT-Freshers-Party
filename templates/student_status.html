@@ -416,7 +416,11 @@
             action="/payment-status"
             method="POST"
         >
-
+<input 
+    type="hidden" 
+    name="csrf_token" 
+    value="{{ csrf_token() }}"
+>
 
             <label>
                 UTR / Transaction ID
