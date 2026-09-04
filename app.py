@@ -6,6 +6,7 @@ from flask import (
     session,
     send_from_directory,
     abort,
+    Response,
 )
 from flask_wtf.csrf import CSRFProtect
 import os
@@ -92,6 +93,18 @@ def add_security_headers(response):
     )
 
     return response
+@app.route("/sitemap.xml")
+def sitemap():
+    xml = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://mmit-freshers-party.onrender.com/</loc>
+    </url>
+
+</urlset>
+"""
+    return Response(xml, mimetype="application/xml")
 # ============================================================
 # BASE URL
 # ============================================================
