@@ -1714,121 +1714,66 @@ function confirmDeleteAll() {
 
 function calculateStats() {
 
-
-    const rows =
-        document.querySelectorAll(
-            ".student-row"
-        );
-
+    const rows = document.querySelectorAll(".student-row");
 
     let total = 0;
-
     let submitted = 0;
-
     let verified = 0;
-
     let rejected = 0;
-
     let totalAmount = 0;
 
+    rows.forEach(function(row) {
 
-    rows.forEach(
-        function(row) {
+        total++;
 
+        const status = row.dataset.status;
 
-            total++;
-
-
-            const status =
-                row.dataset.status;
-
-
-            if (
-                status === "SUBMITTED"
-            ) {
-
-                submitted++;
-
-            }
-
-
-            if (
-                status === "VERIFIED"
-            ) {
-
-                verified++;
-
-            }
-
-
-            if (
-                status === "REJECTED"
-            ) {
-
-                rejected++;
-
-            }
-
-
-           if (status === "VERIFIED") {
-
-    const amountCell =
-        row.querySelector(".amount");
-
-    if (amountCell) {
-
-        let amountText =
-            amountCell.innerText
-            .replace("₹", "")
-            .replace(/,/g, "")
-            .trim();
-
-        let amount =
-            parseFloat(amountText);
-
-        if (!isNaN(amount)) {
-            totalAmount += amount;
+        if (status === "SUBMITTED") {
+            submitted++;
         }
-    }
-}
 
+        if (status === "VERIFIED") {
+            verified++;
 
-    document.getElementById(
-        "totalCount"
-    ).innerText = total;
+            const amountCell = row.querySelector(".amount");
 
+            if (amountCell) {
 
-    document.getElementById(
-        "submittedCount"
-    ).innerText = submitted;
+                let amountText = amountCell.innerText
+                    .replace("₹", "")
+                    .replace(/,/g, "")
+                    .trim();
 
+                let amount = parseFloat(amountText);
 
-    document.getElementById(
-        "verifiedCount"
-    ).innerText = verified;
+                if (!isNaN(amount)) {
+                    totalAmount += amount;
+                }
+            }
+        }
 
+        if (status === "REJECTED") {
+            rejected++;
+        }
 
-    document.getElementById(
-        "rejectedCount"
-    ).innerText = rejected;
+    });
 
+    document.getElementById("totalCount").innerText = total;
 
-    document.getElementById(
-        "totalAmount"
-    ).innerText =
+    document.getElementById("submittedCount").innerText =
+        submitted;
 
-        "₹" +
+    document.getElementById("verifiedCount").innerText =
+        verified;
 
-        totalAmount.toLocaleString(
-            "en-IN"
-        );
+    document.getElementById("rejectedCount").innerText =
+        rejected;
 
+    document.getElementById("totalAmount").innerText =
+        "₹" + totalAmount.toLocaleString("en-IN");
 
     updateVisibleCount();
-
 }
-
-
 
 /* ==================================================
    FILTER STUDENTS
