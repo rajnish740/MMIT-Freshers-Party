@@ -1770,39 +1770,27 @@ function calculateStats() {
             }
 
 
-            const amountCell =
-                row.querySelector(
-                    ".amount"
-                );
+           if (status === "VERIFIED") {
 
+    const amountCell =
+        row.querySelector(".amount");
 
-            if (amountCell) {
+    if (amountCell) {
 
+        let amountText =
+            amountCell.innerText
+            .replace("₹", "")
+            .replace(/,/g, "")
+            .trim();
 
-                let amountText =
-                    amountCell.innerText
-                    .replace("₹", "")
-                    .replace(/,/g, "")
-                    .trim();
+        let amount =
+            parseFloat(amountText);
 
-
-                let amount =
-                    parseFloat(
-                        amountText
-                    );
-
-
-                if (!isNaN(amount)) {
-
-                    totalAmount += amount;
-
-                }
-
-            }
-
-
+        if (!isNaN(amount)) {
+            totalAmount += amount;
         }
-    );
+    }
+}
 
 
     document.getElementById(
