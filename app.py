@@ -2583,11 +2583,29 @@ def admin_dashboard():
 
         payment_rejected = cursor.fetchone()[0]
 
-        # ====================================================
+               # ====================================================
         # TOTAL PAYMENT AMOUNT
-        #
-        # Dashboard में "Total Payment Amount"
-        # सभी registrations की amount दिखाएगा.
+        # ====================================================
+
+        # ====================================================
+        # DEBUG PAYMENT DATA
+        # ====================================================
+
+        cursor.execute("""
+            SELECT id, payment_status, payment_amount
+            FROM students
+            ORDER BY id
+        """)
+
+        debug_rows = cursor.fetchall()
+
+        print("========================================")
+        print("DEBUG PAYMENT ROWS:", debug_rows)
+        print("========================================")
+
+
+        # ====================================================
+        # TOTAL VERIFIED PAYMENT AMOUNT
         # ====================================================
 
         cursor.execute("""
@@ -2597,14 +2615,16 @@ def admin_dashboard():
             )
             FROM students
             WHERE payment_status = 'VERIFIED'
-
         """)
 
         total_collection = cursor.fetchone()[0]
 
+        print("========================================")
+        print("DEBUG TOTAL VERIFIED:", total_collection)
+        print("========================================")
+
         if total_collection is None:
             total_collection = Decimal("0.00")
-
         # ====================================================
         # RENDER DASHBOARD
         # ====================================================
