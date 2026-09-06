@@ -2596,6 +2596,8 @@ def admin_dashboard():
                 0
             )
             FROM students
+            WHERE payment_status = 'VERIFIED'
+
         """)
 
         total_collection = cursor.fetchone()[0]
