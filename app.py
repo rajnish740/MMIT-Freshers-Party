@@ -221,6 +221,7 @@ def allowed_image(filename):
 # DATABASE
 # ============================================================
 
+
 def get_db_connection():
 
     database_url = os.environ.get(
@@ -235,7 +236,9 @@ def get_db_connection():
 
     return psycopg2.connect(
         database_url,
-        sslmode="require"
+        sslmode="require",
+        connect_timeout=10,
+        application_name="MMIT-Freshers-Party"
     )
 
 
