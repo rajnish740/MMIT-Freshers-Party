@@ -2463,11 +2463,18 @@ def admin_dashboard():
 
     try:
 
+        # ====================================================
+        # DATABASE CONNECTION
+        # ====================================================
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
         # ====================================================
         # GET ALL STUDENTS
+        #
+        # Existing dashboard/search/filter ke liye complete
+        # students list intentionally maintain ki gayi hai.
         # ====================================================
 
         cursor.execute("""
@@ -2511,123 +2518,86 @@ def admin_dashboard():
 
         for row in database_students:
 
-            student_id = row[0]
-            name = row[1]
-            roll_number = row[2]
-            semester = row[3]
-            branch = row[4]
-            mobile = row[5]
-            utr = row[6]
-            payment_status = row[7]
-            payment_screenshot = row[8]
-            participant_type = row[9]
-            payment_amount = row[10]
-
             students.append(
                 (
-                    student_id,          # 0
-                    name,                # 1
-                    roll_number,        # 2
-                    semester,           # 3 = Year
-                    branch,             # 4
-                    mobile,             # 5
-                    utr,                # 6
-                    payment_status,     # 7
-                    payment_screenshot, # 8
-                    participant_type,   # 9
-                    payment_amount      # 10
+                    row[0],   # 0 = ID
+                    row[1],   # 1 = Name
+                    row[2],   # 2 = Roll Number
+                    row[3],   # 3 = Year
+                    row[4],   # 4 = Branch
+                    row[5],   # 5 = Mobile
+                    row[6],   # 6 = UTR
+                    row[7],   # 7 = Payment Status
+                    row[8],   # 8 = Payment Screenshot
+                    row[9],   # 9 = Participant Type
+                    row[10],  # 10 = Payment Amount
                 )
             )
 
         # ====================================================
-        # TOTAL REGISTRATIONS
+        # DASHBOARD STATISTICS
+        #
+        # पहले अलग-अलग COUNT queries चल रही थीं।
+        # अब एक ही query में सभी statistics मिलेंगे।
         # ====================================================
 
         cursor.execute("""
-            SELECT COUNT(*)
+            SELECT
+                COUNT(*) AS total_registrations,
+
+                COUNT(*) FILTER (
+                    WHERE payment_status = 'SUBMITTED'
+                ) AS payment_submitted,
+
+                COUNT(*) FILTER (
+                    WHERE payment_status = 'VERIFIED'
+                ) AS payment_verified,
+
+                COUNT(*) FILTER (
+                    WHERE payment_status = 'REJECTED'
+                ) AS payment_rejected,
+
+                COALESCE(
+                    SUM(payment_amount) FILTER (
+                        WHERE payment_status = 'VERIFIED'
+                    ),
+                    0
+                ) AS total_collection
+
             FROM students
         """)
 
-        total_registrations = cursor.fetchone()[0]
+        statistics = cursor.fetchone()
 
         # ====================================================
-        # PAYMENT SUBMITTED
+        # STATISTICS VALUES
         # ====================================================
 
-        cursor.execute("""
-            SELECT COUNT(*)
-            FROM students
-            WHERE payment_status = 'SUBMITTED'
-        """)
-
-        payment_submitted = cursor.fetchone()[0]
+        total_registrations = statistics[0]
+        payment_submitted = statistics[1]
+        payment_verified = statistics[2]
+        payment_rejected = statistics[3]
+        total_collection = statistics[4]
 
         # ====================================================
-        # PAYMENT VERIFIED
+        # SAFETY FOR EMPTY DATABASE
         # ====================================================
 
-        cursor.execute("""
-            SELECT COUNT(*)
-            FROM students
-            WHERE payment_status = 'VERIFIED'
-        """)
+        if total_registrations is None:
+            total_registrations = 0
 
-        payment_verified = cursor.fetchone()[0]
+        if payment_submitted is None:
+            payment_submitted = 0
 
-        # ====================================================
-        # PAYMENT REJECTED
-        # ====================================================
+        if payment_verified is None:
+            payment_verified = 0
 
-        cursor.execute("""
-            SELECT COUNT(*)
-            FROM students
-            WHERE payment_status = 'REJECTED'
-        """)
-
-        payment_rejected = cursor.fetchone()[0]
-
-               # ====================================================
-        # TOTAL PAYMENT AMOUNT
-        # ====================================================
-
-        # ====================================================
-        # DEBUG PAYMENT DATA
-        # ====================================================
-
-        cursor.execute("""
-            SELECT id, payment_status, payment_amount
-            FROM students
-            ORDER BY id
-        """)
-
-        debug_rows = cursor.fetchall()
-
-        print("========================================")
-        print("DEBUG PAYMENT ROWS:", debug_rows)
-        print("========================================")
-
-
-        # ====================================================
-        # TOTAL VERIFIED PAYMENT AMOUNT
-        # ====================================================
-
-        cursor.execute("""
-            SELECT COALESCE(
-                SUM(payment_amount),
-                0
-            )
-            FROM students
-            WHERE payment_status = 'VERIFIED'
-        """)
-
-        total_collection = cursor.fetchone()[0]
-
-        print("========================================")
-        print("DEBUG TOTAL VERIFIED:", total_collection)
-        print("========================================")
+        if payment_rejected is None:
+            payment_rejected = 0
 
         if total_collection is None:
             total_collection = Decimal("0.00")
+
         # ====================================================
         # RENDER DASHBOARD
         # ====================================================
