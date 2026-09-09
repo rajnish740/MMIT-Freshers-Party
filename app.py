@@ -1327,14 +1327,14 @@ def register():
             )
 
 
-        if year == "1st Year":
+        if semester == "1st Year":
+            payment_amount = 149
 
-            payment_amount = Decimal("199")
+        elif semester == "2nd Year":
+            payment_amount = 300
 
-        else:
-
-            payment_amount = Decimal("300")
-
+        elif semester == "3rd Year":
+            payment_amount = 350
 
     # ========================================================
     # TEACHER
