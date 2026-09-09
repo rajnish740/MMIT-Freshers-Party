@@ -850,24 +850,23 @@ function updateFee() {
     }
 
 
-    if (year === "1st Year") {
+   if (year === "1st Year") {
 
-        fee.innerText =
-            "₹199";
+    fee.innerText = "₹149";
 
-    }
+}
 
+else if (year === "2nd Year") {
 
-    else if (
-        year === "2nd Year"
-        ||
-        year === "3rd Year"
-    ) {
+    fee.innerText = "₹300";
 
-        fee.innerText =
-            "₹300";
+}
 
-    }
+else if (year === "3rd Year") {
+
+    fee.innerText = "₹350";
+
+}
 
 
     else {
