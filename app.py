@@ -1326,15 +1326,14 @@ def register():
                 "<a href='/register'>Back</a>"
             )
 
+        if year == "1st Year":
+            payment_amount = Decimal("149")
 
-        if semester == "1st Year":
-            payment_amount = 149
+        elif year == "2nd Year":
+            payment_amount = Decimal("300")
 
-        elif semester == "2nd Year":
-            payment_amount = 300
-
-        elif semester == "3rd Year":
-            payment_amount = 350
+        elif year == "3rd Year":
+            payment_amount = Decimal("350")
 
     # ========================================================
     # TEACHER
